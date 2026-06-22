@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cleared-Tissue Light-Sheet — Interactive Companion</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--panel2:#101A30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
+.wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px;}
+header h1{font-size:30px;margin:0 0 6px;font-weight:800;letter-spacing:-.01em;}
+header .sub{color:var(--mut);font-size:16px;margin:0 0 4px;}
+header .demo{color:var(--am);font-size:13px;font-style:italic;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 30px;}
+section{background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:22px 22px 24px;margin:22px 0;}
+section h2{font-size:20px;margin:0 0 4px;font-weight:700;}
+section h2 .num{color:var(--cy);font-weight:800;margin-right:8px;}
+section .lede{color:var(--mut);font-size:14.5px;margin:0 0 16px;}
+canvas{width:100%;height:auto;display:block;border-radius:12px;background:#0c1322;}
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:14px 0 6px;}
+.controls label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:7px;min-width:210px;}
+.controls label .v{color:var(--ink);font-weight:600;}
+input[type=range]{accent-color:var(--cy);width:100%;}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--hair);border-radius:9px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;}
+button:hover{border-color:var(--cy);}
+button[aria-pressed=true]{border-color:var(--cy);color:var(--cy);}
+.readout{font-size:13px;color:var(--mut);margin-top:8px;}
+.readout b{color:var(--ink);}
+.tag{display:inline-block;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;}
+.good{background:rgba(60,224,166,.16);color:var(--green);}
+.bad{background:rgba(244,114,182,.16);color:var(--mag);}
+.mid{background:rgba(251,191,36,.16);color:var(--am);}
+footer{color:var(--mut);font-size:13px;margin-top:30px;text-align:center;}
+footer a{color:var(--am);text-decoration:none;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+</style></head>
+<body><div class="wrap">
+<header>
+<div class="eyebrow">Cleared-tissue light-sheet microscope</div>
+<h1>Interactive companion</h1>
+<p class="sub">Play with the optics behind the scope — the light sheet, the two arms, and what makes good data.</p>
+<p class="demo">Companion to the live demo. Drag the sliders; everything updates live.</p>
+</header>
+
+<!-- WIDGET D: point scan vs light sheet -->
+<section>
+<h2><span class="num">1</span>Point-scanning vs. light sheet &mdash; photobleaching &amp; speed</h2>
+<p class="lede"><b>Why a light sheet at all? Speed and gentleness.</b> A confocal focuses the laser down through the full depth at every point &mdash; bleaching the whole beam line and crawling plane&#8209;by&#8209;plane &mdash; while a light sheet lights one plane from the side and sweeps through fast, bleaching only what it images. That low photodamage and speed is what lets it image big <b>cleared or living 3&#8209;D samples</b>; the trade-off is that the sample must be reachable from two perpendicular sides (illumination + detection). Side view, depth top&#8209;to&#8209;bottom &mdash; press play.</p>
+<canvas id="dCv" width="900" height="360" aria-hidden="true"></canvas>
+<h2 class="sr-only">In side view the confocal beam bleaches the full-depth column at every scanned point and covers the volume slowly; the light sheet lights one plane at a time, sweeping quickly and bleaching only that plane.</h2>
+<div class="controls"><button id="dPlay" aria-pressed="false">play</button><button id="dReset">reset</button></div>
+<div class="readout">Confocal: <span id="dCs" class="tag good">bright</span> &nbsp;&middot;&nbsp; light sheet: <span id="dLs" class="tag good">bright</span>. <span id="dNote"></span></div>
+</section>
+
+<!-- WIDGET E: cylindrical lens / NA tradeoff -->
+<section>
+<h2><span class="num">2</span>Cylindrical lens, objective &amp; the NA tradeoff</h2>
+<p class="lede"><b>Why the waist matters: it sets how thin &mdash; and how good &mdash; your optical sections are.</b> The <b>cylindrical lens</b> shapes the round beam into a sheet (its height), upstream of two relay mirrors and two tube lenses; the <b>illumination objective</b> then focuses it to a thin waist, and the <b>objective&#39;s NA</b> trades that thickness against how far the sheet stays thin. Slide the objective NA.</p>
+<canvas id="e3d" width="900" height="240" aria-hidden="true"></canvas>
+<p style="font-size:12px;color:var(--mut);margin:6px 0 14px;text-align:center">Drag the beam to spin it &mdash; round before the cylindrical lens, a flat sheet after.</p>
+<canvas id="eCv" width="900" height="300" aria-hidden="true"></canvas>
+<h2 class="sr-only">The cylindrical lens turns the round beam into a sheet; the illumination objective focuses it to a waist, and the objective NA trades sheet thickness against usable length.</h2>
+<div class="controls"><label><span>illumination objective NA &nbsp;<span class="v" id="eNA">medium</span></span><input type="range" id="eRange" min="0" max="100" value="45"></label></div>
+<div class="readout">Sheet thickness &asymp; <b id="eThk">3 &micro;m</b> &nbsp;&middot;&nbsp; usable length &asymp; <b id="eLen">300 &micro;m</b>. <span id="eNote"></span></div>
+</section>
+<!-- WIDGET A: thickness & scan -->
+<section>
+<h2><span class="num">3</span>Sheet thickness &amp; scanning — what makes good data</h2>
+<p class="lede"><b>Why thickness matters: it sets your image quality directly.</b> The light sheet stays fixed and the <b>sample is translated through it</b>, one plane at a time. A <b>thin</b> sheet lights only the plane at the sheet &mdash; crisp sections; a <b>thick</b> one also lights the planes above and below, which blur in as haze. Drag the slider and watch the camera image.</p>
+<canvas id="aCv" width="900" height="380" aria-hidden="true"></canvas>
+<h2 class="sr-only">A thin light sheet produces crisp images; a thick sheet adds out-of-focus haze and lowers contrast.</h2>
+<div class="controls">
+  <label><span>sheet thickness &nbsp;<span class="v" id="aThk">thin</span></span><input type="range" id="aRange" min="6" max="100" value="20"></label>
+  <button id="aScan" aria-pressed="true">move sample: on</button>
+</div>
+<div class="readout">Optical section: <span id="aQual" class="tag good">crisp</span> &nbsp; contrast <b id="aCon">high</b>. <span id="aNote"></span></div>
+</section>
+
+<!-- WIDGET C: galvo / knife-edge -->
+<section>
+<h2><span class="num">4</span>The galvo &amp; the knife-edge mirror</h2>
+<p class="lede"><b>Why two arms: lighting from both sides keeps the image even across the field.</b> Tilting the galvo walks the beam across the knife&#8209;edge mirror &mdash; left feeds <b>arm 1</b>, right feeds <b>arm 2</b>, dead centre <b>splits to both</b> &mdash; and the same galvo&#39;s fast dither pivots the sheet to kill shadows (widget 5). Switch arms, or auto&#8209;sweep to watch the hand&#8209;off.</p>
+<canvas id="cCv" width="900" height="430" aria-hidden="true"></canvas>
+<h2 class="sr-only">Tilting the galvo routes the beam across a knife-edge mirror into arm 1 or arm 2; at the center it splits into both arms.</h2>
+<div class="controls">
+  <button id="cSwitch">switch arm</button>
+  <button id="cSweep" aria-pressed="false">auto-sweep: off</button>
+  <button id="cDith" aria-pressed="true">fast dither: on</button>
+</div>
+<div class="readout">Routing: <span id="cArm" class="tag good">arm 1</span> &nbsp; <span id="cNote"></span></div>
+</section>
+
+<!-- WIDGET B: scan vs no-scan shadow artifacts -->
+<section>
+<h2><span class="num">5</span>Scanning the sheet to wipe out shadows</h2>
+<p class="lede"><b>Why scan the sheet: dense spots cast shadows that wreck the image.</b> An opaque speck blocks the sheet and casts a dark stripe downstream &mdash; a striping artifact. If the galvo <b>dithers (pivots)</b> the sheet through a small angle during the exposure, each speck is lit from many directions and the stripe averages away. Same sample, both ways:</p>
+<canvas id="bCv" width="900" height="430" aria-hidden="true"></canvas>
+<h2 class="sr-only">Without scanning, opaque specks cast shadow stripes; pivoting the sheet during the exposure fills the shadows and removes the stripes.</h2>
+<div class="controls">
+  <label><span>pivot scan amount &nbsp;<span class="v" id="bAmt">off</span></span><input type="range" id="bRange" min="0" max="100" value="65"></label>
+  <button id="bAnim" aria-pressed="true">animate: on</button>
+</div>
+<div class="readout">Left = no scan: <span class="tag bad">shadow stripes</span> &nbsp;&middot;&nbsp; right = scan on: <span id="bState" class="tag good">stripes washed out</span>. <span id="bNote"></span></div>
+</section>
+
+
+<footer>Cleared-tissue light-sheet microscope (a table-built Flamingo / T-SPIM). &nbsp;·&nbsp; <a href="CTLSM_Teaching.pptx">&larr; back to the slide deck</a></footer>
+</div>
+<script>
+var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#e8edf8',DIMG='rgba(150,180,170,.22)';
+function L(x,a,b,c,d,col,w,al){x.save();x.globalAlpha=al==null?1:al;x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke();x.restore();}
+function T(x,tx,ty,s,col,sz,al){x.save();x.globalAlpha=al==null?1:al;x.fillStyle=col||MUT;x.font=(sz||13)+'px system-ui,sans-serif';x.textAlign='center';x.fillText(s,tx,ty);x.restore();}
+
+/* ---------- WIDGET A: sheet thickness; the SAMPLE moves through the fixed sheet ---------- */
+(function(){
+ var cv=document.getElementById('aCv'),x=cv.getContext('2d');
+ var rng=document.getElementById('aRange'),scanBtn=document.getElementById('aScan');
+ var thk=document.getElementById('aThk'),qual=document.getElementById('aQual'),con=document.getElementById('aCon'),note=document.getElementById('aNote');
+ var moving=true; scanBtn.onclick=function(){moving=!moving;scanBtn.setAttribute('aria-pressed',moving);scanBtn.textContent='move sample: '+(moving?'on':'off');};
+ var pts=[]; var seed=7; function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
+ for(var i=0;i<150;i++){pts.push({u:rnd(),v:rnd(),z:(rnd()-0.5)*1.5,r:1.7+rnd()*2.3});}
+ var t=0;
+ function draw(){
+  t+=0.012; var ss=moving?0.5*Math.sin(t*1.3):0;          // the SAMPLE translates; the sheet stays put
+  var W=900,Hc=380; x.clearRect(0,0,W,Hc);
+  var thick=+rng.value/100;
+  // ---- top-down view (left): FIXED sheet, sample moves through it ----
+  var sx=40,sy=50,sw=150,sh=280, cy=sy+sh*0.5;
+  x.fillStyle='#0a1120';x.fillRect(sx,sy,sw,sh);x.strokeStyle='#22304e';x.lineWidth=1;x.strokeRect(sx,sy,sw,sh);
+  T(x,sx+sw/2,sy-14,'top-down view',MUT,13);
+  x.save();x.beginPath();x.rect(sx,sy,sw,sh);x.clip();
+  for(var i=0;i<pts.length;i++){var p=pts[i];var d=Math.abs(p.z+ss);var py=cy+(p.z+ss)*sh;var inb=d<thick/2;
+    x.globalAlpha=inb?1:0.28;x.fillStyle=inb?CY:'#3a4a6a';
+    x.beginPath();x.arc(sx+18+p.u*(sw-36),py,inb?2.4:1.6,0,7);x.fill();x.globalAlpha=1;}
+  var slabT=Math.max(4,thick*sh);
+  var g=x.createLinearGradient(0,cy-slabT/2,0,cy+slabT/2);
+  g.addColorStop(0,'rgba(34,211,238,0)');g.addColorStop(.5,'rgba(34,211,238,.34)');g.addColorStop(1,'rgba(34,211,238,0)');
+  x.fillStyle=g;x.fillRect(sx,cy-slabT/2,sw,slabT);
+  L(x,sx,cy,sx+sw,cy,CY,1.5,.9);
+  x.restore();
+  T(x,sx+sw/2,sy+sh+18,'fixed sheet - the sample moves through it',CY,11);
+  // ---- camera image (right) ----
+  var cx0=250,cy0=50,cw=610,ch=280;
+  x.fillStyle='#05080f';x.fillRect(cx0,cy0,cw,ch);x.strokeStyle='#22304e';x.strokeRect(cx0,cy0,cw,ch);
+  T(x,cx0+cw/2,cy0-14,'camera image (current plane)',MUT,13);
+  var sharp=0,haze=0,sharpB=0.05;
+  for(var i=0;i<pts.length;i++){var p=pts[i];var d=Math.abs(p.z+ss);
+    if(d>thick/2) continue;
+    var px=cx0+24+p.u*(cw-48),py=cy0+22+p.v*(ch-44);
+    if(d<sharpB){x.globalAlpha=.45;x.fillStyle=CY;x.beginPath();x.arc(px,py,p.r*1.9,0,7);x.fill();x.globalAlpha=1;x.fillStyle='#eaffff';x.beginPath();x.arc(px,py,p.r,0,7);x.fill();sharp++;}
+    else{var foc=1-((d-sharpB)/(thick/2-sharpB+0.001));var blur=p.r*(3+(1-foc)*9);x.globalAlpha=0.035+0.085*Math.max(0,foc);x.fillStyle=CY;x.beginPath();x.arc(px,py,blur,0,7);x.fill();haze++;}
+    x.globalAlpha=1;
+  }
+  var q,cls,c2,nt;
+  if(thick<0.18){q='crisp';cls='good';c2='high';nt='Thin sheet: only the plane sitting in the sheet is lit. Sharp dots, dark background.';}
+  else if(thick<0.45){q='softening';cls='mid';c2='medium';nt='Getting thicker: neighbouring planes start to glow in.';}
+  else{q='hazy';cls='bad';c2='low';nt='Thick sheet: many planes lit at once. The structure drowns in out-of-focus haze.';}
+  thk.textContent=thick<0.18?'thin':(thick<0.45?'medium':'thick');
+  qual.textContent=q;qual.className='tag '+cls;con.textContent=c2;note.textContent=nt;
+  requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+/* ---------- WIDGET B: scan vs no-scan, shadow artifacts ---------- */
+(function(){
+ var cv=document.getElementById('bCv'),x=cv.getContext('2d');
+ var rng=document.getElementById('bRange'),animBtn=document.getElementById('bAnim');
+ var amt=document.getElementById('bAmt'),state=document.getElementById('bState'),note=document.getElementById('bNote');
+ var anim=true; animBtn.onclick=function(){anim=!anim;animBtn.setAttribute('aria-pressed',anim);animBtn.textContent='animate: '+(anim?'on':'off');};
+ var seed=42; function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
+ var specks=[]; for(var i=0;i<5;i++){specks.push({u:0.16+rnd()*0.42, v:0.18+rnd()*0.62, r:5+rnd()*5});}
+ var dots=[]; for(var i=0;i<300;i++){dots.push({u:rnd(),v:rnd(),b:0.3+rnd()*0.7});}
+ var t=0;
+ function panel(px,py,pw,ph,scan,title,tcol){
+   x.fillStyle='#06121d';x.fillRect(px,py,pw,ph);x.strokeStyle='#22304e';x.lineWidth=1;x.strokeRect(px,py,pw,ph);
+   T(x,px+pw/2,py-12,title,tcol,14);
+   x.save();x.beginPath();x.rect(px,py,pw,ph);x.clip();
+   for(var i=0;i<dots.length;i++){var d=dots[i];x.globalAlpha=0.18+0.40*d.b;x.fillStyle=CY;x.beginPath();x.arc(px+6+d.u*(pw-12),py+6+d.v*(ph-12),1.4+d.b*1.9,0,7);x.fill();}
+   x.globalAlpha=1;
+   for(var s=0;s<specks.length;s++){var sp=specks[s];var sx=px+sp.u*pw, sy=py+sp.v*ph;
+     var dark=0.78*(1-scan);
+     var wob=(scan>0&&anim)?Math.sin(t*3+s)*scan*9:0;
+     if(scan>0){x.globalAlpha=0.16*(1-dark/0.78);x.fillStyle='#020810';
+       x.beginPath();x.moveTo(sx,sy-sp.r);x.lineTo(sx,sy+sp.r);x.lineTo(px+pw,sy+sp.r*2.6+24*scan);x.lineTo(px+pw,sy-sp.r*2.6-24*scan);x.closePath();x.fill();}
+     if(dark>0.02){x.globalAlpha=dark;x.fillStyle='#020810';
+       x.beginPath();x.moveTo(sx,sy-sp.r);x.lineTo(sx,sy+sp.r);x.lineTo(px+pw,sy+sp.r*2.0+wob);x.lineTo(px+pw,sy-sp.r*2.0+wob);x.closePath();x.fill();}
+     x.globalAlpha=1;x.fillStyle='#0a1320';x.strokeStyle='#33405c';x.lineWidth=1;x.beginPath();x.arc(sx,sy,sp.r,0,7);x.fill();x.stroke();
+   }
+   x.restore();
+ }
+ function sideview(px,py,pw,ph,scan){
+   x.fillStyle='#0a1120';x.fillRect(px,py,pw,ph);x.strokeStyle='#22304e';x.lineWidth=1;x.strokeRect(px,py,pw,ph);
+   T(x,px+54,py+ph/2,'side view',MUT,11);
+   var pivX=px+130, cyl=py+ph/2;
+   var a=(scan>0&&anim)?Math.sin(t*3)*scan*0.15:(scan>0?scan*0.08:0);
+   x.save();x.translate(pivX,cyl);x.rotate(a);x.globalAlpha=.9;x.strokeStyle=GREEN;x.lineWidth=3;x.lineCap='round';x.beginPath();x.moveTo(0,0);x.lineTo(pw-220,0);x.stroke();x.restore();
+   x.globalAlpha=1;x.fillStyle=AM;x.beginPath();x.arc(pivX,cyl,4,0,7);x.fill();
+   T(x,px+pw-120,py+ph/2, scan>0?'the sheet pivots here — a small tilt in Y':'galvo still — no pivot', scan>0?GREEN:MUT,11);
+ }
+ function draw(){
+   t+=0.05;x.clearRect(0,0,900,430);x.fillStyle='#0c1322';x.fillRect(0,0,900,430);
+   var scan=+rng.value/100;
+   var pw=400,ph=250,py=44;
+   panel(40,py,pw,ph,0,'No scan - galvo still',MAG);
+   panel(460,py,pw,ph,scan,'Pivot scan on',GREEN);
+   T(x,240,py+ph+22,'illumination ->',MUT,11);
+   T(x,660,py+ph+22,'illumination -> (sweeping)',MUT,11);
+   sideview(40,py+ph+34,820,46,scan);
+   amt.textContent=scan<0.03?'off':Math.round(scan*100)+'%';
+   if(scan<0.03){state.textContent='same as left';state.className='tag bad';note.textContent='With the galvo still, both images stripe. Raise the scan to fill the shadows.';}
+   else if(scan<0.6){state.textContent='fading';state.className='tag mid';note.textContent='The pivot spreads the illumination angle - the stripes start to wash out.';}
+   else{state.textContent='stripes washed out';state.className='tag good';note.textContent='Full pivot: the shadows behind the specks are gone - even illumination. Trade-off: the effective sheet is a touch thicker.';}
+   requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+/* ---------- WIDGET C: galvo / knife-edge ---------- */
+(function(){
+ var cv=document.getElementById('cCv'),x=cv.getContext('2d');
+ var swBtn=document.getElementById('cSwitch'),sweepBtn=document.getElementById('cSweep'),dithBtn=document.getElementById('cDith');
+ var armTag=document.getElementById('cArm'),note=document.getElementById('cNote');
+ var target=-1,gp=-1,sweep=false,dither=true,t=0;
+ swBtn.onclick=function(){target=-target;};
+ sweepBtn.onclick=function(){sweep=!sweep;sweepBtn.setAttribute('aria-pressed',sweep);sweepBtn.textContent='auto-sweep: '+(sweep?'on':'off');};
+ dithBtn.onclick=function(){dither=!dither;dithBtn.setAttribute('aria-pressed',dither);dithBtn.textContent='fast dither: '+(dither?'on':'off');};
+ var G={x:450,y:74},K={x:450,y:144},IL1={x:180,y:255},IL2={x:720,y:255},S={x:450,y:255},DET={x:450,y:398},R=46;
+ var GREEN2='#3ce0a6',AM2='#FBBF24',GRY='#9fb0c8';
+ function objm(ox,oy,dir,al){x.save();x.globalAlpha=0.28+0.72*al;x.fillStyle='#cfe';x.beginPath();x.moveTo(ox-13*dir,oy-19);x.lineTo(ox-13*dir,oy+19);x.lineTo(ox+17*dir,oy+11);x.lineTo(ox+17*dir,oy-11);x.closePath();x.fill();x.restore();}
+ function draw(){
+  t+=0.05;
+  if(sweep)gp=Math.sin(t*0.7); else gp+=(target-gp)*0.08;
+  var tt=(gp+1)/2, bL=tt, bR=1-tt;
+  var dith=dither?Math.sin(t*3)*6:0;
+  x.clearRect(0,0,900,430);x.fillStyle='#0c1322';x.fillRect(0,0,900,430);
+  // landing point: centre of the knife-edge face for a single arm, the tip when split
+  var landX=K.x-gp*9+dith*0.8, landY=(K.y-16)+Math.abs(gp)*14.5;
+  // laser in from the right; the galvo reflects it down toward that landing point
+  x.fillStyle='#1b2940';x.strokeStyle=GREEN2;x.lineWidth=1.5;x.beginPath();x.roundRect(662,G.y-13,82,26,7);x.fill();x.stroke();
+  T(x,703,G.y+1,'laser',CY,12);
+  L(x,660,G.y,G.x+9,G.y,GREEN2,3,.9);
+  var inx=(G.x-660),iny=0,il=Math.hypot(inx,iny);inx/=il;iny/=il;
+  var oux=(landX-G.x),ouy=(landY-G.y),ol=Math.hypot(oux,ouy);oux/=ol;ouy/=ol;
+  var nmx=-inx+oux,nmy=-iny+ouy,nl=Math.hypot(nmx,nmy);nmx/=nl;nmy/=nl;
+  var mirrorA=Math.atan2(nmy,nmx)+Math.PI/2;
+  x.save();x.translate(G.x,G.y);x.rotate(mirrorA);L(x,-21,0,21,0,AM2,6,1);x.restore();
+  T(x,G.x-36,G.y-24,'galvo',AM2,12);
+  L(x,G.x,G.y+9,landX,landY,GREEN2,3,.9);
+  // knife-edge mirror (triangle, tip up)
+  x.save();x.fillStyle=GRY;x.beginPath();x.moveTo(K.x,K.y-16);x.lineTo(K.x-18,K.y+13);x.lineTo(K.x+18,K.y+13);x.closePath();x.fill();x.restore();
+  T(x,K.x+96,K.y+4,'knife-edge mirror',MUT,12,'left');
+  // arm 1 (left) path, alpha bL
+  L(x,landX,landY,IL1.x,K.y,GREEN2,3,Math.max(.06,bL));
+  L(x,IL1.x,K.y,IL1.x,IL1.y-16,GREEN2,3,Math.max(.06,bL));
+  objm(IL1.x,IL1.y,1,bL);
+  L(x,IL1.x+16,S.y,S.x-R+6,S.y,GREEN2,5,Math.max(.05,bL));
+  T(x,IL1.x,IL1.y+34,'arm 1',bL>bR?'#cfe':MUT,12);
+  // arm 2 (right) path, alpha bR
+  L(x,landX,landY,IL2.x,K.y,GREEN2,3,Math.max(.06,bR));
+  L(x,IL2.x,K.y,IL2.x,IL2.y-16,GREEN2,3,Math.max(.06,bR));
+  objm(IL2.x,IL2.y,-1,bR);
+  L(x,IL2.x-16,S.y,S.x+R-6,S.y,GREEN2,5,Math.max(.05,bR));
+  T(x,IL2.x,IL2.y+34,'arm 2',bR>bL?'#cfe':MUT,12);
+  // sample chamber + fixed sample dot (does NOT move)
+  x.save();x.beginPath();x.arc(S.x,S.y,R,0,7);x.fillStyle='rgba(120,180,255,.10)';x.fill();x.strokeStyle='rgba(160,200,255,.35)';x.lineWidth=1.5;x.stroke();x.restore();
+  x.fillStyle=MAG;x.beginPath();x.arc(S.x,S.y,5.5,0,7);x.fill();
+  T(x,S.x,S.y-R-10,'sample',MUT,12);
+  // detection -> camera
+  L(x,S.x,S.y+R,DET.x,DET.y-16,'rgba(207,238,255,.5)',2,.8);
+  x.save();x.fillStyle='#cfe';x.beginPath();x.moveTo(DET.x-11,DET.y-16);x.lineTo(DET.x+11,DET.y-16);x.lineTo(DET.x+19,DET.y-40);x.lineTo(DET.x-19,DET.y-40);x.closePath();x.fill();x.restore();
+  x.fillStyle='#1b2940';x.strokeStyle='#cfe';x.lineWidth=1.5;x.fillRect(DET.x-26,DET.y-14,52,22);x.strokeRect(DET.x-26,DET.y-14,52,22);
+  T(x,DET.x,DET.y+22,'detection -> camera',MUT,12);
+  // readout
+  if(Math.abs(bL-bR)<0.22){armTag.textContent='splitting';armTag.className='tag mid';note.textContent='Galvo at the knife-edge center - the beam straddles the edge and feeds both arms at once.';}
+  else if(bL>bR){armTag.textContent='arm 1 (left)';armTag.className='tag good';note.textContent='The reflected beam sits on one side of the knife edge - all the light goes to arm 1.';}
+  else{armTag.textContent='arm 2 (right)';armTag.className='tag good';note.textContent='The reflected beam sits on the other side of the knife edge - all the light goes to arm 2.';}
+  if(dither)note.textContent+=' Fast dither pivots the sheet to fill shadows.';
+  requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+/* ---------- WIDGET D: point scan vs sheet ---------- */
+(function(){
+ var cv=document.getElementById('dCv'),x=cv.getContext('2d');
+ var play=document.getElementById('dPlay'),reset=document.getElementById('dReset');
+ var dCs=document.getElementById('dCs'),dLs=document.getElementById('dLs'),note=document.getElementById('dNote');
+ var GW=16,GH=11,base=[],sigC=[],sigL=[];
+ function patt(u,v){var d1=Math.hypot(u-0.40,v-0.42),d2=Math.hypot(u-0.64,v-0.60);return Math.min(1,Math.max(Math.exp(-d1*d1/0.04),0.85*Math.exp(-d2*d2/0.025))*0.9+0.1);}
+ function init(){base=[];sigC=[];sigL=[];for(var j=0;j<GH;j++)for(var i=0;i<GW;i++){var b=patt((i+0.5)/GW,(j+0.5)/GH);base.push(b);sigC.push(b);sigL.push(b);}}
+ init();
+ var playing=false,cx=0,zc=0,zf=0,lastRow=-1,fcnt=0;
+ play.onclick=function(){playing=!playing;play.setAttribute('aria-pressed',playing);play.textContent=playing?'pause':'play';};
+ reset.onclick=function(){init();cx=0;zc=0;zf=0;lastRow=-1;playing=false;play.setAttribute('aria-pressed',false);play.textContent='play';};
+ function panel(px,py,pw,ph,sig,title,col){x.fillStyle='#05080f';x.fillRect(px,py,pw,ph);x.strokeStyle='#22304e';x.lineWidth=1;x.strokeRect(px,py,pw,ph);T(x,px+pw/2,py-12,title,col,13);
+   var cw=pw/GW,ch=ph/GH;for(var j=0;j<GH;j++)for(var i=0;i<GW;i++){var sg=sig[j*GW+i];x.globalAlpha=Math.max(0.03,sg);x.fillStyle=CY;x.fillRect(px+i*cw+0.5,py+j*ch+0.5,cw-1,ch-1);}x.globalAlpha=1;return [cw,ch];}
+ function mean(a){var s=0;for(var i=0;i<a.length;i++)s+=a[i];return s/a.length;}
+ function draw(){
+   x.clearRect(0,0,900,360);x.fillStyle='#0c1322';x.fillRect(0,0,900,360);
+   var pw=380,ph=246,py=56;
+   var d1=panel(40,py,pw,ph,sigC,'Point scanning (confocal)',AM);
+   panel(480,py,pw,ph,sigL,'Light sheet',CY);
+   var cw=d1[0],ch=d1[1];
+   if(playing){
+     fcnt++;
+     if(fcnt%4===0){ for(var r=0;r<GH;r++)sigC[r*GW+cx]*=0.90; cx++; if(cx>=GW){cx=0; zc=(zc+1)%GH;} }  // 75% slower, 2x bleach
+     zf+=0.125; var row=Math.floor(zf)%GH; if(row!==lastRow){for(var i=0;i<GW;i++)sigL[row*GW+i]*=0.93; lastRow=row;}
+   }
+   // confocal: vertical beam line through full depth + focus marker
+   var bx=40+cx*cw+cw/2;
+   x.globalAlpha=.85;x.fillStyle=AM;x.fillRect(bx-2,py,4,ph);x.globalAlpha=1;
+   x.fillStyle='#fff';x.beginPath();x.arc(bx,py+zc*ch+ch/2,4.5,0,7);x.fill();
+   T(x,40,py-30,'excitation enters from the top (down the depth)',AM,10,'left');
+   T(x,230,py+ph+22,'bleaches the full-depth beam line at every point - slow',MUT,11);
+   // light sheet: horizontal plane sweeping
+   var sr=Math.floor(zf)%GH, sy=py+sr*ch+ch/2;
+   x.globalAlpha=.65;x.fillStyle=CY;x.fillRect(480,sy-ch/2,pw,ch);x.globalAlpha=1;
+   L(x,470,sy,480,sy,CY,3,.9);
+   T(x,480,py-30,'sheet enters from the side (one plane)',CY,10,'left');
+   T(x,670,py+ph+22,'one plane lit, sweeps through fast',MUT,11);
+   var b0=mean(base);function tagf(m){var r=m/b0;if(r>0.66)return['bright','good'];if(r>0.33)return['fading','mid'];return['bleached','bad'];}
+   var tc=tagf(mean(sigC)),tl=tagf(mean(sigL));dCs.textContent=tc[0];dCs.className='tag '+tc[1];dLs.textContent=tl[0];dLs.className='tag '+tl[1];
+   note.textContent=playing?'The confocal re-lights the whole depth at every point and re-scans for each plane; the sheet only touches the plane it is imaging.':'Press play. Watch the confocal bleach whole beam-lines and crawl through the volume while the sheet stays bright.';
+   requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+/* ---------- WIDGET E-3D: rotatable beam through the cylindrical lens ---------- */
+(function(){
+ var cv=document.getElementById('e3d'); if(!cv) return; var x=cv.getContext('2d');
+ var theta=0.4, phi=0.46, dragging=false, lastX=0, auto=true, tt=0;
+ cv.style.cursor='grab';
+ function down(px){dragging=true;auto=false;lastX=px;cv.style.cursor='grabbing';}
+ function move(px){if(dragging){theta+=(px-lastX)*0.012;lastX=px;}}
+ function up(){dragging=false;cv.style.cursor='grab';}
+ cv.addEventListener('mousedown',function(e){down(e.clientX);});
+ window.addEventListener('mousemove',function(e){move(e.clientX);});
+ window.addEventListener('mouseup',up);
+ cv.addEventListener('touchstart',function(e){down(e.touches[0].clientX);},{passive:true});
+ cv.addEventListener('touchmove',function(e){move(e.touches[0].clientX);},{passive:true});
+ cv.addEventListener('touchend',up);
+ var cx=450,cy=122,r=34,Xmax=154;
+ function proj(X,Y,Z){var ct=Math.cos(theta),st=Math.sin(theta);var X1=X*ct+Z*st,Z1=-X*st+Z*ct;var cf=Math.cos(phi),sf=Math.sin(phi);return {x:cx+X1,y:cy+(Y*cf-Z1*sf)};}
+ function ring(X,ay,az,N){var p=[];for(var k=0;k<=N;k++){var a=k/N*6.2831853;p.push(proj(X,ay*Math.cos(a),az*Math.sin(a)));}return p;}
+ function shape(X){var ay,az; if(X<=0){ay=r;az=r;} else {var t=X/Xmax; az=r*(1-0.86*t); ay=r*(1+0.05*t);} return [ay,az];}
+ function draw(){
+   if(auto&&!dragging){tt+=0.012; theta=0.5*Math.sin(tt);}
+   if(theta<-0.95)theta=-0.95; if(theta>0.95)theta=0.95;
+   x.clearRect(0,0,900,240);x.fillStyle='#0c1322';x.fillRect(0,0,900,240);
+   var N=28, Xs=[], i;
+   for(i=-7;i<=7;i++) Xs.push(i*22);
+   var rings=Xs.map(function(X){var sp=shape(X);return ring(X,sp[0],sp[1],N);});
+   for(var k=0;k<N;k+=4){x.beginPath();for(i=0;i<rings.length;i++){var p=rings[i][k];if(i===0)x.moveTo(p.x,p.y);else x.lineTo(p.x,p.y);}x.strokeStyle='rgba(60,224,166,.28)';x.lineWidth=1;x.stroke();}
+   for(i=0;i<rings.length;i++){var rg=rings[i];x.beginPath();for(var k2=0;k2<rg.length;k2++){var p=rg[k2];if(k2===0)x.moveTo(p.x,p.y);else x.lineTo(p.x,p.y);}x.closePath();var end=(i===0||i===rings.length-1);x.strokeStyle=end?'rgba(60,224,166,.95)':'rgba(60,224,166,.5)';x.lineWidth=end?2:1;x.stroke();}
+   var lp=ring(0,r*1.55,r*1.55,44);x.beginPath();for(i=0;i<lp.length;i++){if(i===0)x.moveTo(lp[i].x,lp[i].y);else x.lineTo(lp[i].x,lp[i].y);}x.closePath();x.fillStyle='rgba(34,211,238,.12)';x.fill();x.strokeStyle='#22D3EE';x.lineWidth=2;x.stroke();
+   var le=proj(-Xmax-16,-r-8,0), re=proj(Xmax+16,-r-8,0);
+   x.fillStyle='#3CE0A6';x.font='12px system-ui';x.textAlign='center';x.fillText('round beam',le.x,le.y);x.fillText('flat sheet',re.x,re.y);
+   x.fillStyle='#22D3EE';x.fillText('cylindrical lens',cx,232);
+   x.fillStyle='#9AA6C4';x.font='11px system-ui';x.fillText('drag to rotate',cx,16);
+   requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+/* ---------- WIDGET E: cyl lens + objective / NA ---------- */
+(function(){
+ var cv=document.getElementById('eCv'),x=cv.getContext('2d');
+ var rng=document.getElementById('eRange'),na=document.getElementById('eNA'),thkO=document.getElementById('eThk'),lenO=document.getElementById('eLen'),note=document.getElementById('eNote');
+ var TEAL='#3C8FB0';
+ function draw(){
+  x.clearRect(0,0,900,300);x.fillStyle='#0c1322';x.fillRect(0,0,900,300);
+  var v=+rng.value/100, cy=150, Din=26;
+  // --- main beam path (thickness axis) ---
+  // round beam in
+  x.save();x.globalAlpha=.25;x.fillStyle=GREEN;x.beginPath();x.arc(40,cy,20,0,7);x.fill();x.restore();
+  // cylindrical lens
+  x.save();x.fillStyle='rgba(34,211,238,.40)';x.strokeStyle=CY;x.lineWidth=2;x.beginPath();x.ellipse(95,cy,9,40,0,0,7);x.fill();x.stroke();x.restore();
+  T(x,95,cy+56,'cylindrical lens',CY,11);
+  // collimated band cyl->objective + relay note
+  var objX=470;
+  x.save();x.globalAlpha=.20;x.fillStyle=GREEN;x.fillRect(104,cy-Din,objX-30-104,2*Din);x.restore();
+  L(x,104,cy-Din,objX-30,cy-Din,GREEN,1.5,.8);L(x,104,cy+Din,objX-30,cy+Din,GREEN,1.5,.8);
+  x.setLineDash([5,5]);L(x,150,cy-Din-16,objX-40,cy-Din-16,MUT,1,.8);x.setLineDash([]);
+  T(x,(150+objX-40)/2,cy-Din-24,'relay: 2 mirrors + 2 tube lenses',MUT,10);
+  // illumination objective glyph
+  x.save();x.fillStyle=TEAL;x.beginPath();x.roundRect(objX-30,cy-30,26,60,4);x.fill();
+  x.fillStyle='#cfe';x.beginPath();x.moveTo(objX-4,cy-26);x.lineTo(objX+14,cy-16);x.lineTo(objX+14,cy+16);x.lineTo(objX-4,cy+26);x.closePath();x.fill();x.restore();
+  T(x,objX-6,cy+52,'illumination objective',TEAL,11);
+  // converging -> waist -> diverging (objective NA)
+  var conv=80+(1-v)*250, w0=3+(1-v)*13, waistX=objX+18+conv;
+  function w(xx){var d=Math.abs(xx-waistX);var f=Math.min(1,d/conv);return w0+(Din-w0)*f*f;}
+  var x0=objX+16,x1=888;
+  x.beginPath();x.moveTo(x0,cy-w(x0));
+  for(var xx=x0;xx<=x1;xx+=5)x.lineTo(xx,cy-w(xx));
+  for(var xx=x1;xx>=x0;xx-=5)x.lineTo(xx,cy+w(xx));x.closePath();
+  x.fillStyle='rgba(34,211,238,.30)';x.fill();x.strokeStyle=CY;x.lineWidth=1.4;x.stroke();
+  L(x,waistX,cy-w0,waistX,cy+w0,AM,3,1);T(x,waistX,cy-w0-12,'waist',AM,12);
+  var ul=conv*0.3;L(x,waistX-ul,cy+58,waistX+ul,cy+58,MUT,1.4,1);L(x,waistX-ul,cy+52,waistX-ul,cy+64,MUT,1.4,1);L(x,waistX+ul,cy+52,waistX+ul,cy+64,MUT,1.4,1);
+  T(x,waistX,cy+74,'usable length',MUT,11);
+  var thkUm=(w0/13*8+0.9).toFixed(1),lenUm=Math.round(conv*1.1/10)*10;
+  na.textContent=v<0.33?'low':(v<0.66?'medium':'high');
+  thkO.innerHTML=thkUm+' &micro;m';lenO.innerHTML=lenUm+' &micro;m';
+  note.textContent=v<0.33?'Low objective NA: a thicker sheet that stays thin over a long run - fewer tiles.':(v>0.66?'High objective NA: a very thin waist, but short - crisp sections, more tiling.':'A balance of thickness and length.');
+  requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+</script>
+</body></html>

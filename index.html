@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UW-LOCI Interactive Sites</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
+.wrap{max-width:880px;margin:0 auto;padding:48px 22px 80px;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 8px;}
+h1{font-size:30px;margin:0 0 8px;font-weight:800;}
+.sub{color:var(--mut);font-size:15px;margin:0 0 28px;max-width:60ch;}
+h2{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mag);margin:34px 0 12px;}
+a.card{display:block;text-decoration:none;background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:18px 20px;margin:0 0 12px;color:var(--ink);transition:border-color .15s,transform .15s;}
+a.card:hover{border-color:var(--cy);transform:translateY(-1px);}
+a.card .t{font-size:17px;font-weight:700;margin:0 0 3px;}
+a.card .d{color:var(--mut);font-size:13.5px;}
+footer{color:var(--mut);font-size:12.5px;margin-top:44px;border-top:1px solid var(--hair);padding-top:16px;}
+</style></head>
+<body><div class="wrap">
+<p class="eyebrow">UW-LOCI · Microscopy Education</p>
+<h1>Interactive Sites</h1>
+<p class="sub">Self-contained, interactive teaching pages for microscopy. Built for graduate
+biologists — friendly explanations, clickable diagrams, and live canvas widgets. Each page is a
+single offline-capable HTML file.</p>
+
+<h2>Cleared-Tissue Light-Sheet (CTLSM)</h2>
+<a class="card" href="CTLSM_Microscope_Demo.html"><div class="t">Interactive microscope — light-sheet overview</div><div class="d">Clickable photo map of the light-sheet beam path and components.</div></a>
+<a class="card" href="CTLSM_Interactive.html"><div class="t">Cleared-Tissue Light-Sheet — Interactive Companion</div><div class="d">Canvas widgets covering the core light-sheet concepts.</div></a>
+<a class="card" href="CTLSM_BeamPlacement.html"><div class="t">Place the beam in the chamber</div><div class="d">Three synced views mapping the A–F knobs to beam position in the chamber.</div></a>
+
+<h2>Polarized-Light Microscopy (PPM)</h2>
+<a class="card" href="PPM_Intro_Interactive.html"><div class="t">Seeing the Invisible — Interactive Intro to PPM</div><div class="d">Introduction to polarized-light / partial-polarization microscopy.</div></a>
+<a class="card" href="LCPolScope_Birefringence.html"><div class="t">LC-PolScope — polarization states &amp; birefringence</div><div class="d">Explore polarization states and how birefringence builds image contrast.</div></a>
+
+<footer>Laboratory for Optical and Computational Instrumentation (LOCI), UW–Madison.</footer>
+</div></body></html>

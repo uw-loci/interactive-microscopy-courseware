@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LC-PolScope — polarization states & birefringence</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--panel2:#101A30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
+.wrap{max-width:980px;margin:0 auto;padding:30px 20px 70px;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px;}
+h1{font-size:26px;margin:0 0 6px;font-weight:800;}
+.lede{color:var(--mut);font-size:14.5px;margin:0 0 16px;}
+canvas{width:100%;height:auto;display:block;border-radius:12px;background:#0c1322;}
+.controls{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:16px 0 6px;}
+.controls label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:7px;min-width:220px;}
+.controls label .v{color:var(--ink);font-weight:600;}
+input[type=range]{accent-color:var(--cy);width:100%;}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--hair);border-radius:9px;padding:8px 14px;font-size:13px;cursor:pointer;font-family:inherit;}
+button:hover{border-color:var(--cy);}
+button[aria-pressed=true]{border-color:var(--cy);color:var(--cy);}
+.readout{font-size:13.5px;color:var(--mut);margin-top:10px;}
+.readout b{color:var(--ink);}
+footer{color:var(--mut);font-size:12.5px;margin-top:22px;}
+footer a{color:var(--am);text-decoration:none;}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+</style></head>
+<body><div class="wrap">
+<div class="eyebrow">LC-PolScope &middot; polarized-light microscopy</div>
+<h1>How polarization states read out birefringence</h1>
+<p class="lede"><b>Why it matters:</b> an ordinary polarizing microscope shows that something is birefringent, but you can&#39;t read off <b>how much</b> retardance it has or <b>which way</b> its slow axis points. The LC-PolScope solves this by illuminating the sample with circularly polarized light and a liquid-crystal compensator that <b>cycles the polarization state</b>. Circular light alone reveals the retardance magnitude but is blind to orientation; adding the compensator&#39;s &ldquo;swing&rdquo; at different orientations makes the camera intensity modulate &mdash; its <b>amplitude gives the retardance</b> and its <b>phase gives the slow-axis angle</b>. Set a specimen, then sweep the compensator.</p>
+<canvas id="cv" width="900" height="440" aria-hidden="true"></canvas>
+<h2 class="sr-only">Circular illumination plus a compensator bias at orientation alpha passes a birefringent specimen and a circular analyzer; the intensity vs alpha is a sinusoid whose amplitude encodes retardance and phase encodes the slow-axis azimuth.</h2>
+<div class="controls">
+  <label><span>specimen retardance &Gamma; &nbsp;<span class="v" id="vG">40&deg;</span></span><input type="range" id="G" min="0" max="180" value="40"></label>
+  <label><span>specimen slow axis &phi; &nbsp;<span class="v" id="vP">60&deg;</span></span><input type="range" id="P" min="0" max="179" value="60"></label>
+  <label><span>compensator setting &alpha; &nbsp;<span class="v" id="vA">25&deg;</span></span><input type="range" id="A" min="0" max="179" value="25"></label>
+  <button id="swing" aria-pressed="true">compensator swing: on</button>
+  <button id="sweep" aria-pressed="false">auto-sweep &alpha;: off</button>
+</div>
+<div class="readout">Measured from the &alpha;-sweep &mdash; retardance &approx; <b id="rG">&mdash;</b>, slow axis &approx; <b id="rP">&mdash;</b>. <span id="note"></span></div>
+<footer>Model: Jones calculus &mdash; circular illumination &rarr; compensator bias (swing &chi; at orientation &alpha;) &rarr; specimen retarder &rarr; circular analyzer. References: Oldenbourg &amp; Mei, <a href="https://doi.org/10.1111/j.1365-2818.1995.tb03669.x">J. Microsc. 180:140 (1995)</a>; Shribak &amp; Oldenbourg, <a href="https://doi.org/10.1364/AO.42.003009">Appl. Opt. 42:3009 (2003)</a>; <a href="https://openpolscope.org/docs/Pol-Acquisition-Manual-3.0.pdf">OpenPolScope manual</a>.</footer>
+</div>
+<script>
+(function(){
+ var cv=document.getElementById('cv'),x=cv.getContext('2d');
+ var Gs=document.getElementById('G'),Ps=document.getElementById('P'),As=document.getElementById('A');
+ var vG=document.getElementById('vG'),vP=document.getElementById('vP'),vA=document.getElementById('vA');
+ var swBtn=document.getElementById('swing'),swpBtn=document.getElementById('sweep');
+ var rG=document.getElementById('rG'),rP=document.getElementById('rP'),note=document.getElementById('note');
+ var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#e8edf8';
+ var swing=true, sweep=false, t=0, asweep=0;
+ swBtn.onclick=function(){swing=!swing;swBtn.setAttribute('aria-pressed',swing);swBtn.textContent='compensator swing: '+(swing?'on':'off');};
+ swpBtn.onclick=function(){sweep=!sweep;swpBtn.setAttribute('aria-pressed',sweep);swpBtn.textContent='auto-sweep α: '+(sweep?'on':'off');};
+ var SWING=0.5;  // radians, the compensator swing magnitude chi
+ // ---- complex helpers ----
+ function cm(a,b){return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]];}
+ function csc(a,s){return [a[0]*s,a[1]*s];}
+ function cad(a,b){return [a[0]+b[0],a[1]+b[1]];}
+ // apply retarder (retardance d, fast axis th) to complex 2-vector v=[v0,v1]
+ function applyRet(v,d,th){
+   var c=Math.cos(th),s=Math.sin(th);
+   var a0=cad(csc(v[0],c),csc(v[1],s));      // Rot(-th)
+   var a1=cad(csc(v[0],-s),csc(v[1],c));
+   var p=d/2;
+   var b0=cm(a0,[Math.cos(p),-Math.sin(p)]); // e^{-ip}
+   var b1=cm(a1,[Math.cos(p), Math.sin(p)]); // e^{+ip}
+   var o0=cad(csc(b0,c),csc(b1,-s));         // Rot(th)
+   var o1=cad(csc(b0,s),csc(b1,c));
+   return [o0,o1];
+ }
+ var R0=[[1/Math.SQRT2,0],[0,1/Math.SQRT2]]; // right circular [1/√2, i/√2]
+ var Rin=[[1/Math.SQRT2,0],[0,1/Math.SQRT2]];
+ function illum(chi,al){ return applyRet([[1/Math.SQRT2,0],[0,1/Math.SQRT2]],chi,al); }
+ function inten(G,phi,chi,al){
+   var v=applyRet([[1/Math.SQRT2,0],[0,1/Math.SQRT2]],chi,al); // bias on right-circular
+   v=applyRet(v,G,phi);                                         // specimen
+   // <L|v> with L = [1/√2, -i/√2]; conj(L)=[1/√2, i/√2]
+   var p=cad(csc(v[0],1/Math.SQRT2), cm(v[1],[0,1/Math.SQRT2]));
+   return p[0]*p[0]+p[1]*p[1];
+ }
+ function curve(G,phi,chi){ var arr=[]; for(var a=0;a<180;a+=3){ arr.push(inten(G,phi,chi,a*Math.PI/180)); } return arr; }
+ function reconstruct(G,phi,chi){
+   var Ss=0,Sc=0,n=0,off=0,arr=[];
+   for(var a=0;a<180;a+=2){var I=inten(G,phi,chi,a*Math.PI/180);arr.push(I);off+=I;n++;}
+   off/=n;
+   for(var i=0,a=0;a<180;a+=2,i++){var ph=2*a*Math.PI/180;Ss+=(arr[i]-off)*Math.sin(ph);Sc+=(arr[i]-off)*Math.cos(ph);}
+   Ss*=2/n; Sc*=2/n;
+   var amp=Math.hypot(Ss,Sc);
+   var azim=((0.5*Math.atan2(Ss,Sc))*180/Math.PI+180)%180;
+   // amp = k*sin(G)*sin(chi); invert (k from extremes)~ use sin(chi)
+   var Gr=Math.asin(Math.min(1,amp/Math.max(1e-6,0.5*Math.sin(chi))))*180/Math.PI;
+   return {amp:amp,azim:azim,off:off,Gr:Gr};
+ }
+ function L(a,b,c,d,col,w,al){x.save();x.globalAlpha=al==null?1:al;x.strokeStyle=col;x.lineWidth=w;x.lineCap='round';x.beginPath();x.moveTo(a,b);x.lineTo(c,d);x.stroke();x.restore();}
+ function T(tx,ty,s,col,sz,ha){x.fillStyle=col||MUT;x.font=(sz||12)+'px system-ui,sans-serif';x.textAlign=ha||'center';x.fillText(s,tx,ty);x.textAlign='start';}
+ function draw(){
+  t+=0.04; if(sweep){asweep=(asweep+0.4)%180; As.value=Math.round(asweep);}
+  var G=+Gs.value*Math.PI/180, phi=+Ps.value*Math.PI/180, al=+As.value*Math.PI/180;
+  var chi=swing?SWING:0;
+  vG.innerHTML=Gs.value+'&deg;'; vP.innerHTML=Ps.value+'&deg;'; vA.innerHTML=As.value+'&deg;';
+  x.clearRect(0,0,900,440);x.fillStyle='#0c1322';x.fillRect(0,0,900,440);
+  // ===== Specimen panel =====
+  var sx=110,sy=110;
+  T(110,32,'Specimen',INK,14);
+  x.save();x.strokeStyle='#33405c';x.lineWidth=1.2;x.strokeRect(35,45,150,150);x.restore();
+  // birefringent object
+  x.save();x.beginPath();x.arc(sx,sy,42,0,7);x.fillStyle='rgba(110,150,210,.18)';x.fill();x.strokeStyle='#41527a';x.lineWidth=1.5;x.stroke();x.restore();
+  // slow axis double-arrow at phi (length/colour ~ retardance)
+  var rr=18+24*(+Gs.value/180);
+  var dx=Math.cos(phi),dy=-Math.sin(phi);
+  L(sx-rr*dx,sy-rr*dy,sx+rr*dx,sy+rr*dy,MAG,3,1);
+  function head(cx,cy,ddx,ddy){x.fillStyle=MAG;x.beginPath();x.moveTo(cx,cy);x.lineTo(cx-7*ddx-4*ddy,cy-7*ddy+4*ddx);x.lineTo(cx-7*ddx+4*ddy,cy-7*ddy-4*ddx);x.closePath();x.fill();}
+  head(sx+rr*dx,sy+rr*dy,dx,dy);head(sx-rr*dx,sy-rr*dy,-dx,-dy);
+  T(110,212,'slow axis φ, retardance Γ',MUT,11);
+  // ===== Illumination polarization panel =====
+  T(110,250,'Illumination polarization',INK,14);
+  var ix=110,iy=330,iR=52;
+  x.save();x.strokeStyle='#33405c';x.lineWidth=1.2;x.strokeRect(35,265,150,140);x.restore();
+  x.globalAlpha=.5;L(ix-iR,iy,ix+iR,iy,MUT,1,1);L(ix,iy-iR,ix,iy+iR,MUT,1,1);x.globalAlpha=1;
+  // ellipse traced by the illumination Jones state ret(chi,al)*Rcirc
+  var st=illum(chi,al);
+  x.beginPath();var first=true;
+  for(var th2=0;th2<=6.30;th2+=0.12){
+    var ph=[Math.cos(th2),Math.sin(th2)];
+    var ex=cm(st[0],ph)[0], ey=cm(st[1],ph)[0];
+    var px=ix+ex*iR*0.95, py=iy-ey*iR*0.95;
+    if(first){x.moveTo(px,py);first=false;}else x.lineTo(px,py);
+  }
+  x.closePath();x.strokeStyle=CY;x.lineWidth=2;x.stroke();
+  // animated E-field dot
+  var ph0=[Math.cos(t*1.5),Math.sin(t*1.5)];
+  var ex=cm(st[0],ph0)[0], ey=cm(st[1],ph0)[0];
+  x.fillStyle=CY;x.beginPath();x.arc(ix+ex*iR*0.95,iy-ey*iR*0.95,4,0,7);x.fill();
+  T(110,418,swing?'circular + bias at α':'circular only',CY,11);
+  // ===== Camera =====
+  T(300,32,'Camera',INK,14);
+  var I=inten(G,phi,chi,al);
+  var cx=300,cy=120,cr=58;
+  x.save();x.beginPath();x.arc(cx,cy,cr,0,7);x.fillStyle='#05080f';x.fill();x.strokeStyle='#22304e';x.lineWidth=1.5;x.stroke();x.clip();
+  var b=Math.max(0,Math.min(1,I));
+  x.fillStyle='rgba(34,211,238,'+(0.12+0.88*b)+')';x.fillRect(cx-cr,cy-cr,2*cr,2*cr);
+  x.restore();
+  T(300,200,'intensity = '+(b*100|0)+'%',MUT,12);
+  // reconstructed readout
+  var rec=reconstruct(G,phi,SWING);
+  T(300,250,'Reconstructed',INK,13);
+  T(300,272,'retardance ≈ '+(rec.Gr.toFixed(0))+'°',GREEN,12);
+  T(300,290,'slow axis ≈ '+(rec.azim.toFixed(0))+'°',GREEN,12);
+  rG.innerHTML=rec.Gr.toFixed(0)+'&deg;'; rP.innerHTML=rec.azim.toFixed(0)+'&deg;';
+  // ===== Intensity vs alpha plot =====
+  var px0=440,py0=60,pw=430,ph=320;
+  T(px0+pw/2,40,'Camera intensity vs. compensator setting α',INK,13);
+  x.strokeStyle='#22304e';x.lineWidth=1;x.strokeRect(px0,py0,pw,ph);
+  // axes labels
+  T(px0+pw/2,py0+ph+22,'compensator orientation α  (0–180°)',MUT,11);
+  x.save();x.translate(px0-22,py0+ph/2);x.rotate(-Math.PI/2);T(0,0,'intensity',MUT,11);x.restore();
+  var cur=curve(G,phi,chi);
+  // y-scale: fixed 0..1
+  function X(a){return px0+ (a/180)*pw;}
+  function Y(v){return py0+ph - Math.max(0,Math.min(1,v))*ph;}
+  // grid
+  x.globalAlpha=.5;for(var gy=0;gy<=1;gy+=0.25){L(px0,Y(gy),px0+pw,Y(gy),'#1b2740',1,1);}x.globalAlpha=1;
+  // curve
+  x.beginPath();for(var i=0;i<cur.length;i++){var a=i*3;var xx=X(a),yy=Y(cur[i]);if(i===0)x.moveTo(xx,yy);else x.lineTo(xx,yy);}
+  x.strokeStyle=CY;x.lineWidth=2.5;x.stroke();
+  // current alpha marker
+  var mx=X(+As.value);
+  L(mx,py0,mx,py0+ph,AM,1.5,.8);
+  x.fillStyle=AM;x.beginPath();x.arc(mx,Y(I),5,0,7);x.fill();
+  T(mx,py0-4,'α='+As.value+'°',AM,11);
+  // amplitude + phase annotations (only when swinging)
+  if(swing && rec.amp>0.01){
+    // phase = azimuth: mark the curve peak
+    var pkA=rec.azim; // the curve peaks at the slow-axis orientation
+    var px2=X(pkA);
+    L(px2,py0+8,px2,py0+ph-8,GREEN,1,.5);
+    T(px2,py0+ph-6,'peak = slow axis φ',GREEN,10);
+  }
+  // note
+  if(!swing){note.textContent='Swing off: circular light only. Brightness tracks retardance, but the curve is flat — orientation is invisible.';}
+  else if(+Gs.value<3){note.textContent='No birefringence: the curve stays flat at the bias level, nothing to measure.';}
+  else{note.textContent='The curve’s height (amplitude) gives the retardance; where it peaks gives the slow axis.';}
+  requestAnimationFrame(draw);
+ }
+ draw();
+})();
+</script>
+</body></html>
