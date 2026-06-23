@@ -20,6 +20,7 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-sites/**
 ### Polarized-Light Microscopy (PPM)
 - [Seeing the Invisible — intro to PPM](https://uw-loci.github.io/interactive-sites/PPM_Intro_Interactive.html) — interactive introduction to polarized-light microscopy. ([`PPM_Intro_Interactive.html`](PPM_Intro_Interactive.html))
 - [LC-PolScope — polarization states & birefringence](https://uw-loci.github.io/interactive-sites/LCPolScope_Birefringence.html) — explore polarization states and birefringence contrast. ([`LCPolScope_Birefringence.html`](LCPolScope_Birefringence.html))
+- [LC-PolScope — concept interactives](https://uw-loci.github.io/interactive-sites/LCPolScope_Concepts.html) — reading birefringence with polarized light, six core ideas as small interactives. ([`LCPolScope_Concepts.html`](LCPolScope_Concepts.html))
 
 ## Hosting
 

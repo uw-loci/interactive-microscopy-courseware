@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LC-PolScope — concept interactives</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--panel2:#101A30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
+.wrap{max-width:980px;margin:0 auto;padding:30px 20px 70px;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px;}
+h1{font-size:26px;margin:0 0 6px;font-weight:800;}
+h2{font-size:20px;margin:0 0 6px;font-weight:800;}
+.lede{color:var(--mut);font-size:14px;margin:0 0 14px;}
+.intro{color:var(--mut);font-size:14.5px;margin:0 0 10px;}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:14px;padding:20px;margin:22px 0;}
+canvas{width:100%;height:auto;display:block;border-radius:12px;background:#0c1322;}
+.controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:14px 0 4px;}
+.controls label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:6px;min-width:200px;}
+.controls label .v{color:var(--ink);font-weight:600;}
+input[type=range]{accent-color:var(--cy);width:100%;}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--hair);border-radius:9px;padding:8px 13px;font-size:13px;cursor:pointer;font-family:inherit;}
+button:hover{border-color:var(--cy);}
+button[aria-pressed=true]{border-color:var(--cy);color:var(--cy);}
+.readout{font-size:13.5px;color:var(--mut);margin-top:10px;}
+.readout b{color:var(--ink);}
+footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid var(--hair);padding-top:16px;}
+footer a{color:var(--am);text-decoration:none;}
+</style></head>
+<body><div class="wrap">
+<div class="eyebrow">LC-PolScope &middot; concept interactives</div>
+<h1>Reading birefringence with polarized light &mdash; six ideas</h1>
+<p class="intro">A companion to the polarization-state widget. Each card below isolates one idea, building from <b>why</b> the instrument exists up to <b>how to read</b> its images. No optics background assumed &mdash; drag the sliders and watch.</p>
+
+<section class="card">
+<div class="eyebrow">1 &middot; the motivation</div>
+<h2>Crossed polarizers vs. the PolScope</h2>
+<p class="lede"><b>Why it matters:</b> a classic polarizing microscope (two crossed polarizers) can <b>see</b> birefringence, but a tilted specimen goes dark four times per full turn &mdash; so brightness depends on orientation and you can&#39;t measure anything. Circular illumination (the PolScope trick) keeps the same specimen bright at <b>every</b> angle. Rotate the specimen and compare.</p>
+<canvas id="cv1" width="900" height="360"></canvas>
+<div class="controls">
+  <label><span>rotate specimen &nbsp;<span class="v" id="v1t">20&deg;</span></span><input type="range" id="s1t" min="0" max="360" value="20"></label>
+  <label><span>specimen retardance &Gamma; &nbsp;<span class="v" id="v1g">90&deg;</span></span><input type="range" id="s1g" min="0" max="180" value="90"></label>
+  <button id="b1mode" aria-pressed="false">mode: crossed polarizers</button>
+  <button id="b1spin" aria-pressed="false">auto-rotate: off</button>
+</div>
+<div class="readout">Camera brightness now: <b id="r1">&mdash;</b>. <span id="n1"></span></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">2 &middot; the physical origin</div>
+<h2>Where birefringence comes from</h2>
+<p class="lede"><b>Why it matters:</b> retardance isn&#39;t magic &mdash; it comes from <b>aligned, ordered molecules</b> (microtubules, collagen, lipid bilayers, starch). The more the building blocks line up, and the more of them, the more retardance. Dial the order and density and watch the measured signal grow.</p>
+<canvas id="cv2" width="900" height="340"></canvas>
+<div class="controls">
+  <label><span>molecular order (alignment) &nbsp;<span class="v" id="v2o">0.70</span></span><input type="range" id="s2o" min="0" max="100" value="70"></label>
+  <label><span>density (how many) &nbsp;<span class="v" id="v2d">0.70</span></span><input type="range" id="s2d" min="10" max="100" value="70"></label>
+  <label><span>orientation &nbsp;<span class="v" id="v2a">30&deg;</span></span><input type="range" id="s2a" min="0" max="180" value="30"></label>
+  <button id="b2mt">microtubule</button><button id="b2col">collagen</button><button id="b2lip">lipid bilayer</button><button id="b2rnd">disordered</button>
+</div>
+<div class="readout">Resulting retardance &Gamma; &approx; <b id="r2g">&mdash;</b>, slow axis &approx; <b id="r2a">&mdash;</b>. <span id="n2"></span></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">3 &middot; the quantity</div>
+<h2>Retardance = &Delta;n &times; thickness</h2>
+<p class="lede"><b>Why it matters:</b> the PolScope reports <b>retardance in nanometers</b>, not raw brightness. Retardance is how far the slow wave falls behind the fast one: the birefringence &Delta;n times the path length through the specimen. Thicker or more-ordered &rarr; more retardance. See how the two combine.</p>
+<canvas id="cv3" width="900" height="300"></canvas>
+<div class="controls">
+  <label><span>birefringence &Delta;n &nbsp;<span class="v" id="v3n">0.010</span></span><input type="range" id="s3n" min="0" max="50" value="10"></label>
+  <label><span>specimen thickness &nbsp;<span class="v" id="v3d">5.0 &micro;m</span></span><input type="range" id="s3d" min="0" max="400" value="50"></label>
+</div>
+<div class="readout">Retardance &approx; <b id="r3nm">&mdash;</b> = <b id="r3l">&mdash;</b> of a wavelength. Brightness between crossed polarizers: <b id="r3b">&mdash;</b>. <span id="n3"></span></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">4 &middot; the acquisition</div>
+<h2>Five frames become two maps</h2>
+<p class="lede"><b>Why it matters:</b> the PolScope doesn&#39;t take one picture &mdash; it takes a handful at different liquid-crystal settings, then computes. Here a specimen with four regions is imaged at five polarization settings (top row of raw frames); pressing compute combines them into a <b>retardance map</b> and an <b>orientation map</b>.</p>
+<canvas id="cv4" width="900" height="380"></canvas>
+<div class="controls">
+  <button id="b4go" aria-pressed="false">play acquisition</button>
+  <button id="b4comp">compute maps</button>
+</div>
+<div class="readout"><span id="n4">Five raw frames look like brightness changes; the math turns them into quantitative maps.</span></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">5 &middot; reading the image</div>
+<h2>The orientation color wheel</h2>
+<p class="lede"><b>Why it matters:</b> a PolScope orientation map is pseudo-colored &mdash; <b>hue = slow-axis angle</b>, <b>brightness = retardance</b>. Once you know the key, you can read structure direction at a glance. Rotate the fibers and watch every color shift around the wheel.</p>
+<canvas id="cv5" width="900" height="360"></canvas>
+<div class="controls">
+  <label><span>rotate the structure &nbsp;<span class="v" id="v5r">0&deg;</span></span><input type="range" id="s5r" min="0" max="180" value="0"></label>
+  <label><span>retardance (brightness) &nbsp;<span class="v" id="v5g">0.70</span></span><input type="range" id="s5g" min="10" max="100" value="70"></label>
+</div>
+<div class="readout"><span id="n5">Opposite fibers share a color: orientation is defined modulo 180&deg;.</span></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">6 &middot; a reading pitfall</div>
+<h2>Positive vs. negative birefringence</h2>
+<p class="lede"><b>Why it matters:</b> the measured slow axis is <b>not always</b> along the structure. For positive birefringence (e.g. a microtubule) the slow axis runs <b>along</b> the fiber; for negative birefringence (e.g. a lipid membrane, relative to its acyl chains) the measured slow axis is <b>perpendicular</b>. Mistake the sign and you&#39;ll read orientation 90&deg; wrong.</p>
+<canvas id="cv6" width="900" height="320"></canvas>
+<div class="controls">
+  <button id="b6sign" aria-pressed="false">sign: positive (slow &parallel; structure)</button>
+</div>
+<div class="readout"><span id="n6"></span></div>
+</section>
+
+<footer>
+Educational simplifications of LC-PolScope principles. Brightness uses Jones-calculus closed forms (crossed-polarizer transmission, circular-in/circular-out). The real instrument uses two liquid crystals stepped through specific settings; the five-frame card illustrates the idea with evenly spaced settings.<br>
+References: Oldenbourg &amp; Mei, <a href="https://doi.org/10.1111/j.1365-2818.1995.tb03669.x">J. Microsc. 180:140 (1995)</a>; Shribak &amp; Oldenbourg, <a href="https://doi.org/10.1364/AO.42.003009">Appl. Opt. 42:3009 (2003)</a>; <a href="https://openpolscope.org/docs/Pol-Acquisition-Manual-3.0.pdf">OpenPolScope manual</a>.
+</footer>
+</div>
+<script>
+(function(){
+"use strict";
+var TAU=Math.PI*2, D2R=Math.PI/180;
+function gid(i){return document.getElementById(i);}
+// shared hue map: azimuth 0..180deg -> full hue cycle, value 0..1
+function azCol(azDeg, val){
+  var h=((azDeg%180)/180)*360, s=0.85, v=Math.max(0,Math.min(1,val));
+  var c=v*s, hp=h/60, xx=c*(1-Math.abs(hp%2-1)), m=v-c, r=0,g=0,b=0;
+  if(hp<1){r=c;g=xx;}else if(hp<2){r=xx;g=c;}else if(hp<3){g=c;b=xx;}
+  else if(hp<4){g=xx;b=c;}else if(hp<5){r=xx;b=c;}else{r=c;b=xx;}
+  return 'rgb('+((r+m)*255|0)+','+((g+m)*255|0)+','+((b+m)*255|0)+')';
+}
+function gray(v){v=Math.max(0,Math.min(1,v));var g=(v*255)|0;return 'rgb('+g+','+g+','+g+')';}
+function arrow(x,cx,cy,ang,len,col,w){ // double-headed slow-axis tick
+  var dx=Math.cos(ang)*len, dy=Math.sin(ang)*len;
+  x.strokeStyle=col;x.lineWidth=w||3;x.beginPath();
+  x.moveTo(cx-dx,cy-dy);x.lineTo(cx+dx,cy+dy);x.stroke();
+}
+function txt(x,s,px,py,col,sz,al){x.fillStyle=col;x.font=(sz||13)+'px system-ui,sans-serif';x.textAlign=al||'left';x.textBaseline='middle';x.fillText(s,px,py);}
+// deterministic pseudo-random
+function rnd(i){var s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s);}
+var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#e8edf8',HAIR='#27304F';
+
+// ===================== WIDGET 1: crossed pol vs polscope =====================
+(function(){
+ var cv=gid('cv1'),x=cv.getContext('2d'),W=900,H=360;
+ var st=gid('s1t'),sg=gid('s1g'),v1t=gid('v1t'),v1g=gid('v1g');
+ var bm=gid('b1mode'),bs=gid('b1spin'),r1=gid('r1'),n1=gid('n1');
+ var polscope=false,spin=false,th=20;
+ bm.onclick=function(){polscope=!polscope;bm.setAttribute('aria-pressed',polscope);bm.textContent='mode: '+(polscope?'circular (PolScope)':'crossed polarizers');};
+ bs.onclick=function(){spin=!spin;bs.setAttribute('aria-pressed',spin);bs.textContent='auto-rotate: '+(spin?'on':'off');};
+ st.oninput=function(){th=+st.value;};
+ function bright(thDeg,Gdeg){var t=thDeg*D2R,G=Gdeg*D2R;
+   if(polscope) return Math.sin(G/2)*Math.sin(G/2);
+   return Math.sin(2*t)*Math.sin(2*t)*Math.sin(G/2)*Math.sin(G/2);}
+ function draw(){
+   x.clearRect(0,0,W,H);
+   var thv=spin?th:(+st.value); if(spin){th=(th+0.8)%360;} st.value=th|0; v1t.textContent=(th|0)+'°';
+   var G=+sg.value; v1g.textContent=G+'°';
+   // ---- left schematic ----
+   var axY=140, x0=40, x1=430;
+   x.strokeStyle=HAIR;x.lineWidth=2;x.beginPath();x.moveTo(x0,axY);x.lineTo(x1,axY);x.stroke();
+   // source
+   txt(x,'light',x0+8,axY-58,MUT,12,'center');
+   x.fillStyle=AM;x.beginPath();x.arc(x0+8,axY,9,0,TAU);x.fill();
+   // polarizer
+   var pX=130;
+   txt(x,polscope?'circular':'polarizer',pX,axY-58,MUT,12,'center');
+   x.strokeStyle=CY;x.lineWidth=2.5;
+   if(polscope){x.beginPath();x.arc(pX,axY,16,0,TAU);x.stroke();
+     x.beginPath();x.arc(pX,axY,16,-0.5,1.6);x.stroke();
+     x.beginPath();x.moveTo(pX+13,axY-9);x.lineTo(pX+16,axY-2);x.lineTo(pX+9,axY-2);x.closePath();x.fillStyle=CY;x.fill();}
+   else{x.beginPath();x.moveTo(pX,axY-16);x.lineTo(pX,axY+16);x.stroke();}
+   // sample
+   var sX=255, ta=thv*D2R;
+   txt(x,'specimen',sX,axY-58,MUT,12,'center');
+   x.save();x.translate(sX,axY);x.rotate(ta);
+   x.fillStyle='rgba(60,224,166,0.16)';x.strokeStyle=GREEN;x.lineWidth=2;
+   x.beginPath();x.ellipse(0,0,30,11,0,0,TAU);x.fill();x.stroke();
+   arrow(x,0,0,0,26,GREEN,2.5); // slow axis along long dim
+   x.restore();
+   // analyzer
+   var aX=375;
+   txt(x,polscope?'circular':'analyzer',aX,axY-58,MUT,12,'center');
+   x.strokeStyle=MAG;x.lineWidth=2.5;
+   if(polscope){x.beginPath();x.arc(aX,axY,16,0,TAU);x.stroke();
+     x.beginPath();x.arc(aX,axY,16,2.6,4.7);x.stroke();}
+   else{x.beginPath();x.moveTo(aX-16,axY);x.lineTo(aX+16,axY);x.stroke();}
+   // detector brightness
+   var I=bright(thv,G);
+   txt(x,'camera',x1-8,axY-58,MUT,12,'center');
+   x.fillStyle=gray(I);x.strokeStyle=HAIR;x.lineWidth=2;
+   x.beginPath();x.arc(x1-8,axY,18,0,TAU);x.fill();x.stroke();
+   // ---- right plot: brightness vs rotation ----
+   var px=510,py=40,pw=350,ph=210;
+   x.strokeStyle=HAIR;x.lineWidth=1;x.strokeRect(px,py,pw,ph);
+   txt(x,'brightness vs specimen rotation',px,py-14,INK,13,'left');
+   txt(x,'0°',px,py+ph+14,MUT,11,'center');txt(x,'180°',px+pw/2,py+ph+14,MUT,11,'center');txt(x,'360°',px+pw,py+ph+14,MUT,11,'center');
+   function plot(fn,col,wd){x.strokeStyle=col;x.lineWidth=wd;x.beginPath();
+     for(var i=0;i<=180;i++){var a=i*2;var I=fn(a);var xx=px+(a/360)*pw;var yy=py+ph-I*ph;if(i===0)x.moveTo(xx,yy);else x.lineTo(xx,yy);}x.stroke();}
+   var Gn=G;
+   plot(function(a){return Math.sin(2*a*D2R)*Math.sin(2*a*D2R)*Math.sin(Gn*D2R/2)*Math.sin(Gn*D2R/2);},'rgba(34,211,238,0.55)',2);
+   plot(function(a){return Math.sin(Gn*D2R/2)*Math.sin(Gn*D2R/2);},'rgba(244,114,182,0.85)',2.5);
+   // marker
+   var mx=px+(thv/360)*pw, mi=bright(thv,G);
+   x.strokeStyle=AM;x.lineWidth=1;x.setLineDash([3,3]);x.beginPath();x.moveTo(mx,py);x.lineTo(mx,py+ph);x.stroke();x.setLineDash([]);
+   x.fillStyle=AM;x.beginPath();x.arc(mx,py+ph-mi*ph,5,0,TAU);x.fill();
+   txt(x,'● crossed polarizers',px,py+ph+34,'rgba(34,211,238,0.85)',12,'left');
+   txt(x,'● PolScope (circular)',px+170,py+ph+34,MAG,12,'left');
+   r1.textContent=(I*100).toFixed(0)+'%';
+   n1.textContent=polscope?'Circular in and out: brightness is flat — orientation no longer hides the signal.':'Crossed polarizers: the specimen vanishes at 0°/90°/180°/270° — four blackouts per turn.';
+   requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+// ===================== WIDGET 2: birefringence origin =====================
+(function(){
+ var cv=gid('cv2'),x=cv.getContext('2d'),W=900,H=340;
+ var so=gid('s2o'),sd=gid('s2d'),sa=gid('s2a'),v2o=gid('v2o'),v2d=gid('v2d'),v2a=gid('v2a');
+ var r2g=gid('r2g'),r2a=gid('r2a'),n2=gid('n2');
+ gid('b2mt').onclick=function(){so.value=92;sd.value=85;sa.value=30;};
+ gid('b2col').onclick=function(){so.value=80;sd.value=95;sa.value=120;};
+ gid('b2lip').onclick=function(){so.value=55;sd.value=60;sa.value=75;};
+ gid('b2rnd').onclick=function(){so.value=8;sd.value=70;sa.value=90;};
+ function draw(){
+   x.clearRect(0,0,W,H);
+   var p=(+so.value)/100, dens=(+sd.value)/100, a0=+sa.value;
+   v2o.textContent=p.toFixed(2);v2d.textContent=dens.toFixed(2);v2a.textContent=a0+'°';
+   // left: rod field
+   var bx=40,by=40,bw=420,bh=260;
+   x.strokeStyle=HAIR;x.lineWidth=1;x.strokeRect(bx,by,bw,bh);
+   txt(x,'molecular building blocks',bx,by-14,INK,13,'left');
+   var cols=Math.round(6+dens*8), rows=Math.round(4+dens*6);
+   var spread=(1-p)*90; // deg of scatter
+   for(var r=0;r<rows;r++)for(var c=0;c<cols;c++){
+     var idx=r*cols+c;
+     var cx=bx+ (c+0.5)*(bw/cols), cy=by+(r+0.5)*(bh/rows);
+     var ang=(a0 + (rnd(idx)-0.5)*2*spread)*D2R;
+     var L=Math.min(bw/cols,bh/rows)*0.38;
+     x.strokeStyle='rgba(60,224,166,0.85)';x.lineWidth=2;
+     x.beginPath();x.moveTo(cx-Math.cos(ang)*L,cy-Math.sin(ang)*L);x.lineTo(cx+Math.cos(ang)*L,cy+Math.sin(ang)*L);x.stroke();
+   }
+   // compute order vector (mean of doubled angles) -> retardance & axis
+   var Sx=0,Sy=0,nn=rows*cols;
+   for(var i=0;i<nn;i++){var ang=(a0+(rnd(i)-0.5)*2*spread)*D2R;Sx+=Math.cos(2*ang);Sy+=Math.sin(2*ang);}
+   var orderMeas=Math.sqrt(Sx*Sx+Sy*Sy)/nn; // 0..1 alignment order parameter
+   var axis=0.5*Math.atan2(Sy,Sx)/D2R; if(axis<0)axis+=180;
+   var G=Math.min(180, orderMeas*dens*180);
+   // right: readout
+   var rx=520, rcy=150;
+   txt(x,'measured slow axis',rx+90,40,INK,13,'center');
+   x.strokeStyle=HAIR;x.lineWidth=1;x.beginPath();x.arc(rx+90,rcy,70,0,TAU);x.stroke();
+   arrow(x,0,rx+90,rcy,axis*D2R,64,GREEN,4);
+   // retardance bar
+   txt(x,'retardance Γ',rx,250,MUT,12,'left');
+   x.fillStyle=HAIR;x.fillRect(rx,266,260,16);
+   x.fillStyle=CY;x.fillRect(rx,266,260*(G/180),16);
+   txt(x,(G).toFixed(0)+'°',rx+268,274,INK,12,'left');
+   r2g.textContent=G.toFixed(0)+'°';r2a.textContent=axis.toFixed(0)+'°';
+   n2.textContent = orderMeas<0.2 ? 'Disordered: the rods cancel out — little to no net retardance, even at high density.' : 'Aligned and dense — the rods add up to a strong, well-defined slow axis.';
+ }
+ [so,sd,sa].forEach(function(s){s.addEventListener('input',draw);});
+ gid('b2mt').addEventListener('click',draw);gid('b2col').addEventListener('click',draw);gid('b2lip').addEventListener('click',draw);gid('b2rnd').addEventListener('click',draw);
+ draw();
+})();
+
+// ===================== WIDGET 3: retardance = dn x thickness =====================
+(function(){
+ var cv=gid('cv3'),x=cv.getContext('2d'),W=900,H=300;
+ var sn=gid('s3n'),sd=gid('s3d'),v3n=gid('v3n'),v3d=gid('v3d');
+ var r3nm=gid('r3nm'),r3l=gid('r3l'),r3b=gid('r3b'),n3=gid('n3');
+ var LAM=550;
+ function draw(){
+   x.clearRect(0,0,W,H);
+   var dn=(+sn.value)/1000, d=(+sd.value)/10; // dn 0..0.05, d 0..40um
+   v3n.textContent=dn.toFixed(3);v3d.textContent=d.toFixed(1)+' µm';
+   var Rnm=dn*d*1000; var Rl=Rnm/LAM; var B=Math.sin(Math.PI*Rl)*Math.sin(Math.PI*Rl);
+   // diagram: slab with thickness, fast & slow wave
+   var sx=60, sw=40+Math.min(300, d*7), sy=40, sh=150;
+   x.fillStyle='rgba(34,211,238,0.10)';x.strokeStyle=CY;x.lineWidth=2;
+   x.fillRect(sx,sy,sw,sh);x.strokeRect(sx,sy,sw,sh);
+   txt(x,'specimen (thickness → width here)',sx,sy-14,INK,13,'left');
+   txt(x,'Δn = '+dn.toFixed(3),sx+sw/2,sy+sh/2,MUT,13,'center');
+   // two waves entering together, exiting offset by retardance
+   var wy1=sy+sh+50, amp=14, k=0.13;
+   function wave(y,phase,col){x.strokeStyle=col;x.lineWidth=2;x.beginPath();
+     for(var px=0;px<=820;px++){var yy=y+amp*Math.sin((px)*k+phase);if(px===0)x.moveTo(40+px,yy);else x.lineTo(40+px,yy);}x.stroke();}
+   var lag=Rl*TAU; // phase lag in radians scaled to wavelength fraction
+   wave(wy1,0,'rgba(244,114,182,0.9)'); // fast
+   wave(wy1+44,-lag,'rgba(251,191,36,0.95)'); // slow, lags
+   txt(x,'fast wave',40,wy1-26,MAG,12,'left');
+   txt(x,'slow wave (lags by the retardance)',40,wy1+44+26,AM,12,'left');
+   // retardance scale 0..1100 nm
+   var gx=560,gy=60,gw=300;
+   txt(x,'retardance',gx,gy-16,INK,13,'left');
+   var grad=x.createLinearGradient(gx,0,gx+gw,0);grad.addColorStop(0,'#111');grad.addColorStop(1,'#eee');
+   x.fillStyle=grad;x.fillRect(gx,gy,gw,18);x.strokeStyle=HAIR;x.strokeRect(gx,gy,gw,18);
+   var mfrac=Math.min(1,Rnm/1100), mx=gx+gw*mfrac;
+   x.strokeStyle=AM;x.lineWidth=2;x.beginPath();x.moveTo(mx,gy-4);x.lineTo(mx,gy+22);x.stroke();
+   txt(x,'0',gx,gy+32,MUT,11,'center');txt(x,'550 nm (λ)',gx+gw*0.5,gy+32,MUT,11,'center');txt(x,'1100',gx+gw,gy+32,MUT,11,'center');
+   // brightness swatch
+   txt(x,'crossed-pol brightness',gx,gy+70,MUT,12,'left');
+   x.fillStyle=gray(B);x.strokeStyle=HAIR;x.fillRect(gx,gy+80,90,60);x.strokeRect(gx,gy+80,90,60);
+   r3nm.textContent=Rnm.toFixed(0)+' nm';r3l.textContent=Rl.toFixed(2)+'λ';r3b.textContent=(B*100).toFixed(0)+'%';
+   n3.textContent = Rnm<5 ? 'Near zero retardance — the specimen looks empty between crossed polarizers.' : 'Same retardance can come from a thin, strongly-birefringent specimen or a thick, weak one.';
+ }
+ sn.addEventListener('input',draw);sd.addEventListener('input',draw);draw();
+})();
+
+// ===================== WIDGET 4: five frames -> two maps =====================
+(function(){
+ var cv=gid('cv4'),x=cv.getContext('2d'),W=900,H=380;
+ var b4go=gid('b4go'),b4comp=gid('b4comp'),n4=gid('n4');
+ // 4 regions, each [G(deg), phi(deg)]
+ var regs=[[28,20],[72,80],[45,140],[60,50]];
+ var alphas=[0,36,72,108,144]; // 5 settings (deg)
+ var CHI=0.5;
+ function frameI(Gdeg,phiDeg,aDeg){var G=Gdeg*D2R,phi=phiDeg*D2R,a=aDeg*D2R;
+   var off=0.5*Math.sin(G/2)*Math.sin(G/2)+0.12;
+   var amp=0.42*Math.sin(G)*Math.sin(CHI);
+   return off+amp*Math.cos(2*(a-phi));}
+ var showMaps=false, playing=false, hi=-1, tmr=null;
+ b4comp.onclick=function(){showMaps=true;draw();};
+ b4go.onclick=function(){if(playing)return;playing=true;hi=0;showMaps=false;b4go.setAttribute('aria-pressed',true);
+   tmr=setInterval(function(){hi++;if(hi>=5){clearInterval(tmr);playing=false;hi=-1;showMaps=true;b4go.setAttribute('aria-pressed',false);}draw();},420);draw();};
+ function recon(){ // per region reconstruct
+   return regs.map(function(rg){var Sc=0,Ss=0,S0=0;
+     for(var k=0;k<5;k++){var I=frameI(rg[0],rg[1],alphas[k]);S0+=I;Sc+=I*Math.cos(2*alphas[k]*D2R);Ss+=I*Math.sin(2*alphas[k]*D2R);}
+     var amp=2/5*Math.sqrt(Sc*Sc+Ss*Ss);
+     var az=0.5*Math.atan2(Ss,Sc)/D2R;if(az<0)az+=180;
+     var Gr=Math.asin(Math.min(1,amp/(0.42*Math.sin(CHI))))/D2R;
+     return [Gr,az];});}
+ function drawRegions(px,py,sz,valFn){ // 2x2
+   for(var i=0;i<4;i++){var rr=i>>1,cc=i&1;var rx=px+cc*(sz/2),ry=py+rr*(sz/2);
+     valFn(i,rx,ry,sz/2);}
+ }
+ function draw(){
+   x.clearRect(0,0,W,H);
+   // top row: 5 raw frames
+   txt(x,'five raw frames (liquid-crystal settings)',30,24,INK,13,'left');
+   var fsz=120, fy=40, gap=20, fx0=30;
+   for(var k=0;k<5;k++){var fx=fx0+k*(fsz+gap);
+     drawRegions(fx,fy,fsz,function(i,rx,ry,s){x.fillStyle=gray(frameI(regs[i][0],regs[i][1],alphas[k]));x.fillRect(rx,ry,s,s);});
+     x.strokeStyle=(hi===k)?AM:HAIR;x.lineWidth=(hi===k)?3:1;x.strokeRect(fx,fy,fsz,fsz);
+     txt(x,'setting '+(k+1),fx+fsz/2,fy+fsz+14,(hi===k)?AM:MUT,11,'center');
+   }
+   // bottom: maps
+   var my=210;
+   if(showMaps){
+     var rc=recon();
+     // retardance map
+     txt(x,'retardance map',60,my-10,CY,13,'left');
+     drawRegions(60,my,120,function(i,rx,ry,s){x.fillStyle=gray(rc[i][0]/180*0.95+0.05);x.fillRect(rx,ry,s,s);x.strokeStyle=HAIR;x.strokeRect(rx,ry,s,s);});
+     // orientation map
+     txt(x,'orientation map (hue = slow axis)',230,my-10,MAG,13,'left');
+     drawRegions(230,my,120,function(i,rx,ry,s){x.fillStyle=azCol(rc[i][1],Math.min(1,0.35+rc[i][0]/180));x.fillRect(rx,ry,s,s);
+       arrow(x,0,rx+s/2,ry+s/2,rc[i][1]*D2R,s*0.32,'rgba(255,255,255,0.9)',2);x.strokeStyle=HAIR;x.strokeRect(rx,ry,s,s);});
+     // legend wheel
+     var lx=470,ly=my+60,lr=52;
+     for(var a=0;a<180;a+=3){x.strokeStyle=azCol(a,1);x.lineWidth=4;x.beginPath();
+       x.moveTo(lx+Math.cos(a*D2R)*30,ly+Math.sin(a*D2R)*30);x.lineTo(lx+Math.cos(a*D2R)*lr,ly+Math.sin(a*D2R)*lr);x.stroke();
+       x.beginPath();x.moveTo(lx-Math.cos(a*D2R)*30,ly-Math.sin(a*D2R)*30);x.lineTo(lx-Math.cos(a*D2R)*lr,ly-Math.sin(a*D2R)*lr);x.stroke();}
+     txt(x,'orientation key',lx,ly-lr-12,MUT,11,'center');
+     // table of values
+     var tx=590,ty=my-6;
+     txt(x,'region   Γ (recovered)   slow axis',tx,ty,INK,12,'left');
+     for(var i=0;i<4;i++){txt(x,(i+1)+'        '+rc[i][0].toFixed(0)+'°           '+rc[i][1].toFixed(0)+'°',tx,ty+22+i*22,MUT,12,'left');}
+     n4.textContent='Two quantitative maps from five brightness frames — retardance and slow-axis angle, per pixel.';
+   } else {
+     txt(x,'press “compute maps” to combine the five frames →',60,my+40,MUT,13,'left');
+   }
+ }
+ draw();
+})();
+
+// ===================== WIDGET 5: orientation color wheel =====================
+(function(){
+ var cv=gid('cv5'),x=cv.getContext('2d'),W=900,H=360;
+ var sr=gid('s5r'),sg=gid('s5g'),v5r=gid('v5r'),v5g=gid('v5g');
+ function draw(){
+   x.clearRect(0,0,W,H);
+   var rot=+sr.value, val=(+sg.value)/100; v5r.textContent=rot+'°';v5g.textContent=val.toFixed(2);
+   // aster of fibers, colored by azimuth
+   var cx=230,cy=180,N=24;
+   txt(x,'fibers colored by slow-axis angle',cx,28,INK,13,'center');
+   for(var i=0;i<N;i++){var a=(i/N)*180; var az=(a+rot)%180;
+     var ang=a*D2R;
+     x.strokeStyle=azCol(az,val);x.lineWidth=7;x.lineCap='round';
+     x.beginPath();x.moveTo(cx+Math.cos(ang)*20,cy+Math.sin(ang)*20);x.lineTo(cx+Math.cos(ang)*120,cy+Math.sin(ang)*120);x.stroke();
+     x.beginPath();x.moveTo(cx-Math.cos(ang)*20,cy-Math.sin(ang)*20);x.lineTo(cx-Math.cos(ang)*120,cy-Math.sin(ang)*120);x.stroke();
+   }
+   x.lineCap='butt';
+   // legend wheel
+   var lx=640,ly=180,lr=110;
+   txt(x,'orientation key',lx,40,INK,13,'center');
+   for(var a2=0;a2<180;a2+=2){var az2=a2;x.strokeStyle=azCol(az2,1);x.lineWidth=6;
+     x.beginPath();x.moveTo(lx+Math.cos(a2*D2R)*60,ly+Math.sin(a2*D2R)*60);x.lineTo(lx+Math.cos(a2*D2R)*lr,ly+Math.sin(a2*D2R)*lr);x.stroke();
+     x.beginPath();x.moveTo(lx-Math.cos(a2*D2R)*60,ly-Math.sin(a2*D2R)*60);x.lineTo(lx-Math.cos(a2*D2R)*lr,ly-Math.sin(a2*D2R)*lr);x.stroke();}
+   txt(x,'0°',lx+lr+16,ly,MUT,12,'left');txt(x,'90°',lx,ly-lr-12,MUT,12,'center');txt(x,'45°',lx+lr*0.72+8,ly+lr*0.72+8,MUT,12,'left');
+ }
+ sr.addEventListener('input',draw);sg.addEventListener('input',draw);draw();
+})();
+
+// ===================== WIDGET 6: positive vs negative =====================
+(function(){
+ var cv=gid('cv6'),x=cv.getContext('2d'),W=900,H=320;
+ var bs=gid('b6sign'),n6=gid('n6');
+ var positive=true;
+ bs.onclick=function(){positive=!positive;bs.setAttribute('aria-pressed',!positive);
+   bs.textContent='sign: '+(positive?'positive (slow ∥ structure)':'negative (slow ⊥ structure)');draw();};
+ function draw(){
+   x.clearRect(0,0,W,H);
+   // left: a fiber (microtubule). structure direction = horizontal-ish
+   var fcx=210,fcy=160;
+   txt(x,'fiber  (e.g. microtubule)',fcx,40,INK,14,'center');
+   x.strokeStyle='rgba(34,211,238,0.85)';x.lineWidth=18;x.lineCap='round';
+   x.beginPath();x.moveTo(fcx-130,fcy+40);x.lineTo(fcx+130,fcy-40);x.stroke();x.lineCap='butt';
+   var fdir=Math.atan2(-80,260); // structure direction
+   var fslow=positive?fdir:fdir+Math.PI/2;
+   for(var t=-1;t<=1;t++){var px=fcx+Math.cos(fdir)*t*80, py=fcy+Math.sin(fdir)*t*80;
+     arrow(x,0,px,py,fslow,26,AM,4);}
+   txt(x,'measured slow axis',fcx,fcy+90,AM,12,'center');
+   // right: a membrane vesicle (ring). structure = radial acyl chains
+   var mcx=660,mcy=160,R=95;
+   txt(x,'membrane vesicle  (lipids)',mcx,40,INK,14,'center');
+   x.strokeStyle='rgba(244,114,182,0.85)';x.lineWidth=16;
+   x.beginPath();x.arc(mcx,mcy,R,0,TAU);x.stroke();
+   for(var k=0;k<12;k++){var ang=k/12*TAU;var px2=mcx+Math.cos(ang)*R,py2=mcy+Math.sin(ang)*R;
+     var radial=ang; var slow=positive?radial:radial+Math.PI/2;
+     arrow(x,0,px2,py2,slow,16,AM,3.5);}
+   txt(x,'measured slow axis',mcx,mcy+R+30,AM,12,'center');
+   n6.textContent = positive
+     ? 'Positive: the slow axis points ALONG the structure. A microtubule reads with its slow axis down the fiber, lipid chains read radially.'
+     : 'Negative: the slow axis is PERPENDICULAR to the structure. The fiber now reads across itself, and the membrane reads tangentially — 90° from the molecules.';
+ }
+ draw();
+})();
+})();
+</script>
+</body></html>
