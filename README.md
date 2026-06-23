@@ -10,19 +10,22 @@ friendly explanations, clickable diagrams, and live canvas widgets.
 
 ## Pages
 
+Live site (GitHub Pages): **https://uw-loci.github.io/interactive-sites/**
+
 ### Cleared-Tissue Light-Sheet (CTLSM)
-- [`CTLSM_Microscope_Demo.html`](CTLSM_Microscope_Demo.html) — Interactive microscope: clickable photo map of the light-sheet beam path.
-- [`CTLSM_Interactive.html`](CTLSM_Interactive.html) — Interactive companion with the core light-sheet concept widgets.
-- [`CTLSM_BeamPlacement.html`](CTLSM_BeamPlacement.html) — Place the beam in the chamber: A–F knobs mapped to beam position.
+- [Interactive microscope — light-sheet overview](https://uw-loci.github.io/interactive-sites/CTLSM_Microscope_Demo.html) — clickable photo map of the light-sheet beam path. ([`CTLSM_Microscope_Demo.html`](CTLSM_Microscope_Demo.html))
+- [Interactive companion](https://uw-loci.github.io/interactive-sites/CTLSM_Interactive.html) — the core light-sheet concept widgets. ([`CTLSM_Interactive.html`](CTLSM_Interactive.html))
+- [Place the beam in the chamber](https://uw-loci.github.io/interactive-sites/CTLSM_BeamPlacement.html) — A–F knobs mapped to beam position. ([`CTLSM_BeamPlacement.html`](CTLSM_BeamPlacement.html))
 
 ### Polarized-Light Microscopy (PPM)
-- [`PPM_Intro_Interactive.html`](PPM_Intro_Interactive.html) — Seeing the Invisible: interactive intro to PPM.
-- [`LCPolScope_Birefringence.html`](LCPolScope_Birefringence.html) — LC-PolScope: polarization states & birefringence.
+- [Seeing the Invisible — intro to PPM](https://uw-loci.github.io/interactive-sites/PPM_Intro_Interactive.html) — interactive introduction to polarized-light microscopy. ([`PPM_Intro_Interactive.html`](PPM_Intro_Interactive.html))
+- [LC-PolScope — polarization states & birefringence](https://uw-loci.github.io/interactive-sites/LCPolScope_Birefringence.html) — explore polarization states and birefringence contrast. ([`LCPolScope_Birefringence.html`](LCPolScope_Birefringence.html))
 
 ## Hosting
 
-When GitHub Pages is enabled (serving from the default branch root), the landing page is
-`index.html` and each page is reachable at `…/<filename>.html`.
+Served by **GitHub Pages** from the root of the `main` branch: the landing page is `index.html`
+and each page is reachable at `https://uw-loci.github.io/interactive-sites/<filename>.html`.
+After a push, Pages rebuilds in ~1–2 min; hard-refresh (Ctrl+Shift+R) to bypass browser cache.
 
 ## Adding a page
 
