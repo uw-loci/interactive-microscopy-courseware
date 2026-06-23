@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LC-PolScope Portal: Interactive Tutorial & Review</title>
+    <link rel="stylesheet" href="style.css?v=4">
+    <!-- MathJax CDN for beautiful mathematical equations rendering -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo-container">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="9" fill="none" stroke="white" stroke-width="2"/>
+                        <line x1="12" y1="3" x2="12" y2="21" stroke="white" stroke-width="2"/>
+                        <line x1="3" y1="12" x2="21" y2="12" stroke="white" stroke-width="2"/>
+                        <ellipse cx="12" cy="12" rx="6" ry="3" fill="none" stroke="white" stroke-width="1.5" transform="rotate(45 12 12)"/>
+                    </svg>
+                </div>
+                <div class="logo-text">
+                    <h1>LC-PolScope</h1>
+                    <p>Interactive Portal</p>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <button class="nav-item active" data-tab="tab-simulator">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="3" width="7" height="9" rx="1"/>
+                        <rect x="14" y="3" width="7" height="5" rx="1"/>
+                        <rect x="14" y="12" width="7" height="9" rx="1"/>
+                        <rect x="3" y="16" width="7" height="5" rx="1"/>
+                    </svg>
+                    Physics Simulator
+                </button>
+                <button class="nav-item" data-tab="tab-slides">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    Laboratory Slides
+                </button>
+                <button class="nav-item" data-tab="tab-review">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                    Literature Review
+                </button>
+            </nav>
+            
+            <div class="sidebar-footer">
+                <p class="sidebar-footer-text"><strong>LC-PolScope Tutorial</strong></p>
+                <p class="sidebar-footer-text">Designed for graduate level laboratory demonstration and review.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="main-content">
+            
+            <!-- Tab 1: Simulator -->
+            <div class="tab-pane active" id="tab-simulator">
+                <div>
+                    <h2 class="section-title">LC-PolScope Physics Simulator</h2>
+                    <p class="section-desc">Interact with the liquid crystal variables and noise levels to see how retardance and slow-axis orientation are reconstructed. Explore both single-pixel calculations and full-field 2D sample imaging.</p>
+                </div>
+
+                <div class="grid-2col">
+                    <!-- Column 1: Controls -->
+                    <div class="card">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>
+                            Single-Pixel Polarimetry Sandbox
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Specimen Retardance (\(R\)) <span class="value" id="val-ret">5 nm</span></label>
+                            <input type="range" id="slider-ret" min="0" max="100" step="0.5" value="5">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Specimen Azimuth (\(\phi\)) <span class="value" id="val-phi">30°</span></label>
+                            <input type="range" id="slider-phi" min="0" max="180" step="1" value="30">
+                        </div>
+
+                        <div class="form-group">
+                            <label>LCVR Swing Retardance (\(\chi\)) <span class="value" id="val-swing">10.8°</span></label>
+                            <input type="range" id="slider-swing" min="5" max="30" step="0.5" value="10.8">
+                        </div>
+
+                        <div class="form-group">
+                            <label>Camera Read Noise <span class="value" id="val-noise">0%</span></label>
+                            <input type="range" id="slider-noise" min="0" max="10" step="0.5" value="0">
+                        </div>
+                        
+                        <div style="margin-top: 1.5rem; display: flex; gap: 1.5rem; align-items: center; justify-content: space-around;">
+                            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                                <span style="font-size:1.05rem; font-weight:600; color:var(--text-secondary);">Actual Specimen Angle</span>
+                                <div class="alignment-needle-panel">
+                                    <div class="alignment-needle" id="needle-actual" style="transform: rotate(-30deg);"></div>
+                                    <div class="alignment-center-dot"></div>
+                                </div>
+                            </div>
+                            <div style="display:flex; flex-direction:column; align-items:center; gap:0.5rem;">
+                                <span style="font-size:1.05rem; font-weight:600; color:var(--cyan);">Reconstructed Angle</span>
+                                <div class="alignment-needle-panel" style="border-color: var(--cyan);">
+                                    <div class="alignment-needle" id="needle-recon" style="transform: rotate(-30deg); background: linear-gradient(90deg, transparent 50%, var(--cyan) 50%);"></div>
+                                    <div class="alignment-center-dot" style="background-color: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow);"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Live Calculations -->
+                    <div class="card">
+                        <div class="card-title">
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 19.5A2.5 2.5 0 0 0 6.5 22H20M4 19.5L4 3.5A2.5 2.5 0 0 1 6.5 1H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5z"/></svg>
+                            Live Reconstructed Parameters & Math
+                        </div>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="background:#0b0f19; padding:0.75rem; border-radius:8px; border:1px solid var(--border-color);">
+                                <div style="font-size:0.7rem; text-transform:uppercase; color:var(--text-muted); font-weight:600;">Original 4-Frame (Lab Manual)</div>
+                                <div style="font-size:1.1rem; font-weight:700; color:#fff; margin-top:0.25rem;" id="val-recon-ret-4">5.63 nm</div>
+                                <div style="font-size:0.85rem; color:var(--text-secondary);" id="val-recon-phi-4">163.5°</div>
+                            </div>
+                            <div style="background:#0b0f19; padding:0.75rem; border-radius:8px; border:1px solid var(--cyan-glow);">
+                                <div style="font-size:0.7rem; text-transform:uppercase; color:var(--cyan); font-weight:600;">Symmetric 5-Frame (Shribak 2003)</div>
+                                <div style="font-size:1.1rem; font-weight:700; color:var(--cyan); margin-top:0.25rem;" id="val-recon-ret-5">5.00 nm</div>
+                                <div style="font-size:0.85rem; color:var(--text-secondary);" id="val-recon-phi-5">30.0°</div>
+                            </div>
+                        </div>
+
+                        <div style="display:flex; justify-content:space-between; margin-bottom:0.75rem; font-family:var(--font-mono); font-size:0.8rem; color:var(--text-secondary); background: rgba(0,0,0,0.2); padding:0.4rem 0.8rem; border-radius:4px;">
+                            <span>I₁ = <strong id="val-i1" style="color:white;">-</strong> c</span>
+                            <span>I₂ = <strong id="val-i2" style="color:white;">-</strong> c</span>
+                            <span>I₃ = <strong id="val-i3" style="color:white;">-</strong> c</span>
+                            <span>I₄ = <strong id="val-i4" style="color:white;">-</strong> c</span>
+                            <span>I₅ = <strong id="val-i5" style="color:white;">-</strong> c</span>
+                        </div>
+
+                        <div class="math-block" id="single-pixel-math">
+                            Calculating...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2D Specimen Reconstruction Section -->
+                <div class="card" style="margin-top:1rem;">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" fill="none" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        Full-field 2D Specimen Simulation & Background Correction
+                    </div>
+                    
+                    <div class="grid-2col">
+                        <!-- Column 1: Configs -->
+                        <div style="display:flex; flex-direction:column; gap:1.25rem;">
+                            <div class="form-group">
+                                <label>Specimen Type</label>
+                                <select id="select-specimen-type" class="form-control-select">
+                                    <option value="parallel_collagen">(Recommended) Parallel Collagen Fibers (Stromal Bundles)</option>
+                                    <option value="tumor_collagen">Tumor Boundary Desmoplastic Collagen (Radial/Tangential)</option>
+                                    <option value="aster">Centrosomal Microtubule Aster (Radial Pattern)</option>
+                                </select>
+                            </div>
+                            
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                                <button class="btn btn-toggle-active" id="btn-toggle-bg">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+                                    Lens Strain: ON
+                                </button>
+                                <button class="btn btn-toggle-active" id="btn-toggle-correct">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+                                    BG Correction: ON
+                                </button>
+                            </div>
+
+                            <div class="form-group" style="display: none;">
+                                <label>Visual Display Mode</label>
+                                <select id="select-display-mode" class="form-control-select">
+                                    <option value="retardance">(Recommended) Retardance Magnitude (Grayscale Map)</option>
+                                    <option value="azimuth">Azimuth Orientation Map (HSL Color + Orientation Needles)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Reconstruction Algorithm</label>
+                                <select id="select-algorithm" class="form-control-select">
+                                    <option value="5-frame">(Recommended) Symmetric 5-Frame Algorithm</option>
+                                    <option value="4-frame">Original 4-Frame Algorithm</option>
+                                </select>
+                            </div>
+                            
+                            <div class="info-callout" style="margin: 0;">
+                                <div class="info-callout-title">Interactive Tasks for Demonstration:</div>
+                                <div class="info-callout-text" style="font-size:0.85rem;">
+                                    1. Set **Noise** to 8% and note how 5-frame maintains a flatter black background than 4-frame.
+                                    <br>2. Toggle **Lens Strain** and **BG Correction** to see how instrumental birefringence (gradient) is successfully eliminated.
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Canvases -->
+                        <div style="display:flex; flex-direction:column; align-items:center; gap:1rem;">
+                            <div style="display:flex; gap:1.5rem; justify-content:center; width:100%;">
+                                <div class="canvas-panel">
+                                    <div style="font-size:1.15rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.4rem;">Ground Truth Intensity</div>
+                                    <div class="canvas-container">
+                                        <canvas id="canvas-specimen" width="300" height="300"></canvas>
+                                    </div>
+                                </div>
+                                <div class="canvas-panel">
+                                    <div style="font-size:1.15rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.4rem;">Reconstructed Retardance</div>
+                                    <div class="canvas-container">
+                                        <canvas id="canvas-recon-ret" width="300" height="300"></canvas>
+                                    </div>
+                                </div>
+                                <div class="canvas-panel">
+                                    <div style="font-size:1.15rem; font-weight:600; color:var(--cyan); margin-bottom:0.4rem;">Reconstructed Slow Axis</div>
+                                    <div class="canvas-container" style="border-color: var(--cyan);">
+                                        <canvas id="canvas-recon" width="300" height="300"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dynamic Legend Row -->
+                            <div id="simulator-legend-row" style="margin-top: 0.5rem; display: flex; justify-content: center; align-items: flex-start; gap: 1.5rem; width: 100%;">
+                                <!-- Legend Panel 1: Ground Truth Explanation -->
+                                <div style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.35rem; width: 100%; max-width: 300px;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Ground Truth Specimen</span>
+                                    <p style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.35; margin-top: 0.25rem;">
+                                        Shows the ideal spatial distribution of specimen retardance (grayscale magnitude, 0 to 25+ nm).
+                                    </p>
+                                </div>
+
+                                <!-- Legend Panel 2: Grayscale Retardance Legend -->
+                                <div id="legend-retardance" style="display: flex; flex-direction: column; align-items: center; gap: 0.35rem; width: 100%; max-width: 300px;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Retardance Magnitude (nm)</span>
+                                    <div style="width: 100%; height: 12px; border-radius: 6px; border: 1px solid var(--border-color); background: linear-gradient(90deg, #000, #fff);"></div>
+                                    <div style="display: flex; justify-content: space-between; width: 100%; font-size: 0.75rem; color: var(--text-muted); font-family: var(--font-mono);">
+                                        <span>0 nm</span>
+                                        <span>12.5 nm</span>
+                                        <span>25+ nm</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Legend Panel 3: Slow-Axis Orientation Legend -->
+                                <div id="legend-azimuth" style="display: flex; flex-direction: column; align-items: center; gap: 0.25rem; width: 100%; max-width: 300px;">
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 600;">Slow-Axis Orientation</span>
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-top: 0.25rem; width: 100%; justify-content: center;">
+                                        <!-- Color Wheel Dial -->
+                                        <div class="legend-color-wheel" style="flex-shrink: 0;">
+                                            <div class="color-wheel-circle"></div>
+                                            <span class="wheel-label w-0">0°</span>
+                                            <span class="wheel-label w-45">45°</span>
+                                            <span class="wheel-label w-90">90°</span>
+                                            <span class="wheel-label w-135">135°</span>
+                                            <div class="wheel-center-dot"></div>
+                                        </div>
+                                        <!-- Color wheel text explanation -->
+                                        <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.3; text-align: left; max-width: 170px;">
+                                            Hue represents the slow-axis direction. 
+                                            <strong style="color:var(--text-secondary);">0°/180°</strong> is horizontal, 
+                                            <strong style="color:var(--cyan);">90°</strong> is vertical.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Raw frames stack captured by camera -->
+                            <div style="width:100%;">
+                                <div style="font-size:1.15rem; font-weight:600; color:var(--text-secondary); text-align:center; margin-bottom:0.5rem;">Raw Camera Frames (I₁ - I₅ Stack)</div>
+                                <div class="raw-frames-grid">
+                                    <div class="raw-frame-card">
+                                        <div class="raw-frame-canvas-container">
+                                            <canvas id="canvas-i1"></canvas>
+                                        </div>
+                                        <div class="raw-frame-title">I₁ (Ext)</div>
+                                    </div>
+                                    <div class="raw-frame-card">
+                                        <div class="raw-frame-canvas-container">
+                                            <canvas id="canvas-i2"></canvas>
+                                        </div>
+                                        <div class="raw-frame-title">I₂ (+A)</div>
+                                    </div>
+                                    <div class="raw-frame-card">
+                                        <div class="raw-frame-canvas-container">
+                                            <canvas id="canvas-i3"></canvas>
+                                        </div>
+                                        <div class="raw-frame-title">I₃ (+B)</div>
+                                    </div>
+                                    <div class="raw-frame-card">
+                                        <div class="raw-frame-canvas-container">
+                                            <canvas id="canvas-i4"></canvas>
+                                        </div>
+                                        <div class="raw-frame-title">I₄ (-B)</div>
+                                    </div>
+                                    <div class="raw-frame-card">
+                                        <div class="raw-frame-canvas-container">
+                                            <canvas id="canvas-i5"></canvas>
+                                        </div>
+                                        <div class="raw-frame-title">I₅ (-A)</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Laboratory slides -->
+            <div class="tab-pane" id="tab-slides">
+                <div>
+                    <h2 class="section-title">Laboratory Step-by-Step Guide</h2>
+                    <p class="section-desc">An interactive slide guide outlining how to align, calibrate, and acquire birefringence data using an LC-PolScope in a wet-lab environment.</p>
+                </div>
+
+                <div class="slide-deck">
+                    <div class="slide-content-area">
+                        <div class="slide-item active" id="slide-item">
+                            <div class="slide-header">
+                                <span class="slide-step-num">Step 1 of 6</span>
+                                <span id="slide-number-indicator" class="slide-number-indicator">Slide 1 of 6</span>
+                            </div>
+                            <h3 class="slide-title">Slide Title</h3>
+                            <div class="slide-body">Slide Body Text</div>
+                            <div class="slide-illustration">Slide Illustration</div>
+                        </div>
+                    </div>
+                    
+                    <div class="slide-controls">
+                        <button class="btn btn-secondary" id="btn-prev-slide">&larr; Previous</button>
+                        <div class="slide-progress-container">
+                            <div class="slide-progress-bar" id="slide-progress-bar"></div>
+                        </div>
+                        <button class="btn btn-primary" id="btn-next-slide">Next &rarr;</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Literature Review -->
+            <div class="tab-pane" id="tab-review">
+                <article class="lit-review">
+                    <header class="lit-header">
+                        <h2 class="lit-title">Quantitative Polarization Microscopy with the LC-PolScope: Principles, Collagen Pathology, and Modern Variants</h2>
+                        <div class="lit-subtitle">A Comprehensive Review for Biomedical and Optical Physicists</div>
+                        <div class="lit-authors">Antigravity Review Series &bull; Published June 2026</div>
+                    </header>
+
+                    <section class="lit-section">
+                        <h3>1. Introduction & Physical Principles</h3>
+                        <p>
+                            Traditional polarized light microscopy has long served as a vital tool for identifying optical anisotropy (birefringence) in biological and geological specimens. However, standard polarized microscopes suffer from a major limitation: <strong>orientation dependency</strong>. A birefringent fiber will exhibit maximum brightness when oriented at \(45^\circ\) relative to the crossed polarizers, but will disappear completely (extinction) if aligned parallel to either the polarizer or analyzer axis. To map a specimen fully, researchers historically had to rotate the sample stage mechanically—a process that is slow, prone to center drift, and incompatible with live-cell imaging.
+                        </p>
+                        <p>
+                            The **LC-PolScope** (Liquid Crystal Polarization Microscope), introduced by <a class="citation" href="#ref-oldenbourg1995">Oldenbourg and Mei (1995)</a>, solved this limitation by incorporating an electro-optical **Universal Compensator** into the illumination path and a **Circular Analyzer** into the detection path. The compensator consists of a linear polarizer followed by two liquid crystal variable retarders (LCVRs): LC-A (slow axis at \(0^\circ\)) and LC-B (slow axis at \(45^\circ\)). By dynamically varying the voltages applied to these LCVRs, the system can modulate the polarization state of light illuminating the sample without any mechanical movement.
+                        </p>
+                        <div class="info-callout">
+                            <div class="info-callout-title">The Circular Analyzer Extinction Trick</div>
+                            <div class="info-callout-text">
+                                The LC-PolScope uses a circular polarizer (quarter-wave plate + linear polarizer) in the analyzer position. When LCVRs are calibrated to Setting 1, they emit left-circularly polarized light. Since the circular analyzer only transmits right-circularly polarized light, a specimen with zero retardance appears completely dark (extinction). When a birefringent sample is introduced, it converts part of the left-circular light into right-circular light, which passes through the analyzer to the camera.
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="lit-section">
+                        <h3>2. Mathematical Demodulation & Dynamic Range</h3>
+                        <p>
+                            To quantitatively calculate retardance (\(R\) in nm) and slow-axis orientation (\(\phi\)) at every pixel, the LC-PolScope software captures multiple raw frames at predetermined LCVR settings. The standard calibration introduces a retardance swing (\(\chi\), typically \(0.03\lambda \approx 16.4\) nm) around the extinction settings.
+                        </p>
+                        <p>
+                            The original **4-frame algorithm** utilizes the extinction frame (\(I_1\)) and three elliptically polarized frames (\(I_2, I_3, I_4\)) where the swing retardance is added and subtracted to the LCVRs <a class="citation" href="#ref-shribak2003">(Shribak & Oldenbourg, 2003)</a>. The retardance is calculated as:
+                            \[R = \frac{\lambda}{2\pi} \arctan\left(\sqrt{A^2 + B^2}\right)\]
+                            where \(A\) and \(B\) are intermediate coefficients. While highly sensitive, the 4-frame algorithm relies on a first-order approximation that assumes specimen retardance is much smaller than the swing retardance (\(R \ll \chi\)). For larger retardances (such as thick collagen bundles which can exceed 30 nm), the 4-frame algorithm introduces significant underestimation and angle distortion.
+                        </p>
+                        <p>
+                            To expand the dynamic range and eliminate systematic error, <a class="citation" href="#ref-shribak2003">Shribak and Oldenbourg (2003)</a> introduced the **5-frame algorithm** by adding a fifth frame (\(I_5\)) representing a negative swing on LC-A. This symmetric scheme calculates the coefficients as:
+                            \[A = \frac{I_2 - I_5}{I_2 + I_5 - 2I_1} \tan\left(\frac{\chi}{2}\right)\]
+                            \[B = \frac{I_3 - I_4}{I_3 + I_4 - 2I_1} \tan\left(\frac{\chi}{2}\right)\]
+                            Mathematically, the symmetric difference cancels out the \(\cos\delta\) term in the denominator. This makes the 5-frame algorithm **mathematically exact** up to a retardance of half a wavelength (\(\lambda/2\)), providing uniform sensitivity and high accuracy over a wide range of retardances.
+                        </p>
+                    </section>
+
+                    <section class="lit-section">
+                        <h3>3. Application in Collagen Imaging & Histopathology</h3>
+                        <p>
+                            Collagen is the most abundant structural protein in the extracellular matrix (ECM). Because of its highly ordered triple-helical structure, collagen fibers exhibit strong **intrinsic linear birefringence** (retardance of 5–50 nm depending on thickness). In epithelial cancers, such as breast cancer and pancreatic ductal adenocarcinoma (PDAC), the stroma undergoes massive remodeling (desmoplasia), characterized by dense deposition of collagen fibers <a class="citation" href="#ref-keikhosravi2017">(Keikhosravi et al., 2017)</a>.
+                        </p>
+                        <p>
+                            Biomedical research has demonstrated that collagen fiber organization is a critical prognostic indicator of cancer progression:
+                        </p>
+                        <ul>
+                            <li><strong>Tumor Invasion Tracks:</strong> In healthy stroma, collagen fibers form a disorganized, curly mesh. In invasive tumors, stromal collagen bundles become highly straight, thickened, and aligned perpendicular to the tumor boundary, acting as physical "tracks" that facilitate rapid cancer cell migration and hematogenous metastasis. This phenomenon is known as Tumor-Associated Collagen Signature (TACS).</li>
+                            <li><strong>Quantitative Prognostic Metrics:</strong> The LC-PolScope enables pathologists to quantitatively measure collagen thickness (represented by retardance magnitude) and alignment consistency (alignment coefficient, determined by the circular variance of local fiber orientation). Highly aligned collagen stroma is strongly correlated with decreased patient survival.</li>
+                            <li><strong>Clinical Integration:</strong> While Second Harmonic Generation (SHG) multiphoton microscopy is the gold-standard for imaging collagen, it is extremely expensive, slow, and requires specialized optical tables. The LC-PolScope can be added to standard, clinical pathology microscopes using cheap liquid crystal filters. It provides quantitative collagen maps from unlabeled slides or standard H&E stained pathology slides, making it a high-throughput, clinically viable diagnostic tool.</li>
+                        </ul>
+                    </section>
+
+                    <section class="lit-section">
+                        <h3>4. Comparison of LC-PolScope with Modern Computational Variants</h3>
+                        <p>
+                            In recent years, several computational polarization microscopy variants have been developed, extending the principles of the original LC-PolScope to phases, 3D space, or high temporal resolutions. The table below compares these technologies.
+                        </p>
+                        
+                        <div class="lit-table-wrapper">
+                            <table class="academic-table">
+                                <thead>
+                                    <tr>
+                                        <th>Technology / Variant</th>
+                                        <th>Physical Mechanism</th>
+                                        <th>Key Merits & Strengths</th>
+                                        <th>Limitations / Trade-offs</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><strong>Standard LC-PolScope</strong><br><a class="citation" href="#ref-oldenbourg1995">Oldenbourg (1995)</a></td>
+                                        <td>Active LCVR switching (4 or 5 frames) + circular analyzer.</td>
+                                        <td>High retardance sensitivity (~0.05 nm noise floor); mathematically exact reconstructions; low cost.</td>
+                                        <td>Slow temporal resolution (requires 4-5 sequential images); limited to 2D projections of retardance.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>QLIPP</strong> (Phase & Polarization)<br><a class="citation" href="#ref-guo2020">Guo et al. (2020)</a></td>
+                                        <td>Modulated illumination + asymmetric phase retrieval + deep learning.</td>
+                                        <td>Reconstructs both phase (cellular density/refractive index) and birefringence (molecular order) from few frames; powered by open-source *recOrder*.</td>
+                                        <td>Requires complex phase retrieval algorithms and GPU acceleration; susceptible to deep learning artifacts.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>PLFM</strong> (Polarized Light Field)<br><a class="citation" href="#ref-tran2022">Tran & Oldenbourg (2022)</a></td>
+                                        <td>Microlens array + polarization universal compensator + 3D wave-optics deconvolution.</td>
+                                        <td>Reconstructs 3D volumetric retardance and 3D orientation vectors of organelles (e.g. spindles) in a single/few shots.</td>
+                                        <td>Significant reduction in lateral spatial resolution; highly computationally intensive 3D deconvolution.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><strong>Single-Shot Polarimetry</strong><br>Pixelated Sensor Systems</td>
+                                        <td>Micro-polarizer array (0°, 45°, 90°, 135°) etched directly on the camera sensor.</td>
+                                        <td>Instantaneous polarization capture in a single frame; ideal for fast-moving dynamic processes in live cells.</td>
+                                        <td>Reduced spatial resolution (super-pixels divide resolution by 4); lower retardance sensitivity due to fixed polarization filters.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="lit-section">
+                        <h3>5. Key References</h3>
+                        <div class="references-list">
+                            <div class="reference-item" id="ref-guo2020">
+                                Guo, S.-M., Yeh, L.-H., Folkesson, J., Ivanov, I. E., Krishnan, A. P., Keefe, M. G., Hashemi, E., Shin, D., Chhun, B. B., Cho, N. H., Leonetti, M. D., Han, M. H., Nowakowski, T. J., & Mehta, S. B. (2020). <strong>Revealing architectural order with quantitative label-free imaging and deep learning.</strong> <em>eLife</em>, 9. <a href="https://doi.org/10.7554/eLife.55502" target="_blank">https://doi.org/10.7554/eLife.55502</a>
+                            </div>
+                            <div class="reference-item" id="ref-keikhosravi2017">
+                                Keikhosravi, A., Liu, Y., Drifka, C., Woo, K. M., Verma, A., Oldenbourg, R., & Eliceiri, K. W. (2017). <strong>Quantification of collagen organization in histopathology samples using liquid crystal based polarization microscopy.</strong> <em>Biomedical Optics Express</em>, 8(9), 4243–4256. <a href="https://doi.org/10.1364/BOE.8.004243" target="_blank">https://doi.org/10.1364/BOE.8.004243</a>
+                            </div>
+                            <div class="reference-item" id="ref-oldenbourg1995">
+                                Oldenbourg, R., & Mei, G. (1995). <strong>New polarized light microscope with precision universal compensator.</strong> <em>Journal of Microscopy</em>, 180(Pt 2), 140–147. <a href="https://doi.org/10.1111/j.1365-2818.1995.tb03669.x" target="_blank">https://doi.org/10.1111/j.1365-2818.1995.tb03669.x</a>
+                            </div>
+                            <div class="reference-item" id="ref-shribak2003">
+                                Shribak, M., & Oldenbourg, R. (2003). <strong>Techniques for fast and sensitive measurements of two-dimensional birefringence distributions.</strong> <em>Applied Optics</em>, 42(16), 3009–3017. <a href="https://doi.org/10.1364/ao.42.003009" target="_blank">https://doi.org/10.1364/ao.42.003009</a>
+                            </div>
+                            <div class="reference-item" id="ref-tran2022">
+                                Tran, M. T., & Oldenbourg, R. (2022). <strong>Point spread function of the polarized light field microscope.</strong> <em>Journal of the Optical Society of America A</em>, 39(6), 1095–1103. <a href="https://doi.org/10.1364/JOSAA.458034" target="_blank">https://doi.org/10.1364/JOSAA.458034</a>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </div>
+
+        </main>
+    </div>
+    
+    <script src="app.js?v=13"></script>
+</body>
+</html>
