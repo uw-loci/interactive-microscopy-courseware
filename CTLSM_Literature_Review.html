@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cleared-Tissue Light-Sheet Microscopy — Literature Review</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--panel2:#101A30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.65;}
+.wrap{max-width:860px;margin:0 auto;padding:30px 22px 80px;}
+.topbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:26px;}
+.topbar a{color:var(--mut);text-decoration:none;font-size:13px;padding:7px 12px;border:1px solid var(--hair);border-radius:9px;transition:.15s;}
+.topbar a:hover{color:var(--ink);border-color:var(--cy);}
+.topbar .sp{margin-left:auto;color:var(--cy);font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 8px;}
+h1{font-size:29px;line-height:1.25;margin:0 0 8px;font-weight:800;}
+.subtitle{color:var(--mut);font-size:15.5px;margin:0 0 4px;}
+.byline{color:var(--mut);font-size:13px;font-style:italic;margin:6px 0 0;}
+.rule{height:2px;background:var(--hair);border-radius:2px;margin:22px 0 28px;}
+section.s{margin:0 0 30px;}
+section.s h2{color:var(--cy);font-size:19px;font-weight:700;margin:0 0 12px;}
+section.s p{color:var(--mut);font-size:15px;margin:0 0 14px;text-align:justify;}
+section.s strong{color:var(--ink);}
+ul{margin:0 0 14px;padding-left:20px;}
+ul li{color:var(--mut);font-size:15px;margin:8px 0;}
+ul li strong{color:var(--ink);}
+.callout{background:rgba(34,211,238,.06);border-left:4px solid var(--cy);border-radius:4px 12px 12px 4px;padding:14px 18px;margin:18px 0;}
+.callout .ct{color:var(--ink);font-weight:700;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;margin:0 0 6px;}
+.callout p{margin:0;font-size:14.5px;}
+.eq{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--panel2);border:1px solid var(--hair);border-radius:8px;padding:12px 16px;color:var(--ink);font-size:15px;text-align:center;margin:6px 0 16px;}
+.tablewrap{overflow-x:auto;border:1px solid var(--hair);border-radius:12px;margin:16px 0;}
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{background:var(--panel2);color:var(--ink);text-align:left;font-weight:700;padding:11px 12px;border-bottom:2px solid var(--hair);}
+td{padding:11px 12px;border-bottom:1px solid var(--hair);color:var(--mut);vertical-align:top;line-height:1.5;}
+tr:hover td{color:var(--ink);background:rgba(255,255,255,.015);}
+td strong{color:var(--ink);}
+.cite{color:var(--mag);text-decoration:none;}
+.cite:hover{text-decoration:underline;}
+.refs{display:flex;flex-direction:column;gap:12px;margin-top:8px;}
+.ref{font-size:14px;color:var(--mut);padding-left:24px;text-indent:-24px;line-height:1.55;}
+.ref strong{color:var(--ink);}
+.ref a{color:var(--am);text-decoration:none;}
+.ref a:hover{text-decoration:underline;}
+footer{color:var(--mut);font-size:12.5px;margin-top:36px;border-top:1px solid var(--hair);padding-top:16px;}
+footer a{color:var(--am);text-decoration:none;}
+</style></head>
+<body><div class="wrap">
+
+<div class="topbar">
+ <a href="CTLSM_Interactive.html">&larr; Interactive companion</a>
+ <a href="index.html">All sites</a>
+ <span class="sp">Cleared-tissue light-sheet &middot; literature review</span>
+</div>
+
+<p class="eyebrow">Literature review</p>
+<h1>Cleared-Tissue Light-Sheet Microscopy: Principles, Clearing, and Whole-Organ Imaging</h1>
+<p class="subtitle">A concise review for biologists and early-stage researchers entering 3-D imaging.</p>
+<p class="byline">Interactive Microscopy Courseware &mdash; UW-LOCI &middot; June 2026</p>
+<div class="rule"></div>
+
+<section class="s">
+ <h2>1 &middot; Introduction &amp; physical principles</h2>
+ <p>Conventional point-scanning microscopes (confocal, two-photon) illuminate the full depth of a specimen at every pixel, then reject out-of-focus light at the detector. For large three-dimensional samples this is slow and photochemically wasteful: each plane re-exposes the whole illuminated column, bleaching fluorophores far from the plane being recorded. <strong>Light-sheet fluorescence microscopy (LSFM)</strong> inverts this geometry &mdash; a thin sheet of light enters from the side and illuminates only the plane that is currently in focus for a wide-field detection objective placed at right angles to it <a class="cite" href="#r1">(Huisken et al., 2004)</a>.</p>
+ <p>Because only the in-focus plane is ever illuminated, LSFM achieves intrinsic optical sectioning with dramatically lower photobleaching and phototoxicity, and records an entire plane in a single camera exposure rather than pixel by pixel. These properties make it the natural method for imaging large, living, or optically cleared 3-D specimens. The principal geometric cost is that the sample must be optically accessible from two perpendicular directions, which constrains chamber and mounting design.</p>
+ <div class="callout">
+  <p class="ct">The thickness&ndash;coverage trade-off</p>
+  <p>A light sheet is a focused beam, so it is only thin near its waist. For a Gaussian sheet the waist thickness scales roughly as w&#8320;&nbsp;&prop;&nbsp;&lambda;/NA, while the usable in-focus length (the confocal parameter) scales as b&nbsp;&prop;&nbsp;&lambda;/NA&sup2;. Raising the illumination NA for a thinner sheet (better axial resolution) shortens the field over which the sheet stays thin. Real systems resolve this with beam shaping, tiling of sheet positions, or axially swept illumination <a class="cite" href="#r2">(Power &amp; Huisken, 2017)</a>.</p>
+ </div>
+ <div class="eq">w&#8320; &prop; &lambda; / NA &nbsp;&nbsp;&nbsp;&nbsp; b &prop; &lambda; / NA&sup2;</div>
+</section>
+
+<section class="s">
+ <h2>2 &middot; Tissue clearing: making samples transparent</h2>
+ <p>Biological tissue scatters light because it is a dense, heterogeneous mixture of components with different refractive indices &mdash; lipid membranes, proteins, and water. Every index boundary deflects photons, so even a few hundred microns into an uncleared organ the image degrades into haze. <strong>Optical clearing</strong> removes or homogenizes these index mismatches so light passes through with minimal scattering, extending usable imaging depth from microns to whole intact organs <a class="cite" href="#r3">(Richardson &amp; Lichtman, 2015)</a>.</p>
+ <p>Clearing protocols fall into a few broad families, each with characteristic trade-offs:</p>
+ <ul>
+  <li><strong>Solvent-based</strong> (3DISCO, iDISCO, BABB): dehydrate the tissue and replace water with a high-index organic solvent. Fast and highly transparent, but can quench fluorescent proteins and shrink tissue.</li>
+  <li><strong>Aqueous / hyperhydration</strong> (CUBIC, Scale, SeeDB): immerse in high-index aqueous reagents that preserve fluorescence well; generally gentler but slower, sometimes with tissue expansion.</li>
+  <li><strong>Hydrogel embedding</strong> (CLARITY): cross-link biomolecules into a hydrogel scaffold, then remove lipids; strong structural and antigen preservation at the cost of a more involved protocol.</li>
+ </ul>
+ <p>Whichever route is used, the cleared tissue ends at a specific refractive index, and the microscope's <strong>illumination and detection optics must be index-matched to that medium</strong> (objective immersion, chamber fluid, correction collar) or residual mismatch reintroduces aberration and blur. This tight coupling between sample chemistry and optics is exactly why a cleared-tissue light-sheet rig is usually tuned around the clearing protocol it serves.</p>
+</section>
+
+<section class="s">
+ <h2>3 &middot; Application: whole-organ and whole-brain mapping</h2>
+ <p>The flagship application of cleared-tissue light-sheet microscopy is volumetric mapping of intact organs. By combining whole-mount immunolabeling with solvent clearing, methods such as <strong>iDISCO</strong> let antibodies penetrate and label molecular targets throughout an entire mouse brain or organ, which is then imaged in three dimensions by a light sheet <a class="cite" href="#r4">(Renier et al., 2014)</a>.</p>
+ <p>This enables experiments impractical with physical sectioning: brain-wide mapping of neuronal activity via immediate-early genes such as c-Fos, tracing of long-range axonal projections, quantification of vascular networks, and detection of sparse events such as micro-metastases scattered through an intact organ. Light-sheet imaging is the natural readout for these centimetre-scale cleared samples precisely because its speed and low light dose make it feasible to record the enormous volumes involved before the sample bleaches.</p>
+</section>
+
+<section class="s">
+ <h2>4 &middot; Instrument variants and build approaches</h2>
+ <p>"Light-sheet microscope" describes a family of instruments rather than a single design. The table summarizes the major implementation choices a new user is likely to meet, including the open and self-built systems common in cleared-tissue work.</p>
+ <div class="tablewrap">
+ <table>
+  <thead><tr><th>Variant / approach</th><th>Mechanism</th><th>Strengths</th><th>Trade-offs</th></tr></thead>
+  <tbody>
+   <tr><td><strong>Classic SPIM</strong><br><a class="cite" href="#r1">Huisken 2004</a></td><td>Cylindrical-lens sheet; sample translated/rotated through it; detection orthogonal.</td><td>Foundational geometry; gentle, fast sectioning of live embryos and small organisms.</td><td>A single static sheet limits field/thickness; gel mounting can be awkward.</td></tr>
+   <tr><td><strong>Open hardware</strong> (OpenSPIM)<br><a class="cite" href="#r5">Pitrone 2013</a></td><td>Documented modular parts list to build a SPIM on an optical table &mdash; the lineage behind many table-built rigs (e.g. Flamingo / T-SPIM).</td><td>Low cost, fully customizable, transparent for teaching and method development.</td><td>Requires alignment expertise; performance depends on the builder's optics.</td></tr>
+   <tr><td><strong>Cleared-tissue / large-sample systems</strong></td><td>Long-working-distance, index-matched objectives and large chambers matched to the clearing medium.</td><td>Centimetre-scale intact organs imaged at cellular resolution.</td><td>Optics tied to one clearing protocol; very large data volumes.</td></tr>
+   <tr><td><strong>Resolution-extending schemes</strong><br><a class="cite" href="#r2">Power &amp; Huisken 2017</a></td><td>Beam tiling, axially swept illumination, or Bessel/lattice beams to keep the sheet thin across a wide field.</td><td>More uniform axial resolution over large fields of view.</td><td>Added optical and computational complexity.</td></tr>
+   <tr><td><strong>Point-scanning</strong> (confocal / 2-photon) &mdash; for contrast</td><td>Focused spot scanned through the volume; pinhole or nonlinear excitation rejects out-of-focus light.</td><td>Well-established, high resolution, robust in scattering tissue (2-photon).</td><td>Slow over large volumes; far higher cumulative dose &mdash; the problem LSFM was built to avoid.</td></tr>
+  </tbody>
+ </table>
+ </div>
+</section>
+
+<section class="s">
+ <h2>5 &middot; Key references</h2>
+ <div class="refs">
+  <p class="ref" id="r1">Huisken, J., Swoger, J., Del Bene, F., Wittbrodt, J., &amp; Stelzer, E. H. K. (2004). <strong>Optical sectioning deep inside live embryos by selective plane illumination microscopy.</strong> <em>Science</em>, 305(5686), 1007&ndash;1009. <a href="https://doi.org/10.1126/science.1100035" target="_blank">doi.org/10.1126/science.1100035</a></p>
+  <p class="ref" id="r2">Power, R. M., &amp; Huisken, J. (2017). <strong>A guide to light-sheet fluorescence microscopy for multiscale imaging.</strong> <em>Nature Methods</em>, 14(4), 360&ndash;373. <a href="https://doi.org/10.1038/nmeth.4224" target="_blank">doi.org/10.1038/nmeth.4224</a></p>
+  <p class="ref" id="r3">Richardson, D. S., &amp; Lichtman, J. W. (2015). <strong>Clarifying tissue clearing.</strong> <em>Cell</em>, 162(2), 246&ndash;257. <a href="https://doi.org/10.1016/j.cell.2015.06.067" target="_blank">doi.org/10.1016/j.cell.2015.06.067</a></p>
+  <p class="ref" id="r4">Renier, N., Wu, Z., Simon, D. J., Yang, J., Ariel, P., &amp; Tessier-Lavigne, M. (2014). <strong>iDISCO: a simple, rapid method to immunolabel large tissue samples for volume imaging.</strong> <em>Cell</em>, 159(4), 896&ndash;910. <a href="https://doi.org/10.1016/j.cell.2014.10.010" target="_blank">doi.org/10.1016/j.cell.2014.10.010</a></p>
+  <p class="ref" id="r5">Pitrone, P. G., Schindelin, J., Stuyvenberg, L., Preibisch, S., Weber, M., Eliceiri, K. W., Huisken, J., &amp; Tomancak, P. (2013). <strong>OpenSPIM: an open-access light-sheet microscopy platform.</strong> <em>Nature Methods</em>, 10(7), 598&ndash;599. <a href="https://doi.org/10.1038/nmeth.2507" target="_blank">doi.org/10.1038/nmeth.2507</a></p>
+ </div>
+</section>
+
+<footer>Cleared-tissue light-sheet microscope (a table-built Flamingo / T-SPIM). &nbsp;&middot;&nbsp; <a href="CTLSM_Interactive.html">&larr; back to the interactive companion</a></footer>
+</div></body></html>

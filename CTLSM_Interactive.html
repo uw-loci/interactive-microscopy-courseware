@@ -6,7 +6,7 @@
 *{box-sizing:border-box;}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
 .wrap{max-width:980px;margin:0 auto;padding:32px 20px 80px;}
-header h1{font-size:30px;margin:0 0 6px;font-weight:800;letter-spacing:-.01em;}
+header h1{font-size:34px;margin:0 0 6px;font-weight:800;letter-spacing:-.01em;}
 header .sub{color:var(--mut);font-size:16px;margin:0 0 4px;}
 header .demo{color:var(--am);font-size:13px;font-style:italic;}
 .eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 30px;}
@@ -30,12 +30,16 @@ button[aria-pressed=true]{border-color:var(--cy);color:var(--cy);}
 .mid{background:rgba(251,191,36,.16);color:var(--am);}
 footer{color:var(--mut);font-size:13px;margin-top:30px;text-align:center;}
 footer a{color:var(--am);text-decoration:none;}
+.refs{margin:6px 0 0;padding-left:20px;color:var(--mut);font-size:13.5px;}
+.refs li{margin:8px 0;}
+.refs a{color:var(--am);text-decoration:none;}
+.refs b{color:var(--ink);}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
 </style></head>
 <body><div class="wrap">
 <header>
-<div class="eyebrow">Cleared-tissue light-sheet microscope</div>
-<h1>Interactive companion</h1>
+<div class="eyebrow">Interactive companion</div>
+<h1>Cleared-tissue light-sheet microscope</h1>
 <p class="sub">Play with the optics behind the scope — the light sheet, the two arms, and what makes good data.</p>
 <p class="demo">Companion to the live demo. Drag the sliders; everything updates live.</p>
 </header>
@@ -102,7 +106,7 @@ footer a{color:var(--am);text-decoration:none;}
 </section>
 
 
-<footer>Cleared-tissue light-sheet microscope (a table-built Flamingo / T-SPIM). &nbsp;·&nbsp; <a href="CTLSM_Teaching.pptx">&larr; back to the slide deck</a></footer>
+<footer>Cleared-tissue light-sheet microscope (a table-built Flamingo / T-SPIM). &nbsp;·&nbsp; <a href="CTLSM_Literature_Review.html">Literature review &rarr;</a> &nbsp;·&nbsp; <a href="CTLSM_Teaching.pptx">&larr; back to the slide deck</a></footer>
 </div>
 <script>
 var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#e8edf8',DIMG='rgba(150,180,170,.22)';
@@ -302,20 +306,25 @@ function T(x,tx,ty,s,col,sz,al){x.save();x.globalAlpha=al==null?1:al;x.fillStyle
    var cw=d1[0],ch=d1[1];
    if(playing){
      fcnt++;
-     if(fcnt%4===0){ for(var r=0;r<GH;r++)sigC[r*GW+cx]*=0.90; cx++; if(cx>=GW){cx=0; zc=(zc+1)%GH;} }  // 75% slower, 2x bleach
+     if(fcnt%4===0){ for(var r=0;r<GH;r++){ var sp=Math.round(Math.abs(r-zc)/(GH-1)*2.2); for(var dc=-sp;dc<=sp;dc++){ var col=cx+dc; if(col<0||col>=GW)continue; sigC[r*GW+col]*=(dc===0?0.90:0.965); } } cx++; if(cx>=GW){cx=0; zc=(zc+1)%GH;} }  // hourglass double-cone bleach footprint
      zf+=0.125; var row=Math.floor(zf)%GH; if(row!==lastRow){for(var i=0;i<GW;i++)sigL[row*GW+i]*=0.93; lastRow=row;}
    }
-   // confocal: vertical beam line through full depth + focus marker
-   var bx=40+cx*cw+cw/2;
-   x.globalAlpha=.85;x.fillStyle=AM;x.fillRect(bx-2,py,4,ph);x.globalAlpha=1;
-   x.fillStyle='#fff';x.beginPath();x.arc(bx,py+zc*ch+ch/2,4.5,0,7);x.fill();
-   T(x,40,py-30,'excitation enters from the top (down the depth)',AM,10,'left');
-   T(x,230,py+ph+22,'bleaches the full-depth beam line at every point - slow',MUT,11);
+   // confocal: hourglass (double-cone) beam converging at the focal depth
+   var bx=40+cx*cw+cw/2, fy=py+zc*ch+ch/2;
+   var waistHW=Math.max(2,cw*0.16), edgeHW=cw*2.0, maxd=Math.max(fy-py,(py+ph)-fy);
+   function hw(yy){return waistHW+Math.abs(yy-fy)/maxd*(edgeHW-waistHW);}
+   x.beginPath();var Nh=20;
+   for(var s=0;s<=Nh;s++){var yy=py+ph*s/Nh;x.lineTo(bx-hw(yy),yy);}
+   for(var s2=Nh;s2>=0;s2--){var yy2=py+ph*s2/Nh;x.lineTo(bx+hw(yy2),yy2);}
+   x.closePath();x.globalAlpha=.5;x.fillStyle=AM;x.fill();x.globalAlpha=1;
+   x.fillStyle='#fff';x.beginPath();x.arc(bx,fy,4.5,0,7);x.fill();
+   T(x,230,py-30,'excitation enters from the top (down the depth)',AM,10);
+   T(x,230,py+ph+22,'bleaches a full-depth double cone at every point - slow',MUT,11);
    // light sheet: horizontal plane sweeping
    var sr=Math.floor(zf)%GH, sy=py+sr*ch+ch/2;
    x.globalAlpha=.65;x.fillStyle=CY;x.fillRect(480,sy-ch/2,pw,ch);x.globalAlpha=1;
    L(x,470,sy,480,sy,CY,3,.9);
-   T(x,480,py-30,'sheet enters from the side (one plane)',CY,10,'left');
+   T(x,670,py-30,'sheet enters from the side (one plane)',CY,10);
    T(x,670,py+ph+22,'one plane lit, sweeps through fast',MUT,11);
    var b0=mean(base);function tagf(m){var r=m/b0;if(r>0.66)return['bright','good'];if(r>0.33)return['fading','mid'];return['bleached','bad'];}
    var tc=tagf(mean(sigC)),tl=tagf(mean(sigL));dCs.textContent=tc[0];dCs.className='tag '+tc[1];dLs.textContent=tl[0];dLs.className='tag '+tl[1];

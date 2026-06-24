@@ -16,6 +16,7 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-microscopy-cou
 - [Interactive microscope — light-sheet overview](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Microscope_Demo.html) — clickable photo map of the light-sheet beam path. ([`CTLSM_Microscope_Demo.html`](CTLSM_Microscope_Demo.html))
 - [Interactive companion](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Interactive.html) — the core light-sheet concept widgets. ([`CTLSM_Interactive.html`](CTLSM_Interactive.html))
 - [Place the beam in the chamber](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_BeamPlacement.html) — A–F knobs mapped to beam position. ([`CTLSM_BeamPlacement.html`](CTLSM_BeamPlacement.html))
+- [Literature review](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Literature_Review.html) — a concise review: principles, tissue clearing, whole-organ imaging, and key references. ([`CTLSM_Literature_Review.html`](CTLSM_Literature_Review.html))
 
 ### Polarized-Light Microscopy (PPM)
 - [Seeing the Invisible — intro to PPM](https://uw-loci.github.io/interactive-microscopy-courseware/PPM_Intro_Interactive.html) — interactive introduction to polarized-light microscopy. ([`PPM_Intro_Interactive.html`](PPM_Intro_Interactive.html))

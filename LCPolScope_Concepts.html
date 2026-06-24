@@ -24,6 +24,10 @@ button[aria-pressed=true]{border-color:var(--cy);color:var(--cy);}
 .readout b{color:var(--ink);}
 footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid var(--hair);padding-top:16px;}
 footer a{color:var(--am);text-decoration:none;}
+.refs{margin:6px 0 0;padding-left:20px;color:var(--mut);font-size:13.5px;}
+.refs li{margin:8px 0;}
+.refs a{color:var(--am);text-decoration:none;}
+.refs b{color:var(--ink);}
 </style></head>
 <body><div class="wrap">
 <div class="eyebrow">LC-PolScope &middot; concept interactives</div>
@@ -91,7 +95,7 @@ footer a{color:var(--am);text-decoration:none;}
   <label><span>rotate the structure &nbsp;<span class="v" id="v5r">0&deg;</span></span><input type="range" id="s5r" min="0" max="180" value="0"></label>
   <label><span>retardance (brightness) &nbsp;<span class="v" id="v5g">0.70</span></span><input type="range" id="s5g" min="10" max="100" value="70"></label>
 </div>
-<div class="readout"><span id="n5">Opposite fibers share a color: orientation is defined modulo 180&deg;.</span></div>
+<div class="readout"><span id="n5">The spiral runs through every orientation at once, so it shows the whole key; rotating it turns the shape (watch the white tip) and shifts every color. Opposite directions share a color — orientation is defined mod&nbsp;180&deg;.</span></div>
 </section>
 
 <section class="card">
@@ -106,7 +110,7 @@ footer a{color:var(--am);text-decoration:none;}
 </section>
 
 <footer>
-Educational simplifications of LC-PolScope principles. Brightness uses Jones-calculus closed forms (crossed-polarizer transmission, circular-in/circular-out). The real instrument uses two liquid crystals stepped through specific settings; the five-frame card illustrates the idea with evenly spaced settings.<br>
+Educational simplifications of LC-PolScope principles. Brightness uses Jones-calculus closed forms (crossed-polarizer transmission, circular-in/circular-out). The real instrument steps two liquid crystals through specific settings; the five-frame card maps these to an extinction reference plus four compensator-bias orientations (0°, 45°, 90°, 135°) — the classic background-plus-four-frame scheme.<br>
 References: Oldenbourg &amp; Mei, <a href="https://doi.org/10.1111/j.1365-2818.1995.tb03669.x">J. Microsc. 180:140 (1995)</a>; Shribak &amp; Oldenbourg, <a href="https://doi.org/10.1364/AO.42.003009">Appl. Opt. 42:3009 (2003)</a>; <a href="https://openpolscope.org/docs/Pol-Acquisition-Manual-3.0.pdf">OpenPolScope manual</a>.
 </footer>
 </div>
@@ -307,21 +311,28 @@ var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#
  var b4go=gid('b4go'),b4comp=gid('b4comp'),n4=gid('n4');
  // 4 regions, each [G(deg), phi(deg)]
  var regs=[[28,20],[72,80],[45,140],[60,50]];
- var alphas=[0,36,72,108,144]; // 5 settings (deg)
+ var bias=[0,45,90,135]; // the four swing orientations (deg)
  var CHI=0.5;
- function frameI(Gdeg,phiDeg,aDeg){var G=Gdeg*D2R,phi=phiDeg*D2R,a=aDeg*D2R;
+ var fLabel=['1 · extinction','2 · bias 0°','3 · bias 45°','4 · bias 90°','5 · bias 135°'];
+ // frame 1: liquid crystals set for a dark background — bright = retardance, blind to angle
+ function frameExt(Gdeg){var G=Gdeg*D2R;return Math.sin(G/2)*Math.sin(G/2);}
+ // frames 2–5: compensator biased at orientation a — brightest where the slow axis lines up with a
+ function frameSwing(Gdeg,phiDeg,aDeg){var G=Gdeg*D2R,phi=phiDeg*D2R,a=aDeg*D2R;
    var off=0.5*Math.sin(G/2)*Math.sin(G/2)+0.12;
    var amp=0.42*Math.sin(G)*Math.sin(CHI);
    return off+amp*Math.cos(2*(a-phi));}
+ function frameVal(k,Gdeg,phiDeg){return k===0?frameExt(Gdeg):frameSwing(Gdeg,phiDeg,bias[k-1]);}
  var showMaps=false, playing=false, hi=-1, tmr=null;
  b4comp.onclick=function(){showMaps=true;draw();};
  b4go.onclick=function(){if(playing)return;playing=true;hi=0;showMaps=false;b4go.setAttribute('aria-pressed',true);
    tmr=setInterval(function(){hi++;if(hi>=5){clearInterval(tmr);playing=false;hi=-1;showMaps=true;b4go.setAttribute('aria-pressed',false);}draw();},420);draw();};
- function recon(){ // per region reconstruct
-   return regs.map(function(rg){var Sc=0,Ss=0,S0=0;
-     for(var k=0;k<5;k++){var I=frameI(rg[0],rg[1],alphas[k]);S0+=I;Sc+=I*Math.cos(2*alphas[k]*D2R);Ss+=I*Math.sin(2*alphas[k]*D2R);}
-     var amp=2/5*Math.sqrt(Sc*Sc+Ss*Ss);
+ function recon(){ // combine the four swing frames (2–5)
+   return regs.map(function(rg){
+     var I0=frameSwing(rg[0],rg[1],0),I45=frameSwing(rg[0],rg[1],45),
+         I90=frameSwing(rg[0],rg[1],90),I135=frameSwing(rg[0],rg[1],135);
+     var Sc=I0-I90, Ss=I45-I135;               // 2·amp·cos2φ , 2·amp·sin2φ
      var az=0.5*Math.atan2(Ss,Sc)/D2R;if(az<0)az+=180;
+     var amp=0.5*Math.hypot(Sc,Ss);
      var Gr=Math.asin(Math.min(1,amp/(0.42*Math.sin(CHI))))/D2R;
      return [Gr,az];});}
  function drawRegions(px,py,sz,valFn){ // 2x2
@@ -331,15 +342,16 @@ var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#
  function draw(){
    x.clearRect(0,0,W,H);
    // top row: 5 raw frames
-   txt(x,'five raw frames (liquid-crystal settings)',30,24,INK,13,'left');
-   var fsz=120, fy=40, gap=20, fx0=30;
+   txt(x,'five raw frames — each a different liquid-crystal setting',30,24,INK,13,'left');
+   var fsz=120, fy=44, gap=20, fx0=30;
    for(var k=0;k<5;k++){var fx=fx0+k*(fsz+gap);
-     drawRegions(fx,fy,fsz,function(i,rx,ry,s){x.fillStyle=gray(frameI(regs[i][0],regs[i][1],alphas[k]));x.fillRect(rx,ry,s,s);});
+     drawRegions(fx,fy,fsz,function(i,rx,ry,s){x.fillStyle=gray(frameVal(k,regs[i][0],regs[i][1]));x.fillRect(rx,ry,s,s);});
      x.strokeStyle=(hi===k)?AM:HAIR;x.lineWidth=(hi===k)?3:1;x.strokeRect(fx,fy,fsz,fsz);
-     txt(x,'setting '+(k+1),fx+fsz/2,fy+fsz+14,(hi===k)?AM:MUT,11,'center');
+     txt(x,fLabel[k],fx+fsz/2,fy+fsz+14,(hi===k)?AM:(k===0?CY:MUT),11,'center');
    }
+   txt(x,'frame 1: dark background — bright = more retardance, but blind to angle.   frames 2–5: each one brightens structures whose slow axis aligns with that bias direction.',30,fy+fsz+30,MUT,11,'left');
    // bottom: maps
-   var my=210;
+   var my=224;
    if(showMaps){
      var rc=recon();
      // retardance map
@@ -359,7 +371,7 @@ var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#
      var tx=590,ty=my-6;
      txt(x,'region   Γ (recovered)   slow axis',tx,ty,INK,12,'left');
      for(var i=0;i<4;i++){txt(x,(i+1)+'        '+rc[i][0].toFixed(0)+'°           '+rc[i][1].toFixed(0)+'°',tx,ty+22+i*22,MUT,12,'left');}
-     n4.textContent='Two quantitative maps from five brightness frames — retardance and slow-axis angle, per pixel.';
+     n4.textContent='Two quantitative maps from the five frames — retardance and slow-axis angle, per pixel.';
    } else {
      txt(x,'press “compute maps” to combine the five frames →',60,my+40,MUT,13,'left');
    }
@@ -374,23 +386,30 @@ var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#
  function draw(){
    x.clearRect(0,0,W,H);
    var rot=+sr.value, val=(+sg.value)/100; v5r.textContent=rot+'°';v5g.textContent=val.toFixed(2);
-   // aster of fibers, colored by azimuth
-   var cx=230,cy=180,N=24;
-   txt(x,'fibers colored by slow-axis angle',cx,28,INK,13,'center');
-   for(var i=0;i<N;i++){var a=(i/N)*180; var az=(a+rot)%180;
-     var ang=a*D2R;
-     x.strokeStyle=azCol(az,val);x.lineWidth=7;x.lineCap='round';
-     x.beginPath();x.moveTo(cx+Math.cos(ang)*20,cy+Math.sin(ang)*20);x.lineTo(cx+Math.cos(ang)*120,cy+Math.sin(ang)*120);x.stroke();
-     x.beginPath();x.moveTo(cx-Math.cos(ang)*20,cy-Math.sin(ang)*20);x.lineTo(cx-Math.cos(ang)*120,cy-Math.sin(ang)*120);x.stroke();
+   // an asymmetric spiral fiber bundle: every segment a different local orientation
+   var cx=250,cy=185, rotR=rot*D2R;
+   txt(x,'a curved fiber bundle, colored by local slow-axis angle',cx,28,INK,13,'center');
+   x.lineCap='round'; var prev=null;
+   for(var th=0.35; th<=4.4*Math.PI; th+=0.10){
+     var r=12+7.0*th, ang=th+rotR;
+     var p=[cx+Math.cos(ang)*r, cy+Math.sin(ang)*r];
+     if(prev){
+       var az=((Math.atan2(p[1]-prev[1],p[0]-prev[0]))/D2R+180)%180;
+       x.strokeStyle=azCol(az,val);x.lineWidth=7;
+       x.beginPath();x.moveTo(prev[0],prev[1]);x.lineTo(p[0],p[1]);x.stroke();
+     }
+     prev=p;
    }
+   // landmark dot at the outer tip so the rotation is unmistakable
+   x.fillStyle='#fff';x.beginPath();x.arc(prev[0],prev[1],5,0,TAU);x.fill();
    x.lineCap='butt';
    // legend wheel
-   var lx=640,ly=180,lr=110;
+   var lx=665,ly=185,lr=105;
    txt(x,'orientation key',lx,40,INK,13,'center');
-   for(var a2=0;a2<180;a2+=2){var az2=a2;x.strokeStyle=azCol(az2,1);x.lineWidth=6;
-     x.beginPath();x.moveTo(lx+Math.cos(a2*D2R)*60,ly+Math.sin(a2*D2R)*60);x.lineTo(lx+Math.cos(a2*D2R)*lr,ly+Math.sin(a2*D2R)*lr);x.stroke();
-     x.beginPath();x.moveTo(lx-Math.cos(a2*D2R)*60,ly-Math.sin(a2*D2R)*60);x.lineTo(lx-Math.cos(a2*D2R)*lr,ly-Math.sin(a2*D2R)*lr);x.stroke();}
-   txt(x,'0°',lx+lr+16,ly,MUT,12,'left');txt(x,'90°',lx,ly-lr-12,MUT,12,'center');txt(x,'45°',lx+lr*0.72+8,ly+lr*0.72+8,MUT,12,'left');
+   for(var a2=0;a2<180;a2+=2){x.strokeStyle=azCol(a2,1);x.lineWidth=6;
+     x.beginPath();x.moveTo(lx+Math.cos(a2*D2R)*58,ly+Math.sin(a2*D2R)*58);x.lineTo(lx+Math.cos(a2*D2R)*lr,ly+Math.sin(a2*D2R)*lr);x.stroke();
+     x.beginPath();x.moveTo(lx-Math.cos(a2*D2R)*58,ly-Math.sin(a2*D2R)*58);x.lineTo(lx-Math.cos(a2*D2R)*lr,ly-Math.sin(a2*D2R)*lr);x.stroke();}
+   txt(x,'0°',lx+lr+16,ly,MUT,12,'left');txt(x,'90°',lx,ly-lr-12,MUT,12,'center');
  }
  sr.addEventListener('input',draw);sg.addEventListener('input',draw);draw();
 })();
