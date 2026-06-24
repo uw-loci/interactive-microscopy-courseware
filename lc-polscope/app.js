@@ -732,6 +732,177 @@ R = (λ / 2π) · arctan(√(A² + B²))
         specimenGrid = [];
         const center = gridSize / 2;
         
+        if (type === "tumor_parallel" || type === "tumor_perpendicular" || type === "aster") {
+            const fibers = [];
+            
+            // Deterministic LCG for stability across redraws
+            let seed = 42;
+            function deterministicRandom() {
+                const x = Math.sin(seed++) * 10000;
+                return x - Math.floor(x);
+            }
+            
+            if (type === "aster") {
+                // Centrosomal Microtubule Aster (Radial Pattern)
+                // 16 individual thinned microtubules radiating from center to the edges, occupying most of the field of view
+                const numMicrotubules = 16;
+                for (let i = 0; i < numMicrotubules; i++) {
+                    const angleRad = (i * 360 / numMicrotubules * Math.PI) / 180;
+                    const x1 = center + 4 * Math.cos(angleRad);
+                    const y1 = center + 4 * Math.sin(angleRad);
+                    const x2 = center + 47 * Math.cos(angleRad);
+                    const y2 = center + 47 * Math.sin(angleRad);
+                    
+                    fibers.push({
+                        x1, y1, x2, y2,
+                        r_peak: 22.0, // High retardance fiber
+                        // Negate angleRad to align physical slow axis with visual screen orientation (y-axis flipped)
+                        phi: (((-angleRad * 180) / Math.PI) % 180 + 180) % 180,
+                        width: 1.6 // Thinned width for distinct individual fibers with gaps
+                    });
+                }
+            } else if (type === "tumor_parallel") {
+                // 1. Tangential containment fibers (TACS-2) - parallel to the boundary
+                // Spaced out (6 fibers instead of 8, and length = 10 instead of 14) so they don't form a merged thick ring
+                for (let i = 0; i < 6; i++) {
+                    const angleRad = (i * 60 * Math.PI) / 180;
+                    const r_pos = 24;
+                    const xc = center + r_pos * Math.cos(angleRad);
+                    const yc = center + r_pos * Math.sin(angleRad);
+                    
+                    // Fiber orientation is tangential: angle + 90 degrees
+                    const fiberAngle = angleRad + Math.PI / 2;
+                    const L = 10; // fiber length: short enough to prevent merging
+                    const x1 = xc - (L / 2) * Math.cos(fiberAngle);
+                    const y1 = yc - (L / 2) * Math.sin(fiberAngle);
+                    const x2 = xc + (L / 2) * Math.cos(fiberAngle);
+                    const y2 = yc + (L / 2) * Math.sin(fiberAngle);
+                    
+                    fibers.push({
+                        x1, y1, x2, y2,
+                        r_peak: 24.0, // High retardance fiber
+                        // Negate fiberAngle to align physical slow axis with visual screen orientation (y-axis flipped)
+                        phi: (((-fiberAngle * 180) / Math.PI) % 180 + 180) % 180,
+                        width: 1.8 // Thinner profile for distinct individual fibers
+                    });
+                }
+            } else if (type === "tumor_perpendicular") {
+                // 2. Radial invasive fibers (TACS-3) - perpendicular, crossing the boundary
+                // Spaced out. Draw 6 fibers at angles 0, 60, 120, 180, 240, 300.
+                for (let i = 0; i < 6; i++) {
+                    const angleRad = (i * 60 * Math.PI) / 180;
+                    // Fiber starts inside (R=15) and extends outside (R=33)
+                    const x1 = center + 15 * Math.cos(angleRad);
+                    const y1 = center + 15 * Math.sin(angleRad);
+                    const x2 = center + 33 * Math.cos(angleRad);
+                    const y2 = center + 33 * Math.sin(angleRad);
+                    
+                    fibers.push({
+                        x1, y1, x2, y2,
+                        r_peak: 26.0, // High retardance fiber
+                        // Negate angleRad to align physical slow axis with visual screen orientation (y-axis flipped)
+                        phi: (((-angleRad * 180) / Math.PI) % 180 + 180) % 180,
+                        width: 1.8 // Thinner profile for distinct individual fibers
+                    });
+                }
+            }
+            
+            if (type !== "aster") {
+                // 3. Disorganized internal tumor core fibers (R < 15)
+                for (let i = 0; i < 8; i++) {
+                    const r_pos = 5 + deterministicRandom() * 8;
+                    const angleRad = deterministicRandom() * 2 * Math.PI;
+                    const xc = center + r_pos * Math.cos(angleRad);
+                    const yc = center + r_pos * Math.sin(angleRad);
+                    const fiberAngle = deterministicRandom() * Math.PI;
+                    const L = 6 + deterministicRandom() * 6;
+                    const x1 = xc - (L / 2) * Math.cos(fiberAngle);
+                    const y1 = yc - (L / 2) * Math.sin(fiberAngle);
+                    const x2 = xc + (L / 2) * Math.cos(fiberAngle);
+                    const y2 = yc + (L / 2) * Math.sin(fiberAngle);
+                    
+                    fibers.push({
+                        x1, y1, x2, y2,
+                        r_peak: 4.0 + deterministicRandom() * 4.0, // low retardance core
+                        // Negate fiberAngle to align physical slow axis with visual screen orientation (y-axis flipped)
+                        phi: (((-fiberAngle * 180) / Math.PI) % 180 + 180) % 180,
+                        width: 1.5
+                    });
+                }
+                
+                // 4. Background stromal fibers in the stroma (R > 35)
+                for (let i = 0; i < 12; i++) {
+                    const r_pos = 36 + deterministicRandom() * 12;
+                    const angleRad = deterministicRandom() * 2 * Math.PI;
+                    const xc = center + r_pos * Math.cos(angleRad);
+                    const yc = center + r_pos * Math.sin(angleRad);
+                    
+                    // Stromal fibers slightly aligned radially (outward alignment)
+                    const fiberAngle = angleRad + (deterministicRandom() - 0.5) * 0.4;
+                    const L = 10 + deterministicRandom() * 10;
+                    const x1 = xc - (L / 2) * Math.cos(fiberAngle);
+                    const y1 = yc - (L / 2) * Math.sin(fiberAngle);
+                    const x2 = xc + (L / 2) * Math.cos(fiberAngle);
+                    const y2 = yc + (L / 2) * Math.sin(fiberAngle);
+                    
+                    fibers.push({
+                        x1, y1, x2, y2,
+                        r_peak: 8.0 + deterministicRandom() * 6.0, // moderate retardance stroma
+                        // Negate fiberAngle to align physical slow axis with visual screen orientation (y-axis flipped)
+                        phi: (((-fiberAngle * 180) / Math.PI) % 180 + 180) % 180,
+                        width: 1.8
+                    });
+                }
+            }
+            
+            // Fill specimenGrid pixel-by-pixel
+            for (let y = 0; y < gridSize; y++) {
+                specimenGrid[y] = [];
+                for (let x = 0; x < gridSize; x++) {
+                    let maxR = 0;
+                    let bestPhi = 0;
+                    
+                    for (let f = 0; f < fibers.length; f++) {
+                        const fib = fibers[f];
+                        const vx = fib.x2 - fib.x1;
+                        const vy = fib.y2 - fib.y1;
+                        const wx = x - fib.x1;
+                        const wy = y - fib.y1;
+                        
+                        const lenSq = vx * vx + vy * vy;
+                        let t = 0;
+                        if (lenSq > 0) {
+                            t = (wx * vx + wy * vy) / lenSq;
+                            t = Math.max(0, Math.min(1, t));
+                        }
+                        
+                        const closestX = fib.x1 + t * vx;
+                        const closestY = fib.y1 + t * vy;
+                        
+                        const dx = x - closestX;
+                        const dy = y - closestY;
+                        const distSq = dx * dx + dy * dy;
+                        
+                        const r_val = fib.r_peak * Math.exp(-distSq / (2 * fib.width * fib.width));
+                        if (r_val > maxR) {
+                            maxR = r_val;
+                            bestPhi = fib.phi;
+                        }
+                    }
+                    
+                    // Low baseline background retardance if no fiber is close
+                    if (maxR < 0.5) {
+                        maxR = 0.2;
+                        bestPhi = 0;
+                    }
+                    
+                    specimenGrid[y][x] = { r: maxR, phi: (bestPhi % 180 + 180) % 180 };
+                }
+            }
+            return;
+        }
+        
+        // Analytical models for aster and parallel_collagen
         for (let y = 0; y < gridSize; y++) {
             specimenGrid[y] = [];
             for (let x = 0; x < gridSize; x++) {
@@ -742,20 +913,7 @@ R = (λ / 2π) · arctan(√(A² + B²))
                 const dy = y - center;
                 const dist = Math.sqrt(dx*dx + dy*dy);
                 
-                if (type === "aster") {
-                    // Spherically symmetric aster (radial microtubules)
-                    // Birefringence decreases with distance, slow axis is radial
-                    if (dist > 3) {
-                        r = Math.min(22, 100 / (dist - 1)); // peak retardance ~22nm
-                        // Slow axis is oriented radial, which means along the angle of the position vector
-                        phi = Math.atan2(dy, dx) * 180 / Math.PI;
-                    } else {
-                        r = 1.0; // low retardance at center centrosome
-                        phi = 0;
-                    }
-                } else if (type === "parallel_collagen") {
-                    // Simulating fewer but longer parallel fibers oriented at 135 degrees
-                    // We calculate distance to a set of 5 parallel lines: y - x = C_i
+                if (type === "parallel_collagen") {
                     const offsets = [-70, -40, -10, 20, 50, 80];
                     let minD = 999;
                     for (let i = 0; i < offsets.length; i++) {
@@ -764,34 +922,12 @@ R = (λ / 2π) · arctan(√(A² + B²))
                             minD = d;
                         }
                     }
-                    // Profile of fibers: retardance peak of 20nm, width parameter w = 3.5 pixels
                     const w = 3.5;
                     const fiberProfile = Math.exp(-(minD * minD) / (2 * w * w));
-                    r = 20.0 * fiberProfile; // 0nm baseline for high-contrast dark background, up to 20nm inside fibers
-                    phi = 135.0; // Solid orientation angle of 135 degrees along the entire length/width of fibers
-                } else if (type === "tumor_collagen") {
-                    // Bizarre, highly aligned, stretched collagen around tumor border
-                    // Fibers are highly aligned and thick (high retardance)
-                    // Let's simulate a circular "tumor boundary" at radius = 25 pixels
-                    const tumorRadius = 25;
-                    const borderDist = Math.abs(dist - tumorRadius);
-                    if (borderDist < 10) {
-                        // High retardance boundary
-                        r = 25.0 * Math.exp(-borderDist*borderDist / 20); // up to 25nm
-                        // Fiber orientation tangent to tumor boundary
-                        phi = (Math.atan2(dy, dx) * 180 / Math.PI) + 90.0;
-                    } else if (dist < tumorRadius) {
-                        // Inside tumor: lower retardance, randomized
-                        r = 2.0 + 3.0 * Math.random();
-                        phi = Math.random() * 180;
-                    } else {
-                        // Surrounding stroma: aligned collagen fibers radiating outwards
-                        r = 8.0 + 4.0 * Math.sin(x/3) * Math.sin(y/3);
-                        phi = Math.atan2(dy, dx) * 180 / Math.PI; // radial outward alignment
-                    }
+                    r = 20.0 * fiberProfile;
+                    phi = 135.0;
                 }
                 
-                // Keep angle in 0-180 degrees
                 phi = (phi % 180 + 180) % 180;
                 specimenGrid[y][x] = { r, phi };
             }

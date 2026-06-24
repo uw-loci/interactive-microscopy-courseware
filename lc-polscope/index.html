@@ -161,7 +161,8 @@
                                 <label>Specimen Type</label>
                                 <select id="select-specimen-type" class="form-control-select">
                                     <option value="parallel_collagen">(Recommended) Parallel Collagen Fibers (Stromal Bundles)</option>
-                                    <option value="tumor_collagen">Tumor Boundary Desmoplastic Collagen (Radial/Tangential)</option>
+                                    <option value="tumor_parallel">Tumor Boundary: Parallel/Tangential Fibers (TACS-2)</option>
+                                    <option value="tumor_perpendicular">Tumor Boundary: Perpendicular/Radial Fibers (TACS-3)</option>
                                     <option value="aster">Centrosomal Microtubule Aster (Radial Pattern)</option>
                                 </select>
                             </div>
@@ -303,6 +304,69 @@
                                         </div>
                                         <div class="raw-frame-title">I₅ (-A)</div>
                                     </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Simulator Tutorial & User Guide -->
+                <div class="card" style="margin-top: 1.25rem; background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.6) 100%); border: 1px solid var(--border-color);">
+                    <div class="card-title">
+                        <svg viewBox="0 0 24 24" width="20" height="20" stroke="var(--cyan)" fill="none" stroke-width="2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                        Interactive Simulator Quick-Start & Tutorial Guide
+                    </div>
+                    
+                    <div class="tutorial-grid">
+                        <!-- Left Column: How to Use -->
+                        <div class="tutorial-left-col">
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--cyan); font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: var(--cyan); color: var(--bg-darker); border-radius: 50%; width: 1.3rem; height: 1.3rem; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">1</span>
+                                How to Use the Simulator
+                            </h4>
+                            <ul style="margin: 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 0.6rem; color: var(--text-secondary);">
+                                <li><strong>Adjust Single-Pixel Sandbox:</strong> Move the <em>Specimen Retardance</em> and <em>Azimuth</em> sliders to simulate a single birefringent molecule or bundle. Observe the corresponding five camera raw counts (\(I_1\) to \(I_5\)) and how the demodulation algorithm reconstructs the original parameters.</li>
+                                <li><strong>Compare Reconstruction Math:</strong> Trace how the 4-frame (linear approximation) and 5-frame (exact trigonometric) algorithms process the raw intensities. Notice the deviation in the 4-frame at high retardances (\(R > 20\text{ nm}\)).</li>
+                                <li><strong>Select 2D Specimen:</strong> Use the <em>Specimen Type</em> dropdown to load different pre-modeled sample templates (Stromal Bundles, Tumor Boundaries, or Microtubule Asters).</li>
+                                <li><strong>Simulate Real-World Artifacts:</strong> Turn on <em>Lens Strain</em> to introduce an instrumental birefringence background (strain-induced lens birefringence). Add <em>Camera Read Noise</em> to test reconstruction stability under typical CMOS/CCD sensor noise.</li>
+                                <li><strong>Apply Vector Background Correction:</strong> Click <em>Vector Correction</em> to run background calibration. This performs pixel-by-pixel vector coefficient subtraction (\(A_{\text{corrected}} = A_{\text{raw}} - A_{\text{bg}}\)), successfully cleaning the image to isolate the specimen's true retardance.</li>
+                            </ul>
+                        </div>
+
+                        <!-- Right Column: Simulation Purposes -->
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <h4 style="margin: 0 0 0.5rem 0; color: var(--primary); font-size: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="background: var(--primary); color: white; border-radius: 50%; width: 1.3rem; height: 1.3rem; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: bold;">2</span>
+                                Purpose & Learning Objectives of Each Specimen
+                            </h4>
+                            <div style="display: flex; flex-direction: column; gap: 0.8rem; color: var(--text-secondary);">
+                                <div>
+                                    <strong style="color: white;">(1) Parallel Collagen Fibers (Stromal Bundles)</strong>
+                                    <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-muted);">
+                                        Simulates highly ordered, parallel collagen bundles in healthy connective tissue. 
+                                        <strong>Purpose:</strong> Demonstrates that standard polarized microscopy suffers from orientation dependency (extinction angles), whereas the LC-PolScope measures a constant, uniform retardance and azimuth slope (\(135^\circ\) Magenta) independent of stage rotation.
+                                    </p>
+                                </div>
+                                <div>
+                                    <strong style="color: white;">(2) Tumor Boundary: Parallel/Tangential Fibers (TACS-2)</strong>
+                                    <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-muted);">
+                                        Simulates early-stage tumor containment, where stromal collagen bundles surround the tumor core tangentially.
+                                        <strong>Purpose:</strong> Illustrates Tumor-Associated Collagen Signature 2 (TACS-2), demonstrating how collagen remodels to physically restrict or isolate the tumor cells in non-invasive stages.
+                                    </p>
+                                </div>
+                                <div>
+                                    <strong style="color: white;">(3) Tumor Boundary: Perpendicular/Radial Fibers (TACS-3)</strong>
+                                    <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-muted);">
+                                        Simulates late-stage tumor invasion, where collagen fibers align perpendicularly to the tumor boundary.
+                                        <strong>Purpose:</strong> Illustrates TACS-3, showing the formation of radial "invasion tracks" that facilitate rapid cancer cell migration, local invasion, and metastasis into the surrounding stroma.
+                                    </p>
+                                </div>
+                                <div>
+                                    <strong style="color: white;">(4) Centrosomal Microtubule Aster (Radial Pattern)</strong>
+                                    <p style="margin: 0.2rem 0 0 0; font-size: 0.82rem; color: var(--text-muted);">
+                                        Simulates a mitotic spindle pole or centrosomal aster with 16 individual radiating microtubule polymers.
+                                        <strong>Purpose:</strong> Models cell division biology. Shows the extreme orientation sensitivity of the LC-PolScope, mapping a full \(180^\circ\) of radial azimuth angles in a single snapshot. The thinned fibers show the system's ability to resolve sub-diffraction-limited filamentous structures.
+                                    </p>
                                 </div>
                             </div>
                         </div>
