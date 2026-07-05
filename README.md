@@ -14,6 +14,7 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-microscopy-cou
 
 ### Cleared-Tissue Light-Sheet (CTLSM)
 - [Learn about Cleared Tissue Light Sheet 1 - Low Res](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Microscope_Demo.html) — clickable photo map of the light-sheet beam path. ([`CTLSM_Microscope_Demo.html`](CTLSM_Microscope_Demo.html))
+- [Learn about Cleared Tissue Light Sheet 2 - High Res](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM2_Microscope_Demo.html) — high-resolution photo tour, from the full bench into each detailed view (in progress). ([`CTLSM2_Microscope_Demo.html`](CTLSM2_Microscope_Demo.html))
 - [Light Sheet Concepts - Interactive](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Interactive.html) — the core light-sheet concept widgets. ([`CTLSM_Interactive.html`](CTLSM_Interactive.html))
 - [Light Sheet Alignment Simulation](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_BeamPlacement.html) — A–F knobs mapped to beam position; a simplified teaching simulation (real alignment is more involved). ([`CTLSM_BeamPlacement.html`](CTLSM_BeamPlacement.html))
 - [Literature review](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Literature_Review.html) — a concise review: principles, tissue clearing, whole-organ imaging, and key references. ([`CTLSM_Literature_Review.html`](CTLSM_Literature_Review.html))
