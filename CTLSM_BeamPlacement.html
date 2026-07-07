@@ -49,7 +49,7 @@ footer{color:var(--mut);font-size:13px;margin-top:26px;text-align:center;}
 
 <section>
 <canvas id="cv" width="960" height="560" aria-hidden="true"></canvas>
-<h2 class="sr-only">Optics column with two steering mirrors aiming the beam into the fixed excitation objective's back aperture; chamber top-down (rectangle) and front (circle) views show the beam only when it makes it into the objective.</h2>
+<h2 class="sr-only">Optics column with two steering mirrors aiming the beam into the fixed illumination objective's back aperture; chamber top-down (rectangle) and front (circle) views show the beam only when it makes it into the objective.</h2>
 <div class="grid">
   <div class="ctl"><div class="top"><span class="chip" style="background:#22D3EE">A</span><span class="desc">A &mdash; translate up/down (front view)</span><span class="v" id="vA">0</span></div><input type="range" id="A" min="-100" max="100" value="15"></div>
   <div class="ctl"><div class="top"><span class="chip" style="background:#22D3EE">B</span><span class="desc">B &mdash; translate toward/away from detector (top-down) &middot; FOCUS</span><span class="v" id="vB">0</span></div><input type="range" id="B" min="-100" max="100" value="10"></div>
@@ -121,10 +121,10 @@ footer{color:var(--mut);font-size:13px;margin-top:26px;text-align:center;}
   tiltMirror(vx,abY,16,A,B);knob(vx+40,abY-8,A,CY,'A');knob(vx-40,abY-8,B,CY,'B');
   lens(vx,fY,TEAL,18,true,true);chip(vx+46,fY,'F',MUT);Tt(vx+64,fY+4,'(not in demo)',MUT,9,'left');
   foldMirror(vx,cdY,C,D);knob(vx-42,cdY+18,C,AM,'C');knob(vx+42,cdY+18,D,AM,'D');Tt(vx,cdY+44,'C/D fold mirror (45 deg)',MUT,9);
-  // excitation objective: large, FIXED
+  // illumination objective: large, FIXED
   x.save();x.fillStyle=TEAL;x.beginPath();x.roundRect(objBackX,objCY-40,30,80,5);x.fill();
   x.fillStyle='#bcd';x.beginPath();x.moveTo(objBackX+30,objCY-30);x.lineTo(objBackX+58,objCY-18);x.lineTo(objBackX+58,objCY+18);x.lineTo(objBackX+30,objCY+30);x.closePath();x.fill();x.restore();
-  Tt(objBackX+26,objCY+56,'excitation objective (fixed)',MUT,10);
+  Tt(objBackX+26,objCY+56,'illumination objective (fixed)',MUT,10);
   // back-aperture face-on inset (shows where the beam lands)
   var apx=150,apy=470,apR=46;
   Tt(apx,apy-apR-12,'objective back aperture',MUT,11);

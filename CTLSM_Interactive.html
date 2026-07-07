@@ -106,6 +106,24 @@ footer a{color:var(--am);text-decoration:none;}
 </section>
 
 
+<!-- WIDGET F: ASLM - axially swept light sheet + rolling shutter -->
+<section id="aslm">
+<h2><span class="num">6</span>Axially swept light sheet (ASLM) &mdash; sweeping the waist with a voice coil</h2>
+<p class="lede"><b>How this microscope stays razor&#8209;thin across the whole field.</b> A thin waist gives the sharpest optical sections &mdash; but a thin sheet is also <i>short</i>, staying thin over only a small stretch, so it can&#39;t cover the field on its own (widget 2). <b>ASLM</b> solves this: a <b>voice coil</b> in a remote&#8209;focusing arm rocks a mirror back and forth, sliding the thin waist across the field of view, while the camera&#39;s <b>rolling shutter</b> opens only a narrow band that rides along with the waist &mdash; so only the thinnest, in&#8209;focus slice is ever recorded. Match the sheet waist to the shutter and the section sharpens &mdash; but it also dims, because a thinner band collects less light. Drag both sliders.</p>
+<canvas id="fCv" width="900" height="430" aria-hidden="true"></canvas>
+<h2 class="sr-only">A voice-coil mirror sweeps the light-sheet waist across the field of view while the camera rolling shutter tracks the waist, recording only the thin in-focus band. Narrowing the waist and shutter together sharpens the image but reduces its brightness; a shutter wider than the waist lets out-of-focus haze leak in.</h2>
+<div class="controls">
+  <label><span>light-sheet waist &nbsp;<span class="v" id="fWaist">medium</span></span><input type="range" id="fWaistR" min="6" max="60" value="34"></label>
+  <label><span>rolling-shutter width &nbsp;<span class="v" id="fShut">medium</span></span><input type="range" id="fShutR" min="6" max="70" value="40"></label>
+  <button id="fPlay" aria-pressed="true">sweep: on</button>
+</div>
+<div class="readout">Axial section: <span id="fSharp" class="tag good">crisp</span> &nbsp;&middot;&nbsp; brightness: <span id="fBright" class="tag good">bright</span> &nbsp;&middot;&nbsp; <span id="fMatch"></span> <span id="fNote"></span></div>
+<ul class="refs">
+  <li>ASLM was introduced by <b>Dean et al.</b>, <i>Biophys. J.</i> <b>108</b>, 2807 (2015). This scope follows <b>Aakhte et al.</b>, &ldquo;Isotropic, aberration-corrected light sheet microscopy for rapid high-resolution imaging of cleared tissue,&rdquo; <b>Nat. Biotechnol.</b> (2025), <a href="https://doi.org/10.1038/s41587-025-02882-8">doi:10.1038/s41587-025-02882-8</a> &mdash; the voice-coil ASLM this microscope is built on.</li>
+</ul>
+</section>
+
+
 <footer>Cleared-tissue light-sheet microscope (a table-built Flamingo / T-SPIM). &nbsp;·&nbsp; <a href="CTLSM_Literature_Review.html">Literature review &rarr;</a> &nbsp;·&nbsp; <a href="CTLSM_Teaching.pptx">&larr; back to the slide deck</a></footer>
 </div>
 <script>
@@ -411,6 +429,89 @@ function T(x,tx,ty,s,col,sz,al){x.save();x.globalAlpha=al==null?1:al;x.fillStyle
   thkO.innerHTML=thkUm+' &micro;m';lenO.innerHTML=lenUm+' &micro;m';
   note.textContent=v<0.33?'Low objective NA: a thicker sheet that stays thin over a long run - fewer tiles.':(v>0.66?'High objective NA: a very thin waist, but short - crisp sections, more tiling.':'A balance of thickness and length.');
   requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+
+/* ---------- WIDGET F: ASLM - voice-coil swept waist + rolling shutter ---------- */
+(function(){
+ var cv=document.getElementById('fCv'); if(!cv) return; var x=cv.getContext('2d');
+ var wR=document.getElementById('fWaistR'),sR=document.getElementById('fShutR'),play=document.getElementById('fPlay');
+ var wL=document.getElementById('fWaist'),sL=document.getElementById('fShut');
+ var sharpT=document.getElementById('fSharp'),brightT=document.getElementById('fBright'),matchT=document.getElementById('fMatch'),note=document.getElementById('fNote');
+ var sweeping=true; play.onclick=function(){sweeping=!sweeping;play.setAttribute('aria-pressed',sweeping);play.textContent='sweep: '+(sweeping?'on':'off');};
+ var seed=13; function rnd(){seed=(seed*9301+49297)%233280;return seed/233280;}
+ var feats=[]; for(var i=0;i<120;i++){feats.push({u:rnd(),v:rnd(),r:1.4+rnd()*2.6,b:0.5+rnd()*0.5});}
+ var q=0;
+ function arrowH(px,py,dir){x.beginPath();x.moveTo(px,py);x.lineTo(px-8*dir,py-4);x.lineTo(px-8*dir,py+4);x.closePath();x.fill();}
+ function draw(){
+   if(sweeping){q+=0.006; if(q>1)q-=1;}
+   x.clearRect(0,0,900,430);x.fillStyle='#0c1322';x.fillRect(0,0,900,430);
+   var waistHW=+wR.value*0.5, shutHW=+sR.value*0.5;
+   var wn=(+wR.value-6)/54, sn=(+sR.value-6)/64;
+
+   // ===== TOP: illumination + sweep =====
+   var chX=250,chR=860,chW=chR-chX,chY=54,chH=150,cy=chY+chH/2;
+   // voice coil + mirror (left), translating along the optical axis
+   var vcx=74,vcy=cy,mshift=(q-0.5)*38;
+   L(x,36,vcy,150,vcy,MUT,1,.45);
+   x.fillStyle='#1b2940';x.strokeStyle=AM;x.lineWidth=1.5;x.beginPath();x.roundRect(vcx-28+mshift,vcy-20,20,40,4);x.fill();x.stroke();
+   for(var c=0;c<4;c++){L(x,vcx-26+mshift,vcy-14+c*9,vcx-10+mshift,vcy-14+c*9,AM,1,.6);}
+   L(x,vcx+2+mshift,vcy-22,vcx+2+mshift,vcy+22,'#cfe',4,1);
+   T(x,vcx,vcy-32,'voice coil + mirror',AM,11);
+   T(x,vcx,vcy+44,'remote focus',MUT,10);
+   L(x,vcx-30,vcy+54,vcx+30,vcy+54,MUT,1,.8);
+   x.fillStyle=MUT;arrowH(vcx-30,vcy+54,-1);arrowH(vcx+30,vcy+54,1);
+   T(x,(150+chX)/2,cy-28,'shifts the waist',CY,10);
+   L(x,152,cy,chX-8,cy,CY,1.5,.5);x.fillStyle=CY;arrowH(chX-6,cy,1);
+   // chamber top view
+   x.fillStyle='#0a1120';x.fillRect(chX,chY,chW,chH);x.strokeStyle='#22304e';x.lineWidth=1;x.strokeRect(chX,chY,chW,chH);
+   T(x,chX+chW/2,chY-12,'chamber (top view) - light sheet propagates ->',MUT,12);
+   var xW=chX+q*chW, reach=38+waistHW*7, edgeHW=chH*0.46;
+   function thick(px){var d=Math.abs(px-xW),f=Math.min(1,d/reach);return waistHW+(edgeHW-waistHW)*f*f;}
+   x.save();x.beginPath();x.rect(chX,chY,chW,chH);x.clip();
+   x.beginPath();x.moveTo(chX,cy-thick(chX));
+   for(var px=chX;px<=chR;px+=6)x.lineTo(px,cy-thick(px));
+   for(var px2=chR;px2>=chX;px2-=6)x.lineTo(px2,cy+thick(px2));
+   x.closePath();
+   var g=x.createLinearGradient(0,chY,0,chY+chH);g.addColorStop(0,'rgba(34,211,238,0)');g.addColorStop(.5,'rgba(34,211,238,.30)');g.addColorStop(1,'rgba(34,211,238,0)');
+   x.fillStyle=g;x.fill();
+   x.fillStyle='rgba(230,255,255,.06)';x.fillRect(xW-shutHW,chY,shutHW*2,chH);
+   L(x,xW-shutHW,chY,xW-shutHW,chY+chH,GREEN,1.5,.9);L(x,xW+shutHW,chY,xW+shutHW,chY+chH,GREEN,1.5,.9);
+   L(x,xW,cy-waistHW,xW,cy+waistHW,AM,3,1);
+   x.restore();
+   T(x,xW,chY+chH+14,'waist',AM,10);
+   T(x,chX+chW*0.5,chY+chH+30,'green band = rolling shutter (records only here, tracking the waist)',GREEN,10);
+
+   // ===== BOTTOM: camera image =====
+   var iX=40,iY=250,iW=820,iH=150;
+   x.fillStyle='#05080f';x.fillRect(iX,iY,iW,iH);x.strokeStyle='#22304e';x.strokeRect(iX,iY,iW,iH);
+   T(x,iX+iW/2,iY-12,'camera image (built up across one sweep)',MUT,12);
+   var leak=Math.max(0,sn-wn);
+   var blur=1.2+wn*7+leak*6;
+   var bandFrac=(Math.min(+wR.value,+sR.value)-6)/54; if(bandFrac<0)bandFrac=0; if(bandFrac>1)bandFrac=1;
+   var bright=0.30+0.70*bandFrac;
+   x.save();x.beginPath();x.rect(iX,iY,iW,iH);x.clip();
+   if(leak>0.02){x.globalAlpha=0.10*leak;x.fillStyle=CY;for(var i=0;i<feats.length;i++){var f=feats[i];x.beginPath();x.arc(iX+f.u*iW,iY+f.v*iH,10+leak*22,0,7);x.fill();}x.globalAlpha=1;}
+   for(var i2=0;i2<feats.length;i2++){var ff=feats[i2],pxx=iX+ff.u*iW,pyy=iY+ff.v*iH,a=bright*ff.b;
+     x.globalAlpha=a*0.9;x.fillStyle=CY;x.beginPath();x.arc(pxx,pyy,ff.r+blur,0,7);x.fill();
+     if(blur<3){x.globalAlpha=a;x.fillStyle='#eaffff';x.beginPath();x.arc(pxx,pyy,ff.r,0,7);x.fill();}
+   }
+   x.globalAlpha=1;
+   var sc=iX+q*iW;L(x,sc,iY,sc,iY+iH,GREEN,1,.35);
+   x.restore();
+
+   wL.textContent=wn<0.28?'thin':(wn<0.6?'medium':'thick');
+   sL.textContent=sn<0.28?'narrow':(sn<0.6?'medium':'wide');
+   var sq,scl; if(wn<0.28&&leak<0.2){sq='crisp';scl='good';} else if(wn<0.6&&leak<0.35){sq='softening';scl='mid';} else {sq='hazy';scl='bad';}
+   sharpT.textContent=sq;sharpT.className='tag '+scl;
+   var bq,bcl; if(bright>0.72){bq='bright';bcl='good';} else if(bright>0.5){bq='dimmer';bcl='mid';} else {bq='faint';bcl='bad';}
+   brightT.textContent=bq;brightT.className='tag '+bcl;
+   if(Math.abs(wn-sn)<0.12){matchT.innerHTML='<span class="tag good">matched</span> &nbsp;';note.textContent='Shutter matched to the waist: only the thin, in-focus slice is recorded. Thinner sections are sharper but collect less light - so the image also gets fainter.';}
+   else if(sn>wn){matchT.innerHTML='<span class="tag bad">shutter too wide</span> &nbsp;';note.textContent='The shutter is wider than the thin waist, so out-of-focus light leaks in as haze - sharpness and contrast drop.';}
+   else {matchT.innerHTML='<span class="tag mid">shutter too narrow</span> &nbsp;';note.textContent='The shutter is narrower than the waist - you clip in-focus signal (dimmer) without gaining resolution.';}
+   requestAnimationFrame(draw);
  }
  draw();
 })();
