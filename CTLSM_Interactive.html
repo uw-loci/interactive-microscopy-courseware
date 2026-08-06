@@ -114,7 +114,7 @@ footer a{color:var(--am);text-decoration:none;}
 <section id="aslm">
 <h2><span class="num">6</span>Axially swept light sheet (ASLM) &mdash; sweeping the waist with a voice coil</h2>
 <p class="lede"><b>How this microscope stays razor&#8209;thin across the whole field.</b> A thin waist gives the sharpest optical sections &mdash; but a thin sheet is also <i>short</i>, staying thin over only a small stretch, so it can&#39;t cover the field on its own (widget 2). <b>ASLM</b> solves this: a <b>voice coil</b> in a remote&#8209;focusing arm rocks a mirror back and forth, sliding the thin waist across the field of view, while the camera&#39;s <b>rolling shutter</b> opens only a narrow band that rides along with the waist &mdash; so only the thinnest, in&#8209;focus slice is ever recorded. Match the sheet waist to the shutter and the section sharpens &mdash; but it also dims, because a thinner band collects less light. Drag both sliders.</p>
-<canvas id="fCv" width="900" height="430" aria-hidden="true"></canvas>
+<canvas id="fCv" width="900" height="470" aria-hidden="true"></canvas>
 <h2 class="sr-only">A voice-coil mirror sweeps the light-sheet waist across the field of view while the camera rolling shutter tracks the waist, recording only the thin in-focus band. Narrowing the waist and shutter together sharpens the image but reduces its brightness; a shutter wider than the waist lets out-of-focus haze leak in.</h2>
 <div class="controls">
   <label><span>light-sheet waist &nbsp;<span class="v" id="fWaist">medium</span></span><input type="range" id="fWaistR" min="6" max="60" value="34"></label>
@@ -489,7 +489,7 @@ function T(x,tx,ty,s,col,sz,al){x.save();x.globalAlpha=al==null?1:al;x.fillStyle
    T(x,chX+chW*0.5,chY+chH+30,'green band = rolling shutter (records only here, tracking the waist)',GREEN,10);
 
    // ===== BOTTOM: camera image =====
-   var iX=40,iY=250,iW=820,iH=150;
+   var iX=40,iY=286,iW=820,iH=150;
    x.fillStyle='#05080f';x.fillRect(iX,iY,iW,iH);x.strokeStyle='#22304e';x.strokeRect(iX,iY,iW,iH);
    T(x,iX+iW/2,iY-12,'camera image (built up across one sweep)',MUT,12);
    var leak=Math.max(0,sn-wn);
