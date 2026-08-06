@@ -491,19 +491,26 @@ function T(x,tx,ty,s,col,sz,al){x.save();x.globalAlpha=al==null?1:al;x.fillStyle
    // ===== BOTTOM: camera image =====
    var iX=40,iY=286,iW=820,iH=150;
    x.fillStyle='#05080f';x.fillRect(iX,iY,iW,iH);x.strokeStyle='#22304e';x.strokeRect(iX,iY,iW,iH);
-   T(x,iX+iW/2,iY-12,'camera image (built up across one sweep)',MUT,12);
+   T(x,iX+iW/2,iY-12,'camera image - fills in behind the shutter, one sweep at a time',MUT,12);
    var leak=Math.max(0,sn-wn);
    var blur=1.2+wn*7+leak*6;
    var bandFrac=(Math.min(+wR.value,+sR.value)-6)/54; if(bandFrac<0)bandFrac=0; if(bandFrac>1)bandFrac=1;
    var bright=0.30+0.70*bandFrac;
    x.save();x.beginPath();x.rect(iX,iY,iW,iH);x.clip();
-   if(leak>0.02){x.globalAlpha=0.10*leak;x.fillStyle=CY;for(var i=0;i<feats.length;i++){var f=feats[i];x.beginPath();x.arc(iX+f.u*iW,iY+f.v*iH,10+leak*22,0,7);x.fill();}x.globalAlpha=1;}
-   for(var i2=0;i2<feats.length;i2++){var ff=feats[i2],pxx=iX+ff.u*iW,pyy=iY+ff.v*iH,a=bright*ff.b;
+   // the image is RECORDED as the shutter passes: nothing right of the line exists yet
+   function rec(u){var d=q-u;return d<0?0:(d<0.014?d/0.014:1);}
+   var sc=iX+q*iW;
+   x.fillStyle='rgba(60,224,166,.045)';x.fillRect(iX,iY,sc-iX,iH);
+   if(leak>0.02){x.fillStyle=CY;for(var i=0;i<feats.length;i++){var f=feats[i],r0=rec(f.u);
+     if(!r0)continue;x.globalAlpha=0.10*leak*r0;x.beginPath();x.arc(iX+f.u*iW,iY+f.v*iH,10+leak*22,0,7);x.fill();}x.globalAlpha=1;}
+   for(var i2=0;i2<feats.length;i2++){var ff=feats[i2],r1=rec(ff.u);if(!r1)continue;
+     var pxx=iX+ff.u*iW,pyy=iY+ff.v*iH,a=bright*ff.b*r1;
      x.globalAlpha=a*0.9;x.fillStyle=CY;x.beginPath();x.arc(pxx,pyy,ff.r+blur,0,7);x.fill();
      if(blur<3){x.globalAlpha=a;x.fillStyle='#eaffff';x.beginPath();x.arc(pxx,pyy,ff.r,0,7);x.fill();}
    }
    x.globalAlpha=1;
-   var sc=iX+q*iW;L(x,sc,iY,sc,iY+iH,GREEN,1,.35);
+   L(x,sc,iY,sc,iY+iH,GREEN,1.6,.85);
+   x.globalAlpha=.35;x.fillStyle=GREEN;x.fillRect(sc-3,iY,3,iH);x.globalAlpha=1;
    x.restore();
 
    wL.textContent=wn<0.28?'thin':(wn<0.6?'medium':'thick');
