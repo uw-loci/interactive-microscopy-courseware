@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Light-Sheet Glossary — CRB 725</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;
+      --mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);
+     font-family:system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;line-height:1.55;}
+.wrap{max-width:960px;margin:0 auto;padding:44px 22px 90px;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;
+         text-transform:uppercase;margin:0 0 8px;}
+h1{font-size:32px;margin:0 0 10px;font-weight:800;letter-spacing:-.01em;}
+.sub{color:var(--mut);font-size:15px;margin:0 0 26px;max-width:68ch;}
+.sub b{color:var(--ink);font-weight:600;}
+.tools{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 78%,rgba(11,16,32,0));
+       padding:12px 0 16px;margin:0 0 8px;}
+#q{width:100%;background:var(--panel);border:1px solid var(--hair);border-radius:14px;
+   color:var(--ink);font:inherit;font-size:15px;padding:13px 16px;outline:none;}
+#q:focus{border-color:var(--cy);}
+#q::placeholder{color:var(--mut);}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
+.chip{background:transparent;border:1px solid var(--hair);color:var(--mut);border-radius:999px;
+      padding:6px 14px;font:inherit;font-size:13px;cursor:pointer;transition:.15s;}
+.chip:hover{border-color:var(--cy);color:var(--ink);}
+.chip[aria-pressed="true"]{background:var(--cy);border-color:var(--cy);color:#08131c;font-weight:700;}
+.chip.star[aria-pressed="true"]{background:var(--am);border-color:var(--am);color:#241a02;}
+.count{color:var(--mut);font-size:13px;margin:14px 2px 10px;}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:16px;
+      padding:18px 20px;margin:0 0 11px;}
+.card.hit{border-color:var(--cy);}
+.term{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin:0 0 4px;}
+.term .n{font-size:19px;font-weight:800;color:var(--cy);}
+.term .x{color:var(--ink);font-size:14.5px;font-weight:500;opacity:.9;}
+.badge{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;
+       border-radius:999px;padding:3px 9px;border:1px solid var(--hair);color:var(--mut);}
+.badge.star{border-color:var(--am);color:var(--am);}
+.d{color:var(--ink);font-size:14.5px;margin:6px 0 0;}
+.also{color:var(--mut);font-size:13.5px;margin:8px 0 0;padding-left:11px;
+      border-left:2px solid var(--mag);}
+.empty{color:var(--mut);text-align:center;padding:40px 0;font-size:15px;}
+mark{background:rgba(251,191,36,.28);color:var(--am);border-radius:3px;padding:0 1px;}
+footer{color:var(--mut);font-size:12.5px;margin-top:44px;border-top:1px solid var(--hair);
+       padding-top:16px;}
+footer a{color:var(--cy);}
+@media(max-width:560px){h1{font-size:26px;}.term .n{font-size:17px;}}
+</style></head>
+<body><div class="wrap">
+<p class="eyebrow">UW-LOCI &middot; CRB 725 Light Sheet Lab</p>
+<h1>Light-Sheet Glossary</h1>
+<p class="sub">Every acronym and piece of jargon used in the CRB 725 light-sheet lab, in plain language.
+Type to search, or filter by category. Terms marked <b>not in the deck</b> are ones the slides use
+but never stop to explain &mdash; those are the ones worth reading first.</p>
+
+<div class="tools">
+  <input id="q" type="search" placeholder="Search terms and definitions&hellip;  (press / to focus)"
+         autocomplete="off" spellcheck="false">
+  <div class="chips">
+    <button class="chip" data-cat="all" aria-pressed="true">Everything</button>
+<button class="chip" data-cat="acr" aria-pressed="false">Acronyms</button>
+<button class="chip" data-cat="opt" aria-pressed="false">Optics &amp; physics</button>
+<button class="chip" data-cat="acq" aria-pressed="false">Acquisition &amp; data</button>
+<button class="chip" data-cat="sw" aria-pressed="false">Software &amp; hardware</button>
+    <button class="chip star" aria-pressed="false">Not explained in the deck</button>
+  </div>
+</div>
+
+<p class="count" id="count"></p>
+<div id="list"></div>
+
+<footer>Laboratory for Optical and Computational Instrumentation (LOCI), UW&ndash;Madison &middot;
+companion to the CRB 725 light-sheet lab. See also the
+<a href="index.html">other interactive pages</a>.</footer>
+</div>
+<script>
+var D=[{"t": "SPIM", "e": "Selective Plane Illumination Microscopy", "d": "The root name for the whole technique: illuminate one thin plane of the sample at a time, and record that plane with a camera looking at it from the side. Every acronym below that ends in -SPIM is a variation on this idea.", "c": "acr", "s": 1, "a": "Light-sheet fluorescence microscopy (LSFM) is used interchangeably."}, {"t": "LSFM", "e": "Light-Sheet Fluorescence Microscopy", "d": "The general term for the family of techniques. Same idea as SPIM; different labs favour different names.", "c": "acr", "s": 0, "a": ""}, {"t": "ASLM", "e": "Axially Swept Light-sheet Microscopy", "d": "Instead of accepting that a light sheet is thin only near its waist, ASLM sweeps that thin waist across the field and reads the camera through a matching moving slit. You get a uniformly thin sheet across the whole image — at the cost of more time and more light on the sample.", "c": "acr", "s": 0, "a": "This is how our System 2 (23.8×) runs."}, {"t": "T-SPIM", "e": "Two-sided (opposing-arm) SPIM", "d": "Two illumination arms facing each other, on opposite sides of the sample. Each side is shadowed by different structures, so combining them fills in what the other missed.", "c": "acr", "s": 0, "a": "This is our System 1 (6.2×)."}, {"t": "X-SPIM", "e": "SPIM with the arms arranged in an X", "d": "Illumination arms angled like an X rather than in a straight line — one way to get more room around the sample, or to reach it from a different direction.", "c": "acr", "s": 0, "a": ""}, {"t": "DSLM", "e": "Digitally Scanned Light-sheet Microscopy", "d": "Rather than forming a static sheet with a cylindrical lens, a round beam is swept rapidly up and down by a scan mirror. Averaged over one camera exposure this paints a sheet — and it is more evenly lit than a static one.", "c": "acr", "s": 1, "a": ""}, {"t": "iSPIM / diSPIM", "e": "inverted / dual-inverted SPIM", "d": "Two objectives at 45° above a normal coverslip, so the sample sits on a standard slide. In diSPIM the two objectives swap roles — each takes a turn illuminating while the other detects.", "c": "acr", "s": 0, "a": ""}, {"t": "mesoSPIM", "e": "mesoscale SPIM", "d": "A light-sheet design built for centimetre-scale cleared samples — whole mouse brains and larger — at modest resolution.", "c": "acr", "s": 0, "a": ""}, {"t": "sCMOS", "e": "scientific Complementary Metal-Oxide-Semiconductor", "d": "The camera type used on both systems. Large sensor, fast frame rate, low noise. Its rolling shutter is what makes ASLM possible.", "c": "acr", "s": 0, "a": ""}, {"t": "PMT", "e": "Photomultiplier Tube", "d": "A single-pixel light detector — it reports how bright one spot is, with no image of its own. A confocal builds a picture by scanning a spot across the sample and reading a PMT point by point; a light sheet instead records a whole plane at once on a camera.", "c": "acr", "s": 1, "a": ""}, {"t": "NA", "e": "Numerical Aperture", "d": "How wide a cone of light an objective can collect (or send). Higher NA means better resolution and a thinner light sheet — but also a shorter working distance and a shorter usable sheet.", "c": "acr", "s": 0, "a": ""}, {"t": "FOV", "e": "Field Of View", "d": "How much of the sample fits in one camera image. Our 6.2× system sees ≈2.3 mm across; the 23.8× system sees ≈518 µm. Anything bigger has to be covered with multiple tiles.", "c": "acr", "s": 1, "a": ""}, {"t": "RI", "e": "Refractive Index", "d": "How much a material slows and bends light. Water is 1.33, glass ≈1.52, our clearing medium ≈1.55. When the sample, the medium and the optics disagree on RI, the image blurs and shifts with depth.", "c": "acr", "s": 0, "a": ""}, {"t": "EtCi", "e": "Ethyl Cinnamate", "d": "The clearing and imaging medium used here — RI ≈ 1.55, non-toxic, and pleasantly cinnamon-scented.", "c": "acr", "s": 0, "a": ""}, {"t": "NUC", "e": "Next Unit of Computing", "d": "The small Linux PC that runs Control_System and talks directly to the microscope hardware.", "c": "acr", "s": 0, "a": ""}, {"t": "OME-Zarr", "e": "Open Microscopy Environment — Zarr format", "d": "A modern way to store a very large image: instead of one enormous file, the volume is cut into many small chunks in a folder, at several resolution levels. Software can then load just the piece and the zoom level you are looking at, instead of the whole terabyte.", "c": "acr", "s": 1, "a": ""}, {"t": "BigTIFF", "e": "TIFF without the 4 GB limit", "d": "Ordinary TIFF files cannot exceed 4 GB. BigTIFF is the same format with wider internal addresses, so a single light-sheet stack fits.", "c": "acr", "s": 0, "a": ""}, {"t": "CTLSM / CTLSFM", "e": "Cleared-Tissue Light-Sheet (Fluorescence) Microscope", "d": "The name for our two instruments — table-built Flamingo-style light sheets, dedicated to chemically cleared tissue.", "c": "acr", "s": 0, "a": ""}, {"t": "TCP/IP", "e": "Transmission Control Protocol / Internet Protocol", "d": "The ordinary network protocol the control software uses to talk to the microscope — commands on port 53717, live image data on 53718.", "c": "acr", "s": 0, "a": ""}, {"t": "voxel", "e": "", "d": "A 3-D pixel. A pixel has a width and a height; a voxel also has a depth — the spacing between the planes in your stack. Saying \"0.25 × 0.25 × 1 µm voxels\" tells you the sampling in all three directions at once.", "c": "opt", "s": 1, "a": ""}, {"t": "beam waist", "e": "", "d": "The narrowest point of a focused beam. In a light sheet this is where the sheet is thinnest, and therefore where your optical sectioning is best. Everywhere else along the beam it is thicker.", "c": "opt", "s": 0, "a": ""}, {"t": "Rayleigh range", "e": "", "d": "How far you can travel along the beam from the waist before it has spread noticeably (by convention, √2× thicker). It sets how wide a field the sheet can usefully cover — and it shrinks fast as you make the sheet thinner.", "c": "opt", "s": 1, "a": "Thin sheet = great sectioning over a short distance. Wide sheet = mediocre sectioning over a long distance."}, {"t": "Gaussian beam", "e": "", "d": "The bell-shaped intensity profile of a normal laser beam. It is why a beam cannot be focused thin and stay thin — the physics of a Gaussian beam ties the thinness of the waist to how quickly it diverges.", "c": "opt", "s": 0, "a": ""}, {"t": "optical sectioning", "e": "", "d": "Getting a clean image of one plane by keeping out-of-focus light out of it. A confocal does this by rejecting stray light after the fact; a light sheet does it by never creating the stray light in the first place.", "c": "opt", "s": 0, "a": ""}, {"t": "axial vs lateral", "e": "", "d": "Lateral is across the image (x and y) — set by the detection objective. Axial is along the detection axis (z, toward and away from the objective) — set largely by how thin the light sheet is. Axial resolution is nearly always the worse of the two.", "c": "opt", "s": 0, "a": ""}, {"t": "rolling shutter", "e": "", "d": "An sCMOS camera does not expose the whole sensor at once; it exposes a band of rows that sweeps down the chip. Usually a nuisance — but in ASLM the band is deliberately synced to the sweeping beam waist, turning it into a moving slit that only ever sees the thinnest part of the sheet.", "c": "opt", "s": 0, "a": ""}, {"t": "remote focus", "e": "", "d": "Moving the focal plane without moving the objective or the sample — here, by pushing a lens with a voice coil. Fast, and it leaves the specimen undisturbed.", "c": "opt", "s": 0, "a": ""}, {"t": "voice coil", "e": "", "d": "The same kind of actuator that moves a loudspeaker cone: a coil in a magnetic field. Light, fast and precise — it is what sweeps the beam waist in ASLM.", "c": "opt", "s": 0, "a": ""}, {"t": "galvo", "e": "", "d": "Short for galvanometer scanner: a small mirror on a fast rotary actuator. Used to steer the beam between arms, to paint a sheet by scanning, and to dither the sheet angle for shadow removal.", "c": "opt", "s": 0, "a": ""}, {"t": "knife-edge mirror", "e": "", "d": "A mirror with one sharp polished edge. Park the beam on one side of the edge and it goes down the left arm; move it across and it goes down the right. That is how one laser feeds two illumination arms.", "c": "opt", "s": 0, "a": ""}, {"t": "cylindrical lens", "e": "", "d": "A lens curved in one direction only — like a slice off the side of a bottle. It focuses a round beam in one axis while leaving the other axis alone, which is exactly what turns a beam into a sheet.", "c": "opt", "s": 0, "a": ""}, {"t": "dither / pivot", "e": "", "d": "Wiggling the sheet through a small range of angles during the exposure. Anything absorbing in the beam path casts a shadow from only one angle, so over the exposure the stripes average away.", "c": "opt", "s": 0, "a": ""}, {"t": "tube lens", "e": "", "d": "The lens that takes the collimated light coming out of an infinity-corrected objective and forms the actual image on the camera. Its focal length sets the real magnification — which is why a \"20×\" objective is not 20× with a different tube lens.", "c": "opt", "s": 0, "a": ""}, {"t": "dipping objective", "e": "", "d": "An objective designed to be lowered directly into the imaging medium, with no coverslip. Its correction assumes the medium's refractive index — so ours is matched to the clearing solution.", "c": "opt", "s": 0, "a": ""}, {"t": "photobleaching / phototoxicity", "e": "", "d": "Bleaching is the fluorophore being permanently destroyed by the light used to excite it. Phototoxicity is the damage that same light does to a living sample. Light sheet mitigates both by illuminating only the plane being recorded.", "c": "opt", "s": 0, "a": ""}, {"t": "light dose", "e": "", "d": "The total amount of light a sample receives over the whole acquisition. It is the budget you spend on signal — and it is set by how long, how bright and how many times you illuminate each part of the sample.", "c": "opt", "s": 0, "a": ""}, {"t": "RI matching", "e": "", "d": "Making the sample, the mounting medium and the objective's design index all agree. Light then travels in a straight line all the way down, so deep planes stay as sharp as shallow ones.", "c": "opt", "s": 0, "a": ""}, {"t": "clearing", "e": "", "d": "Chemically making tissue transparent — removing or replacing what scatters light (mostly lipids) and then soaking the sample in a medium of matched refractive index. It is what lets a light sheet see through a whole organ.", "c": "opt", "s": 0, "a": ""}, {"t": "equilibration", "e": "", "d": "Letting the sample sit in the final medium long enough to fully exchange. Rush it and the inside of the sample is still a different refractive index from the outside — which looks exactly like bad optics.", "c": "opt", "s": 0, "a": ""}, {"t": "plane · stack · volume", "e": "", "d": "A plane is one camera image. A stack is a series of planes stepped through the sample in z. A volume is the finished 3-D result — often several stacks fused and stitched together.", "c": "acq", "s": 0, "a": ""}, {"t": "tile / tiling", "e": "", "d": "One field of view is a tile. When the sample is bigger than the field, you move the stage and take another — covering a large specimen as a grid of overlapping tiles. At 23.8× that is roughly 20× more tiles than at 6.2× for the same area.", "c": "acq", "s": 0, "a": ""}, {"t": "stitching", "e": "", "d": "Finding the true relative position of the overlapping tiles and blending them into one seamless volume. Stage coordinates get you close; the overlap is what makes it exact.", "c": "acq", "s": 0, "a": ""}, {"t": "fusing views", "e": "", "d": "Combining images of the same plane taken from different illumination sides (or sample rotations) into a single best estimate — each view contributes where it is sharpest and least shadowed.", "c": "acq", "s": 0, "a": ""}, {"t": "destriping", "e": "", "d": "Computationally removing the residual shadow stripes that run along the illumination direction — whatever the optical dither did not already wash out.", "c": "acq", "s": 1, "a": ""}, {"t": "flat-field correction", "e": "", "d": "Evening out the brightness across the field. The sheet is brightest at its waist and falls off toward the edges, so without this correction, tile boundaries show up as a visible grid.", "c": "acq", "s": 1, "a": ""}, {"t": "multiview", "e": "", "d": "Imaging the same sample from several rotations and merging them, so that resolution and coverage are more even in all directions than any single view could be.", "c": "acq", "s": 0, "a": ""}, {"t": "deconvolution", "e": "", "d": "Computationally sharpening the volume by undoing the known blur of the optics. It recovers detail, but it will happily invent it too if the assumed blur is wrong.", "c": "acq", "s": 0, "a": ""}, {"t": "channel", "e": "", "d": "One excitation/emission colour — one laser line and its matched emission filter. Multi-channel acquisitions record each channel separately for every plane or every stack.", "c": "acq", "s": 0, "a": ""}, {"t": "arm", "e": "", "d": "One illumination path, from the laser to the sample. System 1 has two opposing arms; System 2 has one.", "c": "acq", "s": 0, "a": ""}, {"t": "exposure", "e": "", "d": "How long the camera collects light for a single frame. It sets both your signal and your speed — and multiplied by every plane and every tile, it is most of your total acquisition time.", "c": "acq", "s": 0, "a": ""}, {"t": "Scope_Control", "e": "", "d": "The original acquisition application (Mac). Still the reference for how the systems are driven.", "c": "sw", "s": 0, "a": ""}, {"t": "Control_System", "e": "", "d": "The C++ program on the Linux NUC that actually talks to the hardware — lasers, galvos, stages, camera. Everything else sends it commands over the network.", "c": "sw", "s": 0, "a": ""}, {"t": "Live Viewer", "e": "", "d": "The window that shows frames as they come off the camera, on port 53718. What you use while aligning and finding the sample.", "c": "sw", "s": 0, "a": ""}, {"t": "Flamingo_Control / py2flamingo", "e": "", "d": "The Python control layer, in active development. It plans the acquisition and generates the matching processing workflow, so what you asked for and what gets run stay in step.", "c": "sw", "s": 0, "a": ""}, {"t": "Workflow.txt", "e": "", "d": "The plain-text file describing one acquisition — positions, channels, ranges, settings. It is what actually gets handed to the microscope, and it is worth reading.", "c": "sw", "s": 0, "a": ""}, {"t": "flamingo-stitcher", "e": "", "d": "The tool that takes the tiles and assembles them into a single stitched volume.", "c": "sw", "s": 0, "a": ""}, {"t": "Napari · Fiji / BigDataViewer · Imaris", "e": "", "d": "Viewers for the finished volume. Napari (Python) and Fiji/BigDataViewer are free and handle very large data by loading only what is on screen; Imaris is commercial and strong on rendering and tracing.", "c": "sw", "s": 0, "a": ""}, {"t": "Toptica iChrome CLE", "e": "", "d": "The multi-line laser engine — several wavelengths in one box with a single fibre output.", "c": "sw", "s": 0, "a": ""}, {"t": "PCO panda", "e": "", "d": "The sCMOS camera on the system.", "c": "sw", "s": 0, "a": ""}, {"t": "Mitutoyo M Plan Apo 20× / 0.42", "e": "", "d": "The long-working-distance air objective used in the illumination path (and in the voice-coil remote-focus arm), with a 200 mm tube lens.", "c": "sw", "s": 0, "a": ""}, {"t": "ESPECIAL 23.8× / 0.7 NA", "e": "", "d": "The detection objective on System 2 — a dipping objective corrected for high-index clearing media. In RI ≈ 1.55 medium the effective magnification works out near 25×, which is where that number comes from.", "c": "sw", "s": 0, "a": ""}, {"t": "Nikon AZ 2× / 0.2", "e": "", "d": "The detection objective on System 1, used with a SIM lens and a 200 mm tube lens to give the 6.2× effective magnification.", "c": "sw", "s": 0, "a": ""}, {"t": "PI stages", "e": "", "d": "Physik Instrumente translation stages — what moves the sample in x, y, z and rotation between tiles.", "c": "sw", "s": 0, "a": ""}, {"t": "Moku:Go", "e": "", "d": "A reconfigurable test instrument (oscilloscope, waveform generator and more in one box) used for checking and generating the control signals.", "c": "sw", "s": 0, "a": ""}], box=document.getElementById('list'), q=document.getElementById('q'),
+    cnt=document.getElementById('count'), cat='all', starOnly=false;
+function esc(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
+function mark(s,t){
+  if(!t) return esc(s);
+  var out='',low=s.toLowerCase(),lt=t.toLowerCase(),i=0,j;
+  while((j=low.indexOf(lt,i))>-1){out+=esc(s.slice(i,j))+'<mark>'+esc(s.slice(j,j+t.length))+'</mark>';i=j+t.length;}
+  return out+esc(s.slice(i));
+}
+function render(){
+  var t=q.value.trim(), lt=t.toLowerCase(), out=[], n=0;
+  D.forEach(function(x){
+    if(cat!=='all'&&x.c!==cat) return;
+    if(starOnly&&!x.s) return;
+    if(t&&(x.t+' '+x.e+' '+x.d+' '+x.a).toLowerCase().indexOf(lt)<0) return;
+    n++;
+    var h='<div class="card'+(t?' hit':'')+'"><div class="term"><span class="n">'+mark(x.t,t)+'</span>';
+    if(x.e) h+='<span class="x">'+mark(x.e,t)+'</span>';
+    h+='<span class="badge">'+CAT[x.c]+'</span>';
+    if(x.s) h+='<span class="badge star">not in the deck</span>';
+    h+='</div><p class="d">'+mark(x.d,t)+'</p>';
+    if(x.a) h+='<p class="also">'+mark(x.a,t)+'</p>';
+    out.push(h+'</div>');
+  });
+  box.innerHTML=out.length?out.join(''):'<p class="empty">Nothing matches \u201c'+esc(t)+'\u201d.</p>';
+  cnt.textContent=n+' of '+D.length+' terms';
+}
+var CAT={"acr": "Acronym", "opt": "Optics & physics", "acq": "Acquisition & data", "sw": "Software & hardware"};
+q.addEventListener('input',render);
+document.querySelectorAll('.chip').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(b.classList.contains('star')){
+      starOnly=!starOnly; b.setAttribute('aria-pressed',starOnly?'true':'false');
+    } else {
+      cat=b.dataset.cat;
+      document.querySelectorAll('.chip:not(.star)').forEach(function(o){
+        o.setAttribute('aria-pressed',o===b?'true':'false');});
+    }
+    render();
+  });
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='/'&&document.activeElement!==q){e.preventDefault();q.focus();}
+  if(e.key==='Escape'){q.value='';render();q.blur();}
+});
+render();
+</script>
+</body></html>

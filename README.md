@@ -18,6 +18,7 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-microscopy-cou
 - [Light Sheet Concepts - Interactive](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Interactive.html) — the core light-sheet concept widgets. ([`CTLSM_Interactive.html`](CTLSM_Interactive.html))
 - [Light Sheet Alignment Simulation](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_BeamPlacement.html) — A–F knobs mapped to beam position; a simplified teaching simulation (real alignment is more involved). ([`CTLSM_BeamPlacement.html`](CTLSM_BeamPlacement.html))
 - [Literature review](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Literature_Review.html) — a concise review: principles, tissue clearing, whole-organ imaging, and key references. ([`CTLSM_Literature_Review.html`](CTLSM_Literature_Review.html))
+- [Glossary — light-sheet terms & acronyms](https://uw-loci.github.io/interactive-microscopy-courseware/CRB725_Glossary.html) — searchable plain-language definitions for 64 terms (SPIM, ASLM, voxel, Rayleigh range, destriping…), filterable by category. ([`CRB725_Glossary.html`](CRB725_Glossary.html))
 
 ### Polarized-Light Microscopy (PPM)
 - [Seeing the Invisible — intro to PPM](https://uw-loci.github.io/interactive-microscopy-courseware/PPM_Intro_Interactive.html) — interactive introduction to polarized-light microscopy. ([`PPM_Intro_Interactive.html`](PPM_Intro_Interactive.html))
