@@ -20,7 +20,7 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-microscopy-cou
 - [Literature review](https://uw-loci.github.io/interactive-microscopy-courseware/CTLSM_Literature_Review.html) — a concise review: principles, tissue clearing, whole-organ imaging, and key references. ([`CTLSM_Literature_Review.html`](CTLSM_Literature_Review.html))
 - [Glossary — light-sheet terms & acronyms](https://uw-loci.github.io/interactive-microscopy-courseware/CRB725_Glossary.html) — searchable, alphabetical plain-language definitions for 62 terms (SPIM, ASLM, voxel, Rayleigh range, destriping…), filterable by category. ([`CRB725_Glossary.html`](CRB725_Glossary.html))
 
-### Polarized-Light Microscopy (PPM)
+### Polarized-Light Microscopy
 - [Seeing the Invisible — intro to PPM](https://uw-loci.github.io/interactive-microscopy-courseware/PPM_Intro_Interactive.html) — interactive introduction to polarized-light microscopy. ([`PPM_Intro_Interactive.html`](PPM_Intro_Interactive.html))
 - [LC-PolScope — polarization states & birefringence](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Birefringence.html) — explore polarization states and birefringence contrast. ([`LCPolScope_Birefringence.html`](LCPolScope_Birefringence.html))
 - [LC-PolScope — concept interactives](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Concepts.html) — reading birefringence with polarized light, six core ideas as small interactives. ([`LCPolScope_Concepts.html`](LCPolScope_Concepts.html))
