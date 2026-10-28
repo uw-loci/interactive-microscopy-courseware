@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LC-PolScope Settings</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--panel2:#101A30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.5;}
+.wrap{max-width:1000px;margin:0 auto;padding:30px 16px 70px;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px;}
+h1{font-size:26px;margin:0 0 6px;font-weight:800;}
+h2{font-size:20px;margin:0 0 6px;font-weight:800;}
+h3{font-size:15px;margin:14px 0 6px;font-weight:700;}
+p{margin:0 0 10px;}
+.lede{color:var(--mut);font-size:14px;margin:0 0 14px;}
+.intro{color:var(--mut);font-size:14.5px;margin:0 0 10px;}
+.lede b,.intro b{color:var(--ink);}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:20px;margin:22px 0;}
+canvas{width:100%;height:auto;display:block;border-radius:12px;background:#0c1322;}
+.controls{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:flex-end;margin:14px 0 4px;}
+.controls label{font-size:13px;color:var(--mut);display:flex;flex-direction:column;gap:6px;min-width:190px;flex:1 1 190px;}
+.controls label .v{color:var(--ink);font-weight:600;}
+.seg{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;color:var(--mut);}
+.seg .lab{min-width:120px;}
+input[type=range]{accent-color:var(--cy);width:100%;}
+button{background:var(--panel2);color:var(--ink);border:1px solid var(--hair);border-radius:9px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit;}
+button:hover{border-color:var(--cy);}
+button[aria-pressed=true]{border-color:var(--cy);color:var(--cy);background:#0f2333;}
+button.go{border-color:var(--am);color:var(--am);}
+.readout{font-size:13.5px;color:var(--mut);margin-top:10px;}
+.readout b{color:var(--ink);}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+@media (max-width:720px){.two{grid-template-columns:1fr;}}
+.box{background:var(--panel2);border:1px solid var(--hair);border-radius:12px;padding:14px 16px;font-size:14px;}
+.box h3{margin-top:0;}
+.box ul{margin:6px 0 0;padding-left:18px;}
+.box li{margin:4px 0;color:var(--mut);}
+.box li b{color:var(--ink);}
+.note{border-left:3px solid var(--am);padding:8px 12px;background:#1a1a22;border-radius:0 10px 10px 0;color:var(--mut);font-size:13.5px;margin:12px 0 0;}
+.note b{color:var(--ink);}
+.chip{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.04em;padding:2px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap;}
+.c-fixed{color:var(--cy);} .c-session{color:var(--am);} .c-slide{color:var(--mag);} .c-any{color:var(--green);}
+.legend{display:flex;flex-wrap:wrap;gap:8px 14px;font-size:12.5px;color:var(--mut);margin:8px 0 0;}
+svg text{font-family:system-ui,sans-serif;}
+.part{cursor:pointer;}
+.part:hover rect,.part:focus rect{stroke:#fff;}
+.part.sel rect{stroke:#fff;stroke-width:2.5;}
+.info{min-height:150px;}
+.info .k{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.08em;margin:10px 0 2px;}
+.info p{margin:0;color:#dfe5f3;font-size:14px;}
+.tablewrap{overflow-x:auto;margin-top:8px;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:680px;}
+th,td{text-align:left;vertical-align:top;padding:9px 10px;border-bottom:1px solid var(--hair);}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;}
+td{color:#dfe5f3;} td b{color:var(--ink);}
+.steps{margin:8px 0 0;padding-left:0;list-style:none;counter-reset:s;}
+.steps li{counter-increment:s;position:relative;padding:8px 10px 8px 40px;margin:6px 0;background:var(--panel2);border:1px solid var(--hair);border-radius:10px;font-size:14px;color:#dfe5f3;}
+.steps li::before{content:counter(s);position:absolute;left:10px;top:8px;width:22px;height:22px;border-radius:50%;background:var(--hair);color:var(--ink);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.steps li.skip{opacity:.55;}
+.steps li .why{display:block;color:var(--mut);font-size:12.5px;margin-top:2px;}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:14px;color:#dfe5f3;}
+@media (max-width:720px){.checks{grid-template-columns:1fr;}}
+.checks label{display:flex;gap:8px;align-items:flex-start;background:var(--panel2);border:1px solid var(--hair);border-radius:10px;padding:8px 10px;cursor:pointer;}
+.checks input{margin-top:4px;accent-color:var(--cy);}
+footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid var(--hair);padding-top:16px;}
+footer a,.refs a,.card a{color:var(--am);text-decoration:none;}
+.refs{margin:6px 0 0;padding-left:20px;color:var(--mut);font-size:13px;}
+.refs li{margin:6px 0;}
+</style></head>
+<body><div class="wrap">
+<div class="eyebrow">LC-PolScope &middot; settings &amp; image formation</div>
+<h1>What the PolScope settings do, and how often to change them</h1>
+<p class="intro">The <a href="LCPolScope_Concepts.html">concept page</a> covers what birefringence is and how five frames become a retardance map. This page covers what an operator does with the instrument: how the image actually forms in the light path, what the <b>calibration</b> and the <b>background</b> each correct, and which settings stay fixed for a whole study while others must be redone for every slide. All the numbers come from an exact polarization model (Jones calculus) of the same five-state scheme our rig uses, at its 549&nbsp;nm wavelength and 0.03-wave swing.</p>
+
+<section class="card">
+<div class="eyebrow">0 &middot; the rule you were taught</div>
+<h2>&ldquo;Keep every setting the same between acquisitions.&rdquo; So why redo the background on every slide?</h2>
+<p class="lede">The rule is right, but it applies to the <b>measurement</b>, not the <b>reference</b>. Retardance (nm) and slow-axis angle (&deg;) are physical quantities. You keep them comparable by keeping fixed everything that defines how they are measured. The calibration and the background are references: they record what the instrument reads when no specimen is there. That reading includes the slide's own glass, coverslip and mountant, so a new slide changes it. Think of the tare button on a balance: you press it again for every new weighing boat precisely so that the <b>weights</b> stay comparable.</p>
+<div class="two">
+ <div class="box"><h3 class="c-fixed">Hold constant across a study</h3><ul>
+  <li><b>Wavelength</b> (549&nbsp;nm filter) and <b>swing</b> (0.03 waves)</li>
+  <li><b>Objective</b> and <b>condenser aperture</b></li>
+  <li><b>Reconstruction</b>: 5-state scheme, method, black level for the camera's pixel format</li>
+  <li><b>Camera mode</b>: auto gain and auto exposure off, gamma off, 12/16-bit</li>
+  <li><b>Exposure</b>, where the slides allow it</li>
+  <li><b>Display</b> (retardance ceiling, colour map) for any figures you compare</li></ul></div>
+ <div class="box"><h3 class="c-slide">Re-measure, because they include the slide</h3><ul>
+  <li><b>Background</b>: every slide, after every calibration, after any exposure change, for each objective</li>
+  <li><b>Calibration</b>: every session (the liquid crystals drift), after any change to the light path, and on a new slide when its extinction ratio comes out low. The recOrder/waveorder guide puts it as &ldquo;definitely between imaging sessions, often between different samples.&rdquo;</li></ul></div>
+</div>
+<p class="note"><b>Redoing these does not make slides incomparable.</b> Skipping them does. In card 4, a background reused from another slide makes a 10.3&nbsp;nm fibre read 8.5&nbsp;nm, 7&deg; off its true angle, and every empty pixel reads 3.6&nbsp;nm at one shared angle. The mosaic still looks seamless.</p>
+</section>
+
+<section class="card">
+<div class="eyebrow">1 &middot; image formation</div>
+<h2>The light path, piece by piece</h2>
+<p class="lede">Light passes every element below in order. Each one either <b>sets</b> the polarization, <b>adds</b> some retardance (wanted or not), or <b>measures</b> the result. Click any element to see what it does to the image, which setting belongs to it, and how often that setting changes. The colour of each element's label matches its cadence.</p>
+<svg id="path" viewBox="0 0 960 230" width="100%" role="img" aria-label="LC-PolScope light path"></svg>
+<div class="legend"><span><span class="chip c-fixed">fixed</span> set once for the instrument or study</span><span><span class="chip c-session">per session</span> drifts over hours</span><span><span class="chip c-slide">per slide</span> changes with each slide</span><span><span class="chip c-any">any time</span> display only, never changes data</span></div>
+<div class="box info" id="info" style="margin-top:12px"></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">2 &middot; the five states</div>
+<h2>Five illumination states, one pixel</h2>
+<p class="lede">The two liquid crystals shape the light reaching the slide. In the <b>extinction</b> state (State0) it is circularly polarized, so the circular analyzer blocks it completely, unless something on the slide changed it. Each of the four <b>swing</b> states moves one crystal by &plusmn;0.03 waves, which makes the light slightly elliptical, with its long axis in one of four directions. A birefringent pixel brightens some swing states more than others, and the pattern across the four tells the reconstruction its <b>angle</b>. How far the pixel rises above extinction overall gives its <b>retardance</b>. Pick a state to see it.</p>
+<canvas id="cv2" width="960" height="330"></canvas>
+<div class="controls">
+ <div class="seg"><span class="lab">state</span><span id="stbtns"></span></div>
+ <label><span>collagen retardance &nbsp;<span class="v" id="v2r">8 nm</span></span><input type="range" id="s2r" min="1" max="30" value="8"></label>
+ <label><span>collagen slow axis &nbsp;<span class="v" id="v2a">30&deg;</span></span><input type="range" id="s2a" min="0" max="179" value="30"></label>
+ <button id="b2x" aria-pressed="true">ellipse drawn 3&times; exaggerated</button>
+</div>
+<div class="readout" id="r2"></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">3 &middot; calibration</div>
+<h2>Calibration: finding extinction for the light path you actually have</h2>
+<p class="lede">&ldquo;Calibrate Liquid Crystals&rdquo; searches both crystals for the setting where the least light reaches the camera, on a clear, specimen-free field. That minimum is not a fixed number. It moves when the crystals <b>drift</b> (temperature, warm-up, time) and when the slide adds its own <b>uniform residual retardance</b>. The search places extinction wherever the minimum is for the path in front of it, so a calibration silently absorbs the slide it was run on. The map shows extinction-state brightness over the two crystal settings, with dark meaning less light. Drift the crystals or change the slide, and watch the extinction ratio fall until you calibrate again.</p>
+<canvas id="cv3" width="960" height="380"></canvas>
+<div class="controls">
+ <label><span>crystal drift since calibration (illustrative) &nbsp;<span class="v" id="v3d">none</span></span><input type="range" id="s3d" min="0" max="100" value="0"></label>
+ <div class="seg"><span class="lab">slide on the stage</span><span id="slbtns3"></span></div>
+ <button id="b3cal" class="go">Calibrate here</button>
+</div>
+<div class="readout" id="r3"></div>
+<p class="note"><b>The drift here is illustrative.</b> How quickly the crystals drift on our rig has not been measured. The extinction ratio is the number to watch: QPSC grades it as good at 100 or above and acceptable from 80. This rig has reached about 280. In the model, a calibrated path reaches 300 and the limit is set by stray light, which on a real microscope also falls as the condenser aperture opens.</p>
+</section>
+
+<section class="card">
+<div class="eyebrow">4 &middot; background</div>
+<h2>Background correction: what calibration cannot remove</h2>
+<p class="lede">A calibration sets one extinction point for the whole field. Residual retardance that <b>varies across the field</b> stays behind. Strain in the objective and condenser lenses is the main source, and it is identical in every tile, which is why uncorrected mosaics show seams. Glass, coverslip and mountant add a component that differs <b>from slide to slide</b>. The background is five frames taken on a clear area of the same slide, with the same calibration and the same exposure, defocused 10&ndash;20&nbsp;&micro;m so dust drops out. The reconstruction subtracts it pixel by pixel. Retardance adds like an arrow (magnitude and angle), so the subtraction only cancels when the background describes the same path as the acquisition. Below are three adjacent tiles of a slide with two collagen fibres. Try each background choice.</p>
+<canvas id="cv4" width="960" height="410"></canvas>
+<div class="controls">
+ <div class="seg"><span class="lab">slide on the stage</span><span id="slbtns4"></span></div>
+ <div class="seg"><span class="lab">calibrated on</span><span id="calbtns4"></span></div>
+</div>
+<div class="controls">
+ <div class="seg"><span class="lab">background</span><span id="bgbtns4"></span></div>
+</div>
+<div class="controls">
+ <div class="seg"><span class="lab">view</span><button id="b4ret" aria-pressed="true">retardance</button><button id="b4ori" aria-pressed="false">orientation (hue = angle)</button></div>
+ <label><span>display ceiling (retardance shown as full brightness) &nbsp;<span class="v" id="v4c">10 nm</span></span><input type="range" id="s4c" min="4" max="40" value="10"></label>
+</div>
+<div class="readout" id="r4"></div>
+<p class="note"><b>Mostly one colour in the orientation view?</b> Uncorrected residual retardance has a single angle, so glass and faint tissue all take that angle's hue. Switch to the orientation view with no background, or with the other slide's background, to see it. QPSC refuses a background from a different calibration and reconstructs uncorrected instead, saying why in the server log. It cannot tell that a background came from <b>another slide</b>, so that part is yours: keep a <a href="#cadence">background profile</a> per slide setup and collect on each slide.</p>
+</section>
+<section class="card" id="cadence">
+<div class="eyebrow">5 &middot; the settings you will see</div>
+<h2>Every setting, what it does, and when to change it</h2>
+<p class="lede">These follow the order of QPSC's <b>LC-PolScope Setup</b> window (Camera, then Calibrate, then Background) and the <b>Ready to acquire?</b> box in the acquisition panel. That box checks most of them for you. <b>Fix</b> lines there give wrong or uncorrected results if left; <b>Check</b> lines are worth a look.</p>
+<div class="tablewrap"><table>
+<tr><th>Setting</th><th>What it does to the image</th><th>Change it when</th><th>Cadence</th></tr>
+<tr><td><b>Wavelength</b><br>549&nbsp;nm green filter; the LC adapter's <i>Wavelength</i> property</td><td>The crystals and the quarter-wave plate are only correct at one wavelength, and retardance in nm is computed from it. The calibration sets the adapter to it before measuring.</td><td>Never, unless the filter changes. Then recalibrate and take new backgrounds.</td><td><span class="chip c-fixed">fixed</span></td></tr>
+<tr><td><b>Swing</b><br>0.03 waves (16.5&nbsp;nm)</td><td>How far each swing state sits from extinction. A smaller swing is more sensitive to faint retardance; a larger one keeps more brightness in the swing states. The recOrder guide suggests 0.05&ndash;0.1 for tissue and 0.03&ndash;0.05 for cells.</td><td>Only between studies. A new swing means a new calibration and backgrounds.</td><td><span class="chip c-fixed">fixed</span></td></tr>
+<tr><td><b>Scheme, state order, method</b><br>5-State, State0&ndash;State4, <i>openpolscope</i></td><td>How the five frames are combined into retardance and angle.</td><td>Never during a study. QPSC resets the state order when you apply a calibration.</td><td><span class="chip c-fixed">fixed</span></td></tr>
+<tr><td><b>Objective, condenser aperture</b></td><td>Lens strain sets the field-varying background. A wider condenser aperture lets in more oblique rays, which lowers the extinction ratio.</td><td>When you change either one: recalibrate, then collect a background for that objective's profile.</td><td><span class="chip c-fixed">fixed</span></td></tr>
+<tr><td><b>Camera mode</b><br>Gain Auto and Exposure Auto off, gamma off, 12/16-bit</td><td>Retardance is computed from <b>ratios</b> between frames. Auto gain rescales each frame and gamma bends the ratios, so both corrupt the measurement. QPSC refuses to calibrate with auto gain or auto exposure on.</td><td>Once; recheck after Micro-Manager restarts.</td><td><span class="chip c-fixed">fixed</span></td></tr>
+<tr><td><b>Black level</b><br>camera offset in counts (99 on the Flash4)</td><td>Subtracted from every frame before the ratios are taken. Too high or too low biases the retardance. The calibration measures it from four exposures.</td><td>When the pixel format, bit depth or binning changes; the value is in that format's counts.</td><td><span class="chip c-fixed">fixed</span></td></tr>
+<tr><td><b>Exposure</b><br>one value for all five states (30&nbsp;ms here)</td><td>Brightness and noise only; retardance values do not depend on it. The palette does not depend on it either. Too short is noisy, and a clipped swing state ruins those pixels.</td><td>Ideally never within a study. If a slide needs a different exposure, collect its background again at that exposure.</td><td><span class="chip c-slide">per slide if needed</span></td></tr>
+<tr><td><b>LC calibration</b> (the palette)<br>LC-A/LC-B waves for each state, extinction ratio, age</td><td>Puts State0 at true extinction for the path in front of it, including the slide's uniform residual, and places the swing states around it.</td><td>Each session after the lamp and crystals have warmed up; whenever the extinction ratio falls; after any optical change; on a new slide if its extinction ratio is low. Always followed by a new background.</td><td><span class="chip c-session">per session</span> <span class="chip c-slide">often per slide</span></td></tr>
+<tr><td><b>Background</b><br>5 states &times; 10 frames, in the active background profile</td><td>Removes field-varying residual retardance (lens strain) and the slide's own residual. Without it you get seams and a uniform-hue orientation map.</td><td>Every slide; after every calibration; after an exposure change; for each objective. Take it on a clear area of <b>that</b> slide, close to where you will image, defocused 10&ndash;20&nbsp;&micro;m.</td><td><span class="chip c-slide">per slide</span></td></tr>
+<tr><td><b>Calibration area, Measure on</b><br>central 10&ndash;100% of the field</td><td>Which pixels the search averages. Keep dust and edge junk out.</td><td>Whenever the clear field has debris.</td><td><span class="chip c-slide">per slide</span></td></tr>
+<tr><td><b>Display</b><br>retardance ceiling (20&nbsp;nm), colour map, hue offset; Orientation Colour View</td><td>How retardance and angle are drawn. The stored values never change; collagen above the ceiling just shows at full brightness.</td><td>Any time. Use one setting for every figure you compare.</td><td><span class="chip c-any">any time</span></td></tr>
+</table></div>
+</section>
+
+<section class="card">
+<div class="eyebrow">6 &middot; at the microscope</div>
+<h2>A new slide is on the stage. What do I redo?</h2>
+<p class="lede">Tick what is true. The list shows the steps in order and why each one is or is not needed.</p>
+<div class="checks">
+ <label><input type="checkbox" id="q-session" checked> <span><b>First slide of the session</b>, or the scope has been idle or warming up for hours</span></label>
+ <label><input type="checkbox" id="q-optics"> <span><b>Something in the light path changed</b>: objective, condenser aperture, filter, lamp</span></label>
+ <label><input type="checkbox" id="q-camera"> <span><b>The camera's pixel format, bit depth or binning changed</b>, or Micro-Manager restarted</span></label>
+ <label><input type="checkbox" id="q-exposure"> <span><b>This slide needs a different exposure</b> (much darker or brighter stain)</span></label>
+ <label><input type="checkbox" id="q-slide" checked> <span><b>It is a different slide</b>, or a different coverslip or mountant from the last background</span></label>
+ <label><input type="checkbox" id="q-er"> <span><b>The extinction ratio came out low</b> (under 100) or the <i>Ready to acquire?</i> box warns about the calibration</span></label>
+</div>
+<ol class="steps" id="steps"></ol>
+</section>
+
+<section class="card">
+<div class="eyebrow">7 &middot; reading results</div>
+<h2>Things that look like settings problems, but are not</h2>
+<div class="two">
+ <div class="box"><h3>Changes the retardance, but is real</h3><ul>
+  <li><b>Section thickness.</b> Retardance is &Delta;n &times; thickness, so a 7&nbsp;&micro;m section of the same collagen reads 40% more than a 5&nbsp;&micro;m one. Compare slides cut at the same thickness, or compare orientation, which thickness does not change.</li>
+  <li><b>Fibres tilted out of the plane</b> show less retardance than the same fibres lying flat.</li></ul></div>
+ <div class="box"><h3>Changes the brightness, not the retardance</h3><ul>
+  <li><b>Stain absorption, or a dimmed area.</b> Anything that dims all five states equally cancels out of the ratios. That includes heavy eosin and the darker circle where the lamp was left on overnight. Retardance should be unaffected, but those pixels are noisier.</li>
+  <li><b>Exposure.</b> Same retardance, different noise. Recollect the background if you change it.</li></ul></div>
+ <div class="box"><h3>Background or calibration taken in the wrong place</h3><ul>
+  <li><b>Specimen in the background field</b> subtracts tissue from every tile, which shows up as ghost negatives. The Ready box warns when the background's swing states disagree by more than 10%.</li>
+  <li><b>Dust in focus</b> during the background leaves spots in every tile. Defocus 10&ndash;20&nbsp;&micro;m.</li>
+  <li><b>Birefringent junk in the calibration field</b> pulls extinction off; the extinction ratio drops.</li></ul></div>
+ <div class="box"><h3>Display, not data</h3><ul>
+  <li><b>All collagen the same brightness</b>: it is above the display ceiling (20&nbsp;nm). Raise the ceiling to see the differences.</li>
+  <li><b>Mostly one hue in the orientation map</b>: residual retardance left uncorrected (see card 4).</li></ul></div>
+</div>
+</section>
+
+<footer>
+<b>About the model.</b> Every frame on this page is computed with exact Jones calculus: a linear polarizer, two variable retarders 45&deg; apart, the slide, specimen and optics as retarders, and an ideal circular analyzer. Retardance and angle come from the five-state formulas of Shribak &amp; Oldenbourg (2003), and the background is subtracted as their two coefficients, as OpenPolScope does. Stray light sets an extinction-ratio ceiling of 300. The residual retardances (0.4&ndash;3&nbsp;nm optics, 1&ndash;5&nbsp;nm slides) and the drift rate are illustrative, not measured on our rig.
+<ul class="refs">
+<li>Oldenbourg R, Mei G. New polarized light microscope with precision universal compensator. <a href="https://doi.org/10.1111/j.1365-2818.1995.tb03669.x">J. Microsc. 180:140&ndash;147 (1995)</a>.</li>
+<li>Shribak M, Oldenbourg R. Techniques for fast and sensitive measurements of two-dimensional birefringence distributions. <a href="https://doi.org/10.1364/AO.42.003009">Appl. Opt. 42:3009&ndash;3017 (2003)</a>.</li>
+<li>Oldenbourg R. Polarization microscopy with the LC-PolScope (<a href="lc-polscope/Oldenbourg%20et%20al.%20-%20Polarization%20microscopy%20with%20the%20LC-PolScope.pdf">PDF</a>).</li>
+<li>waveorder / recOrder: <a href="https://waveorder.readthedocs.io/en/latest/guide/calibration-guide.html">Calibration guide</a> (&ldquo;definitely between imaging sessions, often between different samples&rdquo;) and <a href="https://waveorder.readthedocs.io/en/latest/guide/napari-plugin-guide.html">napari plugin guide</a> (reuse a calibration only if &ldquo;the sample and imaging setup haven't changed&rdquo;; swing by sample type; background on an empty field, averaged).</li>
+<li><a href="https://openpolscope.org/docs/Pol-Acquisition-Manual-3.0.pdf">OpenPolScope Pol-Acquisition manual 3.0</a>.</li>
+</ul>
+Companion pages: <a href="LCPolScope_Concepts.html">concept interactives</a> &middot; <a href="LCPolScope_Birefringence.html">polarization states</a> &middot; <a href="lc-polscope/">simulator &amp; lab guide</a>.
+</footer>
+</div>
+<script>
+(function(){
+"use strict";
+// ===================== polarization model (no DOM) =====================
+var TAU=Math.PI*2, D2R=Math.PI/180, LAM=549, CHI=0.03, FLOOR=1/300;
+function cm(a,b){return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]];}
+function ca(a,b){return [a[0]+b[0], a[1]+b[1]];}
+function cexp(p){return [Math.cos(p), Math.sin(p)];}
+// retarder, slow axis at theta (rad), retardance d (rad)
+function ret(theta,d){
+  var c=Math.cos(theta), s=Math.sin(theta), e1=cexp(-d/2), e2=cexp(d/2), o=[c*s*(e1[0]-e2[0]), c*s*(e1[1]-e2[1])];
+  return [[[c*c*e1[0]+s*s*e2[0], c*c*e1[1]+s*s*e2[1]], o], [o, [s*s*e1[0]+c*c*e2[0], s*s*e1[1]+c*c*e2[1]]]];
+}
+var ID=[[[1,0],[0,0]],[[0,0],[1,0]]];
+function mmul(M,N){ // M*N
+  return [[ca(cm(M[0][0],N[0][0]),cm(M[0][1],N[1][0])), ca(cm(M[0][0],N[0][1]),cm(M[0][1],N[1][1]))],
+          [ca(cm(M[1][0],N[0][0]),cm(M[1][1],N[1][0])), ca(cm(M[1][0],N[0][1]),cm(M[1][1],N[1][1]))]];
+}
+function apply(M,v){return [ca(cm(M[0][0],v[0]),cm(M[0][1],v[1])), ca(cm(M[1][0],v[0]),cm(M[1][1],v[1]))];}
+function elemMat(e){return (e && e.nm) ? ret(e.deg*D2R, TAU*e.nm/LAM) : ID;}
+// path matrix: elements in the order light meets them
+function pathMat(elems){var M=ID; for(var i=0;i<elems.length;i++){M=mmul(elemMat(elems[i]),M);} return M;}
+// universal compensator: linear polarizer at 0, LC-A at 45 deg, LC-B at 0 deg (settings in waves)
+function compOut(a,b){var v=[[1,0],[0,0]]; v=apply(ret(Math.PI/4,a*TAU),v); return apply(ret(0,b*TAU),v);}
+var EXT0=compOut(0.25,0.5);
+// ideal circular analyzer: passes the state orthogonal to the nominal extinction output
+function passI(v){var t=ca(cm([-EXT0[1][0],-EXT0[1][1]],v[0]), cm(EXT0[0],v[1])); return t[0]*t[0]+t[1]*t[1];}
+function intensityM(a,b,M){return passI(apply(M,compOut(a,b)))+FLOOR;}
+// the five states: State0 extinction, State1 LC-A -swing, State2 LC-B +swing, State3 LC-A +swing, State4 LC-B -swing
+function palette(a0,b0,chi){chi=(chi===undefined)?CHI:chi; return [[a0,b0],[a0-chi,b0],[a0,b0+chi],[a0+chi,b0],[a0,b0-chi]];}
+function framesM(pal,M){var out=[]; for(var k=0;k<5;k++){out.push(intensityM(pal[k][0],pal[k][1],M));} return out;}
+// Shribak & Oldenbourg 2003 five-state coefficients (frames already black-subtracted)
+function abCoef(I){var t=Math.tan(Math.PI*CHI);
+  return [(I[1]-I[3])/(I[1]+I[3]-2*I[0])*t, (I[2]-I[4])/(I[2]+I[4]-2*I[0])*t];}
+function recon(AB){var R=Math.atan(Math.hypot(AB[0],AB[1]))*LAM/TAU; var az=0.5*Math.atan2(AB[0],AB[1])/D2R; az=((az%180)+180)%180; return [R,az];}
+// calibration: coordinate search for the darkest State0 setting, from the nominal point; drift shifts the crystals' response
+function calibrate(M,dA,dB){
+  dA=dA||0; dB=dB||0;
+  var a=0.25,b=0.5,st=0.016,I=intensityM(a+dA,b+dB,M),path=[[a,b]];
+  while(st>2e-5){var moved=false, dirs=[[st,0],[-st,0],[0,st],[0,-st]];
+    for(var i=0;i<4;i++){var J=intensityM(a+dirs[i][0]+dA,b+dirs[i][1]+dB,M); if(J<I-1e-14){a+=dirs[i][0];b+=dirs[i][1];I=J;moved=true;path.push([a,b]);break;}}
+    if(!moved) st/=2;}
+  return {a:a,b:b,I:I,path:path};
+}
+function erOf(Iext){return 1/Iext;}   // open (analyzer-parallel) intensity is 1 in this model
+// slides: residual retardance of slide glass + mountant + coverslip (illustrative)
+var SLIDES={A:{nm:1.2,deg:20,label:'Slide A'},B:{nm:2.5,deg:110,label:'Slide B'},C:{nm:5.0,deg:150,label:'Slide C (strained coverslip)'}};
+var OPT0={nm:0.8,deg:70}; // field-centre residual of condenser + objective
+
+// ---------- mosaic model for card 4 ----------
+var NT=3, TW=64, TH=64, MW=NT*TW;
+function fiberCurves(x){
+  return [{y:20+10*Math.sin(TAU*x/120)+0.05*x, dy:10*TAU/120*Math.cos(TAU*x/120)+0.05, R:11},
+          {y:46+7*Math.sin(TAU*x/90+1.3), dy:7*TAU/90*Math.cos(TAU*x/90+1.3), R:6}];
+}
+function specimenAt(x,y){ // returns {fiber:{nm,deg}|null, stroma:{nm,deg}|null, truthR, fiberCore}
+  var cs=fiberCurves(x), best=null;
+  for(var i=0;i<cs.length;i++){var c=cs[i], cosv=1/Math.sqrt(1+c.dy*c.dy), d=Math.abs(y-c.y)*cosv, R=c.R*Math.exp(-(d*d)/(2.6*2.6));
+    if(R>0.02 && (!best || R>best.nm)) best={nm:R, deg:((-Math.atan(c.dy)/D2R)%180+180)%180, core:(i===0 && d<1.2)};}
+  var sR=2.2*Math.exp(-(((x-104)*(x-104))/900+((y-36)*(y-36))/260)), stroma=sR>0.05?{nm:sR,deg:((60+40*Math.sin(x/15))%180+180)%180}:null;
+  return {fiber:best, stroma:stroma, core:!!(best&&best.core)};
+}
+function slideAt(key,x){var s=SLIDES[key], f=x/MW; return {nm:s.nm*(0.92+0.16*f), deg:s.deg+6*(f-0.5)};}
+function lensAt(u,v){var r2=(u*u+v*v)/2; return {nm:2.6*r2, deg:Math.atan2(v,u)/D2R+90};}
+function tileUV(px,py){return [(px+0.5)/TW*2-1,(py+0.5)/TH*2-1];}
+var _palCache={};
+function paletteFor(key){ if(!_palCache[key]){ var k=calibrate(pathMat([slideAt(key,0),OPT0])); _palCache[key]=palette(k.a,k.b);} return _palCache[key]; }
+var _pathCache={};
+function mosaicPaths(key){ // per mosaic pixel path matrix (slide, specimen, optics)
+  if(_pathCache[key]) return _pathCache[key];
+  var out=new Array(MW*TH);
+  for(var y=0;y<TH;y++) for(var x=0;x<MW;x++){var sp=specimenAt(x,y), uv=tileUV(x%TW,y);
+    out[y*MW+x]=pathMat([slideAt(key,x), sp.stroma, sp.fiber, OPT0, lensAt(uv[0],uv[1])]);}
+  return (_pathCache[key]=out);
+}
+function bgAB(slideKey,pal){ // background coefficients per tile pixel, collected on a clear area at x=0 of that slide
+  var out=new Array(TW*TH);
+  for(var y=0;y<TH;y++) for(var x=0;x<TW;x++){var uv=tileUV(x,y);
+    out[y*TW+x]=abCoef(framesM(pal,pathMat([slideAt(slideKey,0),OPT0,lensAt(uv[0],uv[1])])).map(function(v){return v-0;}));}
+  return out;
+}
+function reconstructMosaic(stage,cal,bg){ // bg: null or array of AB per tile pixel
+  var P=mosaicPaths(stage), pal=paletteFor(cal), R=new Float32Array(MW*TH), AZ=new Float32Array(MW*TH);
+  for(var i=0;i<P.length;i++){var ab=abCoef(framesM(pal,P[i])); if(bg){var x=i%MW, y=(i/MW)|0, b=bg[y*TW+(x%TW)]; ab=[ab[0]-b[0],ab[1]-b[1]];}
+    var r=recon(ab); R[i]=r[0]; AZ[i]=r[1];}
+  return {R:R,AZ:AZ};
+}
+function mosaicStats(res){
+  var gl=0,gn=0,sxa=0,sya=0, fe=0,ft=0,fn=0,fae=0, seam=0,sn=0,base=0,bn=0;
+  for(var y=0;y<TH;y++) for(var x=0;x<MW;x++){var i=y*MW+x, sp=specimenAt(x,y), empty=!sp.fiber&&!sp.stroma;
+    if(empty){gl+=res.R[i];gn++; sxa+=res.R[i]*Math.cos(2*res.AZ[i]*D2R); sya+=res.R[i]*Math.sin(2*res.AZ[i]*D2R);}
+    if(sp.core){fe+=res.R[i];ft+=sp.fiber.nm;fn++; var d=Math.abs(res.AZ[i]-sp.fiber.deg)%180; fae+=Math.min(d,180-d);}
+    if(x<MW-1 && empty && !specimenAt(x+1,y).fiber && !specimenAt(x+1,y).stroma){var dd=Math.abs(res.R[i]-res.R[i+1]);
+      if((x+1)%TW===0){seam+=dd;sn++;} else {base+=dd;bn++;}}}
+  var glAz=0.5*Math.atan2(sya,sxa)/D2R; glAz=((glAz%180)+180)%180;
+  return {glass:gl/gn, glassAz:glAz, glassCoh:Math.hypot(sxa,sya)/gl, fiber:fe/fn, fiberTrue:ft/fn, fiberAz:fae/fn, seam:seam/sn-base/bn};
+}
+// ===================== shared drawing helpers =====================
+function gid(i){return document.getElementById(i);}
+var CY='#22D3EE',MAG='#F472B6',AM='#FBBF24',GREEN='#3CE0A6',MUT='#9AA6C4',INK='#e8edf8',HAIR='#27304F';
+var CAD={fixed:CY,session:AM,slide:MAG,any:GREEN,sample:'#c9d3ea'};
+function hsv(h,s,v){var c=v*s,hp=(h%360)/60,xx=c*(1-Math.abs(hp%2-1)),m=v-c,r=0,g=0,b=0;
+  if(hp<1){r=c;g=xx;}else if(hp<2){r=xx;g=c;}else if(hp<3){g=c;b=xx;}else if(hp<4){g=xx;b=c;}else if(hp<5){r=xx;b=c;}else{r=c;b=xx;}
+  return [(r+m)*255|0,(g+m)*255|0,(b+m)*255|0];}
+function azRGB(az,val){return hsv(((az%180)/180)*360,0.85,Math.max(0,Math.min(1,val)));}
+function txt(x,s,px,py,col,sz,al,wt){x.fillStyle=col;x.font=(wt||'')+' '+(sz||13)+'px system-ui,sans-serif';x.textAlign=al||'left';x.textBaseline='middle';x.fillText(s,px,py);}
+function segButtons(hostId,items,cur,onPick){var host=gid(hostId),btns={};host.innerHTML='';
+  items.forEach(function(it){var b=document.createElement('button');b.textContent=it[1];b.setAttribute('aria-pressed',it[0]===cur);
+    b.onclick=function(){for(var k in btns)btns[k].setAttribute('aria-pressed',k===it[0]);onPick(it[0]);};btns[it[0]]=b;host.appendChild(b);host.appendChild(document.createTextNode(' '));});
+  return btns;}
+function f1(v){return v.toFixed(1);} function f2(v){return v.toFixed(2);}
+
+// ===================== CARD 1: clickable light path =====================
+(function(){
+ var svg=gid('path'), info=gid('info'), NS='http://www.w3.org/2000/svg';
+ var P=[
+  {k:'lamp',x:8,w:78,lab:['Lamp +','549 nm filter'],cad:'fixed',fill:'#3b3415',
+   name:'Lamp and 549 nm green interference filter',
+   img:'The liquid crystals and the quarter-wave plate in the analyzer only give exact polarization states at one wavelength, so the light is narrowed to 549 nm (Semrock FF01-549/15). Retardance in nm is computed from that wavelength. Lamp brightness only sets how long an exposure you need.',
+   set:'Reconstruction wavelength 549 nm, and the Meadowlark adapter\'s Wavelength property, which the calibration sets before it measures. Lamp intensity.',
+   when:'Wavelength: never, while the filter stays. If you change lamp brightness, change the exposure instead of the gain, and collect the background again. Turn the lamp off or close the diaphragm when idle: a field left lit overnight dimmed the tissue under it.'},
+  {k:'pol',x:96,w:62,lab:['Linear','polarizer'],cad:'fixed',fill:'#13303a',
+   name:'Linear polarizer (first part of the universal compensator)',
+   img:'Turns the lamp light into one linear polarization, the starting point for every state the crystals make.',
+   set:'None: it is fixed in the compensator housing.',
+   when:'Never.'},
+  {k:'lca',x:168,w:62,lab:['LC-A'],cad:'session',fill:'#3a2f10',
+   name:'Liquid-crystal retarder LC-A',
+   img:'A retarder whose retardance follows the voltage applied to it. Together with LC-B it sets the polarization of the light reaching the slide: circular for extinction (State0), slightly elliptical for the swing states. State1 and State3 move LC-A by -swing and +swing.',
+   set:'The palette: LC-A in waves for each state (about 0.25 at extinction). LC control mode MM-Retardance, so QPSC sends waves and the adapter converts them to volts.',
+   when:'The crystals drift with temperature and time, so the palette is re-measured by Calibrate Liquid Crystals: each session after warm-up, and whenever the extinction ratio falls.'},
+  {k:'lcb',x:240,w:62,lab:['LC-B'],cad:'session',fill:'#3a2f10',
+   name:'Liquid-crystal retarder LC-B',
+   img:'The second retarder, 45 degrees from LC-A. State2 and State4 move LC-B by +swing and -swing. On this rig LC-B responds lopsidedly about extinction, which is visible in the calibration\'s Search curves tab.',
+   set:'The palette: LC-B in waves for each state (about 0.44 at extinction here).',
+   when:'Same as LC-A: re-measured by every calibration.'},
+  {k:'cond',x:314,w:70,lab:['Condenser'],cad:'fixed',fill:'#1b2547',
+   name:'Condenser and its aperture',
+   img:'Focuses the polarized light onto the slide. Strain in its lenses adds a small residual retardance. A wider aperture (higher NA) brings in oblique rays that are depolarized at the lens surfaces, which raises the extinction floor and lowers the extinction ratio.',
+   set:'Aperture position, and condenser_na in the reconstruction settings (0.5).',
+   when:'Keep it fixed for a study. If you change it, recalibrate and collect new backgrounds.'},
+  {k:'glass',x:396,w:52,lab:['Slide','glass'],cad:'slide',fill:'#3a1530',
+   name:'Slide glass, mountant and coverslip',
+   img:'None of these should be birefringent, but all of them are a little: stress frozen into the glass, a coverslip of different thickness or strain, mountant that dried under tension. Together they add a residual retardance of a few nm at some angle, and it is different on every slide.',
+   set:'None you can set. It is measured by the background (and partly absorbed by the calibration).',
+   when:'Every slide is different, so the background has to be collected on the slide being imaged, close to where you will image.'},
+  {k:'tissue',x:452,w:52,lab:['Tissue','section'],cad:'sample',fill:'#18352b',
+   name:'The specimen: tissue section',
+   img:'The part you want to measure. Ordered structures such as collagen have retardance R = delta-n x thickness, at the angle of their slow axis. The five frames record how the section changes each illumination state.',
+   set:'Section thickness and orientation are properties of the sample, not settings.',
+   when:'Thickness changes retardance directly, so compare sections cut at the same thickness.'},
+  {k:'cover',x:508,w:52,lab:['Cover-','slip'],cad:'slide',fill:'#3a1530',
+   name:'Coverslip and mountant',
+   img:'Part of the slide\'s residual retardance (see Slide glass). A thicker or strained coverslip can add several nm.',
+   set:'None; corrected by the background taken on this slide.',
+   when:'Every slide.'},
+  {k:'obj',x:572,w:72,lab:['Objective'],cad:'fixed',fill:'#1b2547',
+   name:'Objective',
+   img:'Strain in its lens elements adds residual retardance that varies across the field, often more at the edges. Because it is the same in every tile, an uncorrected mosaic shows seams. A strain-free (Pol) objective keeps it small.',
+   set:'The objective, which sets the imaging profile.',
+   when:'Each objective needs its own background (one per LC-PolScope profile). After switching objectives, recalibrate and collect.'},
+  {k:'ana',x:656,w:84,lab:['Circular','analyzer'],cad:'fixed',fill:'#13303a',
+   name:'Circular analyzer (quarter-wave plate + polarizer)',
+   img:'Blocks the circular light of State0 and passes only light whose polarization something has changed. That is why empty glass is dark at extinction and birefringent structure is bright.',
+   set:'None: fixed.',
+   when:'Never.'},
+  {k:'cam',x:752,w:80,lab:['Camera'],cad:'fixed',fill:'#22223a',
+   name:'Camera (Hamamatsu ORCA-Flash4.0 here)',
+   img:'Measures five intensities per pixel. Retardance comes from ratios between them, so the camera must be linear: auto gain or auto exposure rescales each frame, gamma bends the ratios, and a wrong black level shifts every ratio.',
+   set:'Exposure (one value for all five states), black level (99 counts on the Flash4), Gain Auto and Exposure Auto Off, gamma off, 12/16-bit pixel format.',
+   when:'Camera mode: once, then recheck after Micro-Manager restarts. Black level: when the pixel format, bit depth or binning changes. Exposure: keep it fixed if you can; collect a new background after any change.'},
+  {k:'rec',x:844,w:108,lab:['Reconstruction','& display'],cad:'any',fill:'#12352a',
+   name:'Reconstruction and display',
+   img:'The five frames become a retardance image and an orientation image, with the background subtracted per pixel. The display then maps retardance to brightness (up to the ceiling) and angle to hue.',
+   set:'Fixed: scheme 5-State, method openpolscope, state order. Free: display_retardance_ceiling_nm (20), colour map, hue offset, Orientation Colour View.',
+   when:'Reconstruction settings: never within a study. Display: any time, since the stored values never change. Use one display setting for every figure you compare.'}
+ ];
+ var Y=118, sel=null, groups={};
+ function el(t,a,p){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e;}
+ // beam
+ el('line',{x1:20,y1:Y,x2:950,y2:Y,stroke:'#5c4a14','stroke-width':6,'stroke-linecap':'round'});
+ el('line',{x1:20,y1:Y,x2:950,y2:Y,stroke:AM,'stroke-width':1.5,'stroke-dasharray':'6 6'});
+ // compensator bracket
+ el('path',{d:'M96 52 v-8 h206 v8',fill:'none',stroke:MUT,'stroke-width':1.2});
+ var t=el('text',{x:199,y:36,fill:MUT,'font-size':12,'text-anchor':'middle'});t.textContent='universal compensator';
+ el('path',{d:'M396 52 v-8 h164 v8',fill:'none',stroke:MUT,'stroke-width':1.2});
+ t=el('text',{x:478,y:36,fill:MUT,'font-size':12,'text-anchor':'middle'});t.textContent='the slide';
+ P.forEach(function(p){
+   var g=el('g',{'class':'part',tabindex:0,role:'button','aria-label':p.name});
+   var h=(p.k==='glass'||p.k==='tissue'||p.k==='cover')?92:76;
+   el('rect',{x:p.x,y:Y-h/2,width:p.w,height:h,rx:10,fill:p.fill,stroke:CAD[p.cad],'stroke-width':1.5},g);
+   p.lab.forEach(function(L,i){var tt=el('text',{x:p.x+p.w/2,y:Y+h/2+18+i*15,fill:CAD[p.cad],'font-size':12.5,'font-weight':600,'text-anchor':'middle'},g);tt.textContent=L;});
+   g.addEventListener('click',function(){pick(p.k);});
+   g.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();pick(p.k);}});
+   groups[p.k]=g;
+ });
+ function chip(c){var n={fixed:'fixed',session:'per session',slide:'per slide',any:'any time',sample:'the sample'}[c];
+   return '<span class="chip" style="color:'+CAD[c]+'">'+n+'</span>';}
+ function pick(k){var p=P.filter(function(q){return q.k===k;})[0]; sel=k;
+   for(var q in groups) groups[q].setAttribute('class','part'+(q===k?' sel':''));
+   info.innerHTML='<h3 style="margin:0 0 4px">'+p.name+' &nbsp;'+chip(p.cad)+'</h3>'+
+     '<div class="k">In image formation</div><p>'+p.img+'</p>'+
+     '<div class="k">Settings that belong to it</div><p>'+p.set+'</p>'+
+     '<div class="k">How often it changes</div><p>'+p.when+'</p>';}
+ pick('glass');
+})();
+
+// ===================== CARD 2: five states for one pixel =====================
+(function(){
+ var cv=gid('cv2'),x=cv.getContext('2d'),W=960,H=330;
+ var sr=gid('s2r'),sa=gid('s2a'),bx=gid('b2x'),r2=gid('r2');
+ var cur=0, exag=true, phase=0;
+ var NAMES=['State0 extinction','State1 LC-A -swing','State2 LC-B +swing','State3 LC-A +swing','State4 LC-B -swing'];
+ var SHORT=['State0','State1','State2','State3','State4'];
+ segButtons('stbtns',[[0,'State0'],[1,'State1'],[2,'State2'],[3,'State3'],[4,'State4']],0,function(k){cur=+k;});
+ bx.onclick=function(){exag=!exag;bx.setAttribute('aria-pressed',exag);bx.textContent=exag?'ellipse drawn 3× exaggerated':'ellipse drawn true to scale';};
+ var cal=calibrate(pathMat([OPT0])), pal=palette(cal.a,cal.b);
+ function draw(){
+   var R=+sr.value, A=+sa.value; gid('v2r').textContent=R+' nm'; gid('v2a').textContent=A+'°';
+   x.clearRect(0,0,W,H);
+   // ellipse of the light leaving the compensator
+   var cx=150,cy=175,rad=105;
+   txt(x,'light reaching the slide',cx,22,INK,13,'center');
+   x.strokeStyle=HAIR;x.lineWidth=1;x.beginPath();x.arc(cx,cy,rad,0,Math.PI*2);x.stroke();
+   x.beginPath();x.moveTo(cx-rad-8,cy);x.lineTo(cx+rad+8,cy);x.moveTo(cx,cy-rad-8);x.lineTo(cx,cy+rad+8);x.stroke();
+   var k=exag?3:1, da=pal[cur][0]-pal[0][0], db=pal[cur][1]-pal[0][1];
+   var v=compOut(pal[0][0]+k*da,pal[0][1]+k*db), nrm=Math.sqrt(v[0][0]*v[0][0]+v[0][1]*v[0][1]+v[1][0]*v[1][0]+v[1][1]*v[1][1]);
+   function pt(tt){return [cx+rad*Math.SQRT2*(v[0][0]*Math.cos(tt)+v[0][1]*Math.sin(tt))/nrm, cy-rad*Math.SQRT2*(v[1][0]*Math.cos(tt)+v[1][1]*Math.sin(tt))/nrm];}
+   x.strokeStyle=cur===0?CY:AM;x.lineWidth=3;x.beginPath();
+   for(var i=0;i<=120;i++){var p=pt(i/120*Math.PI*2);if(i===0)x.moveTo(p[0],p[1]);else x.lineTo(p[0],p[1]);}x.stroke();
+   phase+=0.04; var d=pt(phase); x.fillStyle='#fff';x.beginPath();x.arc(d[0],d[1],5,0,Math.PI*2);x.fill();
+   txt(x,cur===0?'circular: blocked by the analyzer':'slightly elliptical',cx,cy+rad+28,cur===0?CY:AM,12,'center');
+   // bars
+   var Mg=pathMat([OPT0]), Mc=pathMat([{nm:R,deg:A},OPT0]);
+   var Ig=framesM(pal,Mg), Ic=framesM(pal,Mc), mx=0; for(i=0;i<5;i++){mx=Math.max(mx,Ig[i],Ic[i]);}
+   var bx0=330,by0=40,bw=600,bh=210, slot=bw/5;
+   txt(x,'camera brightness in each state',bx0,22,INK,13,'left');
+   x.strokeStyle=HAIR;x.beginPath();x.moveTo(bx0,by0+bh);x.lineTo(bx0+bw,by0+bh);x.stroke();
+   for(i=0;i<5;i++){var sx=bx0+i*slot, on=i===cur;
+     if(on){x.fillStyle='rgba(251,191,36,0.08)';x.fillRect(sx+4,by0-6,slot-8,bh+6);}
+     var hg=Ig[i]/mx*bh, hc=Ic[i]/mx*bh;
+     x.fillStyle='rgba(154,166,196,0.75)';x.fillRect(sx+slot*0.18,by0+bh-hg,slot*0.28,hg);
+     x.fillStyle=GREEN;x.fillRect(sx+slot*0.54,by0+bh-hc,slot*0.28,hc);
+     txt(x,SHORT[i],sx+slot/2,by0+bh+16,on?AM:MUT,12,'center',on?'600':'');
+   }
+   txt(x,'■ empty glass',bx0,by0+bh+40,'rgba(154,166,196,0.95)',12,'left');
+   txt(x,'■ collagen pixel',bx0+120,by0+bh+40,GREEN,12,'left');
+   var rc=recon(abCoef(Ic));
+   r2.innerHTML='<b>'+NAMES[cur]+'</b>. '+(cur===0?'Empty glass is almost black; the collagen pixel leaks light in proportion to its retardance, but this frame alone cannot tell its angle.':'Empty glass is equally bright in all four swing states. The collagen pixel is brighter in some than in others, and which ones depends on its angle.')+
+     ' From the five frames: <b>'+f1(rc[0])+' nm at '+rc[1].toFixed(0)+'°</b> (set: '+R+' nm at '+A+'°).';
+   requestAnimationFrame(draw);
+ }
+ draw();
+})();
+
+// ===================== CARD 3: calibration search =====================
+(function(){
+ var cv=gid('cv3'),x=cv.getContext('2d'),W=960,H=380;
+ var sd=gid('s3d'),bcal=gid('b3cal'),r3=gid('r3');
+ var slide='A', calSlide='A', calDrift=0, pal=null, anim=null, animI=0;
+ var A0=0.25,B0=0.5,SPAN=0.065, N=110, off=document.createElement('canvas'); off.width=N; off.height=N;
+ var hx=60,hy=30,hs=300, heatKey='';
+ function drift(){var f=(+sd.value)/100; return [0.03*f,-0.022*f];}
+ function Mpath(){return pathMat([slideAt(slide,0),OPT0]);}
+ function doCal(animate){var d=drift(), k=calibrate(Mpath(),d[0],d[1]); pal=palette(k.a,k.b); calSlide=slide; calDrift=+sd.value;
+   if(animate){anim=k.path; animI=0;}}
+ doCal(false);
+ segButtons('slbtns3',[['A','Slide A'],['B','Slide B'],['C','Slide C (strained coverslip)']],'A',function(k){slide=k;anim=null;draw();});
+ sd.oninput=function(){anim=null;draw();};
+ bcal.onclick=function(){doCal(true);step();};
+ function step(){if(!anim)return; animI++; draw(); if(animI<anim.length) setTimeout(step,140); else {anim=null;draw();}}
+ function heat(M,d){var key=slide+'|'+sd.value; if(key===heatKey)return; heatKey=key;
+   var ctx=off.getContext('2d'), im=ctx.createImageData(N,N), lo=Math.log(FLOOR), hi=Math.log(0.06);
+   for(var j=0;j<N;j++)for(var i=0;i<N;i++){var a=A0-SPAN+2*SPAN*i/(N-1), b=B0+SPAN-2*SPAN*j/(N-1);
+     var t=(Math.log(intensityM(a+d[0],b+d[1],M))-lo)/(hi-lo); t=Math.max(0,Math.min(1,t)); var o=(j*N+i)*4;
+     im.data[o]=(40+215*Math.pow(t,1.6))|0; im.data[o+1]=(18+200*Math.pow(t,1.1))|0; im.data[o+2]=(60+150*Math.sqrt(t))|0; im.data[o+3]=255;}
+   ctx.putImageData(im,0,0);}
+ function toXY(a,b){return [hx+(a-(A0-SPAN))/(2*SPAN)*hs, hy+((B0+SPAN)-b)/(2*SPAN)*hs];}
+ function draw(){
+   var d=drift(), M=Mpath(); gid('v3d').textContent=(+sd.value===0)?'none':(d[0].toFixed(3)+' waves');
+   heat(M,d); x.clearRect(0,0,W,H);
+   x.imageSmoothingEnabled=true; x.drawImage(off,hx,hy,hs,hs); x.strokeStyle=HAIR;x.strokeRect(hx,hy,hs,hs);
+   txt(x,'extinction-state brightness (dark = less light)',hx,14,INK,13,'left');
+   txt(x,'LC-A (waves)',hx+hs/2,hy+hs+30,MUT,12,'center');
+   txt(x,(A0-SPAN).toFixed(3),hx,hy+hs+14,MUT,11,'left');txt(x,(A0+SPAN).toFixed(3),hx+hs,hy+hs+14,MUT,11,'right');
+   x.save();x.translate(hx-34,hy+hs/2);x.rotate(-Math.PI/2);txt(x,'LC-B (waves)',0,0,MUT,12,'center');x.restore();
+   txt(x,(B0+SPAN).toFixed(3),hx-6,hy+6,MUT,11,'right');txt(x,(B0-SPAN).toFixed(3),hx-6,hy+hs-6,MUT,11,'right');
+   x.save();x.beginPath();x.rect(hx,hy,hs,hs);x.clip();
+   // true minimum for this path
+   var tm=calibrate(M,d[0],d[1]), p=toXY(tm.a,tm.b);
+   x.strokeStyle=GREEN;x.lineWidth=2;x.beginPath();x.moveTo(p[0]-8,p[1]);x.lineTo(p[0]+8,p[1]);x.moveTo(p[0],p[1]-8);x.lineTo(p[0],p[1]+8);x.stroke();
+   // search path animation
+   if(anim){x.strokeStyle=AM;x.lineWidth=1.5;x.setLineDash([3,3]);x.beginPath();
+     for(var i=0;i<Math.min(animI,anim.length);i++){var q=toXY(anim[i][0],anim[i][1]);if(i===0)x.moveTo(q[0],q[1]);else x.lineTo(q[0],q[1]);}x.stroke();x.setLineDash([]);}
+   // palette
+   var show=anim?null:pal;
+   if(show){for(i=1;i<5;i++){var s=toXY(show[i][0],show[i][1]);x.fillStyle=MAG;x.beginPath();x.arc(s[0],s[1],4,0,Math.PI*2);x.fill();}
+     var e=toXY(show[0][0],show[0][1]);x.strokeStyle=AM;x.lineWidth=2.5;x.beginPath();x.arc(e[0],e[1],9,0,Math.PI*2);x.stroke();}
+   x.restore();
+   // legend
+   var lx=hx+hs+30;
+   txt(x,'○ State0 as calibrated',lx,hy+8,AM,12,'left'); txt(x,'● swing states',lx,hy+26,MAG,12,'left'); txt(x,'+ darkest point for this path now',lx,hy+44,GREEN,12,'left');
+   // ER gauge
+   var Iext=pal?intensityM(pal[0][0]+d[0],pal[0][1]+d[1],M):1, ER=erOf(Iext);
+   var gx=lx, gy=hy+90, gw=W-lx-30, gh=18, MAXER=320;
+   txt(x,'extinction ratio',gx,gy-14,INK,13,'left');
+   function band(a,b,c){x.fillStyle=c;x.fillRect(gx+gw*a/MAXER,gy,gw*(b-a)/MAXER,gh);}
+   band(0,80,'rgba(244,114,182,0.35)');band(80,100,'rgba(251,191,36,0.4)');band(100,MAXER,'rgba(60,224,166,0.3)');
+   var mxp=gx+gw*Math.min(ER,MAXER)/MAXER; x.fillStyle='#fff';x.fillRect(mxp-2,gy-5,4,gh+10);
+   txt(x,'poor',gx+gw*40/MAXER,gy+gh+14,MAG,11,'center');txt(x,'ok',gx+gw*90/MAXER,gy+gh+14,AM,11,'center');txt(x,'good',gx+gw*200/MAXER,gy+gh+14,GREEN,11,'center');
+   txt(x,ER.toFixed(0),mxp,gy+gh+30,'#fff',14,'center','700');
+   // swing balance on clear glass
+   var I=pal?framesM(pal.map(function(q){return [q[0]+d[0],q[1]+d[1]];}),M):[0,0,0,0,0];
+   var sw=I.slice(1), mean=(sw[0]+sw[1]+sw[2]+sw[3])/4, spread=(Math.max.apply(null,sw)-Math.min.apply(null,sw))/(mean-I[0])*100;
+   var by=gy+80, bh=110, bw=(gw-20)/5, mxI=Math.max.apply(null,I);
+   txt(x,'the five states on clear glass',gx,by-12,INK,13,'left');
+   for(i=0;i<5;i++){var hh=I[i]/mxI*bh; x.fillStyle=i===0?CY:MAG; x.fillRect(gx+i*(bw+5),by+bh-hh+10,bw,hh); txt(x,'S'+i,gx+i*(bw+5)+bw/2,by+bh+22,MUT,11,'center');}
+   txt(x,'swing states differ by '+spread.toFixed(0)+'%',gx,by+bh+44,spread>10?MAG:MUT,12,'left');
+   var grade=ER>=100?'good':(ER>=80?'acceptable':'poor');
+   if(anim){r3.innerHTML='Searching: each step moves one crystal toward less light, halving the step when neither direction helps.';return;}
+   var msg='Calibrated on <b>'+SLIDES[calSlide].label+'</b>'+'. Extinction ratio <b>'+ER.toFixed(0)+'</b> ('+grade+'). ';
+   if(slide!==calSlide||+sd.value!==calDrift){
+     msg+=(+sd.value!==calDrift?'The crystals have drifted, so the whole map has moved under the palette. ':'')+(slide!==calSlide?'This slide adds a different residual, so the darkest point (+) has moved a little. ':'')+
+       'The swing states are no longer balanced on clear glass. '+(ER<100?'<b>Recalibrate.</b>':'Still usable; the background will absorb the difference, but recalibrating restores it.');
+   } else msg+='State0 sits on the darkest point, and the four swing states match on clear glass.';
+   r3.innerHTML=msg;
+ }
+ draw();
+})();
+
+// ===================== CARD 4: mosaic + background =====================
+(function(){
+ var cv=gid('cv4'),x=cv.getContext('2d'),W=960,H=410;
+ var r4=gid('r4'), sc=gid('s4c');
+ var stage='B', cal='A', bgMode='none', view='ret';
+ var OTHER={A:'B',B:'A',C:'A'};
+ var off=document.createElement('canvas'); off.width=MW; off.height=TH;
+ var cache={};
+ function result(){var key=stage+cal+bgMode; if(cache[key]) return cache[key];
+   var pal=paletteFor(cal), bg=null, prev=(cal==='A')?'B':'A';
+   if(bgMode==='match') bg=bgAB(stage,pal);
+   else if(bgMode==='other') bg=bgAB(OTHER[stage],pal);
+   else if(bgMode==='oldcal') bg=bgAB(stage,paletteFor(prev));
+   var res=reconstructMosaic(stage,cal,bg); res.stats=mosaicStats(res); return (cache[key]=res);}
+ var SL=[['A','Slide A'],['B','Slide B'],['C','Slide C']];
+ segButtons('slbtns4',SL,stage,function(k){stage=k;draw();});
+ segButtons('calbtns4',SL,cal,function(k){cal=k;draw();});
+ segButtons('bgbtns4',[['none','none'],['match','this slide, this calibration'],['other','from another slide'],['oldcal','this slide, before recalibrating']],bgMode,function(k){bgMode=k;draw();});
+ gid('b4ret').onclick=function(){view='ret';gid('b4ret').setAttribute('aria-pressed',true);gid('b4ori').setAttribute('aria-pressed',false);draw();};
+ gid('b4ori').onclick=function(){view='ori';gid('b4ori').setAttribute('aria-pressed',true);gid('b4ret').setAttribute('aria-pressed',false);draw();};
+ sc.oninput=draw;
+ function draw(){
+   var ceil=+sc.value; gid('v4c').textContent=ceil+' nm';
+   var res=result(), ctx=off.getContext('2d'), im=ctx.createImageData(MW,TH);
+   for(var i=0;i<MW*TH;i++){var t=Math.min(1,res.R[i]/ceil), o=i*4, c;
+     if(view==='ret'){var g=(t*255)|0; c=[g,g,g];} else c=azRGB(res.AZ[i],t);
+     im.data[o]=c[0];im.data[o+1]=c[1];im.data[o+2]=c[2];im.data[o+3]=255;}
+   ctx.putImageData(im,0,0);
+   x.clearRect(0,0,W,H);
+   var ix=20,iy=46,iw=920,ih=iw*TH/MW;
+   x.imageSmoothingEnabled=false; x.drawImage(off,ix,iy,iw,ih);
+   x.strokeStyle='rgba(251,191,36,0.55)';x.setLineDash([4,4]);x.lineWidth=1;
+   for(var k=1;k<NT;k++){var sx=ix+iw*k/NT;x.beginPath();x.moveTo(sx,iy);x.lineTo(sx,iy+ih);x.stroke();}
+   x.setLineDash([]);
+   for(k=0;k<NT;k++) txt(x,'tile '+(k+1),ix+iw*(k+0.5)/NT,iy-10,MUT,12,'center');
+   txt(x,(view==='ret'?'retardance':'orientation')+' · '+SLIDES[stage].label+' on the stage, calibrated on '+SLIDES[cal].label,ix,14,INK,13,'left');
+   // key
+   var ky=iy+ih+14, kw=300;
+   if(view==='ret'){var gr=x.createLinearGradient(ix,0,ix+kw,0);gr.addColorStop(0,'#000');gr.addColorStop(1,'#fff');x.fillStyle=gr;x.fillRect(ix,ky,kw,12);
+     txt(x,'0',ix,ky+24,MUT,11,'left');txt(x,ceil+' nm and above',ix+kw,ky+24,MUT,11,'right');}
+   else{for(var a=0;a<180;a++){var c2=azRGB(a,1);x.fillStyle='rgb('+c2[0]+','+c2[1]+','+c2[2]+')';x.fillRect(ix+a*kw/180,ky,kw/180+1,12);}
+     txt(x,'0°',ix,ky+24,MUT,11,'left');txt(x,'90°',ix+kw/2,ky+24,MUT,11,'center');txt(x,'180°  (brightness = retardance)',ix+kw,ky+24,MUT,11,'left');}
+   var s=res.stats, ok=s.glass<0.8&&Math.abs(s.fiber-s.fiberTrue)<0.8;
+   var lines='Empty glass reads <b>'+f2(s.glass)+' nm</b>'+(s.glassCoh>0.8&&s.glass>0.5?' (almost all at <b>'+s.glassAz.toFixed(0)+'°</b>, so in the orientation view it is one hue)':'')+' and should read 0. '+
+     'Brightest fibre: <b>'+f1(s.fiber)+' nm</b> (true '+f1(s.fiberTrue)+' nm), angle off by <b>'+f1(s.fiberAz)+'°</b>. '+
+     'Step at the tile seams: <b>'+f2(Math.max(0,s.seam))+' nm</b>. ';
+   var why={none:'With no background, the lens strain repeats in every tile (seams) and the slide\'s own residual is left in.',
+     match:'The background describes the same optics, slide, calibration and exposure, so it cancels. The small remainder is the slide changing between where the background was taken (left of tile 1) and the tiles, which is why the background should be taken close to where you image.',
+     other:'The seams are gone, because both slides share the same lenses, but every value is shifted by the difference between the two slides. <b>A clean mosaic does not prove the background is right.</b>',
+     oldcal:'Collected on this slide, but through the previous palette, so it describes a different extinction point. <b>QPSC refuses this background</b> and reconstructs uncorrected instead, as with no background. The image shown is what a silent reuse would give.'}[bgMode];
+   if(bgMode==='match'&&cal!==stage) why+=' The calibration came from another slide, but the background was taken through that same calibration on this slide, so it still cancels. That is why the background is the per-slide must, while recalibrating per slide is the refinement.';
+   r4.innerHTML=lines+'<br>'+why+(ok?' <b style="color:#3CE0A6">[OK]</b>':'');
+ }
+ draw();
+})();
+
+// ===================== CARD 6: what do I redo? =====================
+(function(){
+ var ids=['session','optics','camera','exposure','slide','er'], q={};
+ function val(){ids.forEach(function(i){q[i]=gid('q-'+i).checked;});}
+ function li(need,opt,t,why){return '<li class="'+(need||opt?'':'skip')+'"><b>'+t+'</b>'+(opt?' <span class="chip c-am" style="color:#FBBF24">recommended</span>':'')+(need?'':' <span class="chip" style="color:#9AA6C4">not needed</span>')+'<span class="why">'+why+'</span></li>';}
+ function render(){val();
+   var cam=q.camera, calNeed=q.session||q.optics||q.camera||q.er, calOpt=!calNeed&&q.slide, bgNeed=calNeed||calOpt||q.exposure||q.slide;
+   var h='';
+   h+=li(cam,false,'Camera and black level',cam?'In Micro-Manager: Gain Auto and Exposure Auto Off, gamma off, 12/16-bit. The calibration then measures the black level in this format\'s counts, and Apply offers it.':'Nothing about the camera changed; the Ready to acquire? box rechecks auto gain, gamma and bit depth on every run anyway.');
+   h+=li(calNeed,calOpt,'Calibrate Liquid Crystals on a clear field, then Apply to acquisition',
+     calNeed?(q.er?'A low extinction ratio means State0 is no longer at extinction for this path.':q.optics?'The light path changed, so the extinction point has moved.':q.camera?'Recalibrate after camera changes so the palette and black level are measured together.':'The crystals drift between sessions; measure the palette after the lamp and crystals have warmed up.')+' Pick a field with no tissue, dust or bubbles; set Measure on to avoid junk at the edges.':
+     calOpt?'Optional on a new slide: it absorbs this slide\'s uniform residual and rebalances the swing states. If the extinction ratio is still good, the background below corrects the difference on its own.':'Same session, same light path, extinction ratio fine: the applied calibration is still valid.');
+   h+=li(q.exposure,false,'Set the exposure',q.exposure?'One exposure for all five states. Keep the brightest swing state well below clipping. The calibration does not depend on exposure, so you do not need to recalibrate for this.':'Keep the exposure the rest of the study used.');
+   h+=li(bgNeed,false,'Collect the background',bgNeed?'On a clear area of this slide, close to where you will image, defocused 10&ndash;20&nbsp;&micro;m, in the background profile for this slide setup and for each objective you will use. '+((calNeed||calOpt)?'Every calibration makes the old background invalid (QPSC refuses it). ':'')+(q.exposure?'It is taken at the configured exposure, so an exposure change needs a new one. ':'')+(q.slide?'A new slide has its own glass, coverslip and mountant residual.':''):'Same slide, same calibration, same exposure: the existing background is still valid.');
+   h+=li(true,false,'Check the Ready to acquire? box, then acquire','It confirms the server config matches, the calibration is applied, the black level is set, a background matching this calibration exists, and the camera and LC wavelength are right. Fix lines first; Check lines are worth a look.');
+   gid('steps').innerHTML=h;}
+ ids.forEach(function(i){gid('q-'+i).addEventListener('change',render);});
+ render();
+})();
+
+})();
+</script>
+</body></html>
