@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Running the LC-PolScope with QPSC</title>
+<style>
+:root{--bg:#0B1020;--panel:#151B30;--panel2:#101A30;--ink:#FFFFFF;--mut:#9AA6C4;--cy:#22D3EE;--mag:#F472B6;--am:#FBBF24;--green:#3CE0A6;--hair:#27304F;}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.55;}
+.wrap{max-width:920px;margin:0 auto;padding:30px 16px 70px;}
+.eyebrow{color:var(--cy);font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;margin:0 0 6px;}
+h1{font-size:26px;margin:0 0 6px;font-weight:800;}
+h2{font-size:20px;margin:0 0 8px;font-weight:800;}
+h3{font-size:15.5px;margin:18px 0 6px;font-weight:700;color:var(--cy);}
+p{margin:0 0 10px;color:#dfe5f3;font-size:14.5px;}
+.intro{color:var(--mut);font-size:14.5px;}
+.intro b{color:var(--ink);}
+.card{background:var(--panel);border:1px solid var(--hair);border-radius:16px;padding:20px;margin:22px 0;scroll-margin-top:12px;}
+a{color:var(--am);text-decoration:none;}
+.toc{display:flex;flex-wrap:wrap;gap:6px 8px;font-size:13px;margin:12px 0 0;}
+.toc a{background:var(--panel2);border:1px solid var(--hair);border-radius:9px;padding:5px 10px;color:var(--ink);}
+.toc a:hover{border-color:var(--cy);}
+ol.do{margin:6px 0 12px;padding-left:0;list-style:none;counter-reset:s;}
+ol.do>li{counter-increment:s;position:relative;padding:7px 10px 7px 40px;margin:6px 0;background:var(--panel2);border:1px solid var(--hair);border-radius:10px;font-size:14.5px;color:#dfe5f3;}
+ol.do>li::before{content:counter(s);position:absolute;left:10px;top:8px;width:22px;height:22px;border-radius:50%;background:var(--hair);color:var(--ink);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+ol.do>li b{color:var(--ink);}
+.ui{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.9em;background:#0c1322;border:1px solid var(--hair);border-radius:5px;padding:0 5px;color:#e8edf8;white-space:nowrap;}
+.path{white-space:normal;}
+.note{border-left:3px solid var(--am);padding:8px 12px;background:#1a1a22;border-radius:0 10px 10px 0;color:var(--mut);font-size:13.5px;margin:12px 0;}
+.note b{color:var(--ink);}
+.warn{border-left-color:var(--mag);}
+.slot{border:2px dashed #3b4670;border-radius:12px;padding:22px 16px;margin:12px 0;text-align:center;color:var(--mut);font-size:13.5px;background:#0e1527;}
+.slot b{display:block;color:var(--cy);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;}
+.confirm{border:1px solid var(--am);border-radius:10px;padding:8px 12px;margin:10px 0;background:#231d0c;color:#f3e5b8;font-size:13.5px;}
+.confirm b{color:var(--am);}
+.tablewrap{overflow-x:auto;margin:8px 0 12px;}
+table{border-collapse:collapse;width:100%;font-size:13.5px;}
+th,td{text-align:left;vertical-align:top;padding:8px 10px;border-bottom:1px solid var(--hair);}
+th{color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.06em;}
+td{color:#dfe5f3;} td b{color:var(--ink);}
+.lv{font-weight:700;font-size:12px;} .lv.ok{color:var(--green);} .lv.ch{color:var(--am);} .lv.fx{color:var(--mag);}
+details{margin:10px 0;background:var(--panel2);border:1px solid var(--hair);border-radius:10px;padding:8px 12px;font-size:14px;color:#dfe5f3;}
+summary{cursor:pointer;font-weight:600;color:var(--ink);}
+footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid var(--hair);padding-top:16px;}
+</style></head>
+<body><div class="wrap">
+<div class="eyebrow">LC-PolScope &middot; operator walkthrough</div>
+<h1>Running the LC-PolScope with QPSC</h1>
+<p class="intro">Follow these steps to go from a powered-off microscope to retardance and orientation images in a QuPath project. <a href="LCPolScope_Image_Workflow.html">Making an image</a> shows what each mistake does to the result, and <a href="LCPolScope_Settings.html">Settings</a> explains why each setting matters. Labels in <span class="ui">this style</span> match the software exactly, including its British spelling of &ldquo;Colour&rdquo;.</p>
+<p class="intro"><b>Software version.</b> The steps follow the build on our microscope, which is newer than QPSC 0.13.0. The released 0.13.0 lacks several items shown here, including the <span class="ui">Stitching queue</span> window and the reminder before each run.</p>
+<div class="toc">
+<a href="#s1">1. Start the hardware</a><a href="#s2">2. Start the software</a><a href="#s3">3. Load the slide</a><a href="#s4">4. Check the camera</a><a href="#s5">5. Calibrate</a><a href="#s6">6. Collect the background</a><a href="#s7">7. Acquire</a><a href="#s8">8. Open the results</a><a href="#s9">9. Change slides</a><a href="#s10">10. Shut down</a><a href="#s11">If something goes wrong</a>
+</div>
+
+<section class="card">
+<h2>What you will do for each slide</h2>
+<p>Calibration and background both include the slide's own glass, coverslip and mountant, so you repeat them for every slide. A run with one slide follows this order: focus, calibrate on a clear area, apply, collect the background, focus again, acquire.</p>
+<div class="slot"><b>Photo to add</b>Whole microscope from the operator's position, with the lamp, liquid crystal controller, stage, computer and both cameras labeled.</div>
+</section>
+
+<section class="card" id="s1">
+<h2>1. Start the hardware</h2>
+<p>The lamp, filter, objective and Kohler alignment are all set by hand. The software cannot change or detect them.</p>
+<ol class="do">
+<li><b>Turn on the lamp.</b> Micro-Manager has no control over it.</li>
+<li><b>Check that the 549 nm filter is in the lamp path.</b> The liquid crystals and retardance values are only correct at this wavelength.</li>
+<li><b>Turn on the Meadowlark liquid crystal controller, the stage controller and the camera.</b></li>
+<li><b>Turn the nosepiece to the objective you will use.</b> QPSC records your choice of objective but cannot move the nosepiece.</li>
+<li><b>Set the light path selector on the right side of the stand.</b> Use position 2 for the camera and position 5 for the eyepieces. Positions 1 and 2 look alike, so check the number.</li>
+</ol>
+<div class="slot"><b>Photo to add</b>Lamp housing and the 549 nm filter in place.</div>
+<div class="slot"><b>Photo to add</b>Liquid crystal controller front panel, powered on, and the stage controller.</div>
+<div class="slot"><b>Photo to add</b>Light path selector with positions 2 and 5 marked.</div>
+<div class="confirm"><b>Confirm at the microscope:</b> power-on order, how long the lamp and crystals need to warm up before calibrating, and which light path position serves each camera.</div>
+</section>
+
+<section class="card" id="s2">
+<h2>2. Start the software</h2>
+<p>Start the programs in this order: Micro-Manager, then the microscope server, then QuPath. The server cannot start without Micro-Manager, and QuPath needs the server.</p>
+<h3>2.1 Start Micro-Manager</h3>
+<ol class="do">
+<li><b>Open Micro-Manager and load the configuration for the camera you are using.</b> For the Hamamatsu camera, use <span class="ui">MM2-Flash4-20261021.cfg</span>.</li>
+<li><b>Close OpenPolScope and recOrder if either is open.</b> Only one program should drive the liquid crystals.</li>
+</ol>
+<div class="confirm"><b>Confirm at the microscope:</b> the Micro-Manager version to open, where its server setting for outside programs is found, and whether OpenPolScope or recOrder must be closed first.</div>
+<h3>2.2 Start the microscope server</h3>
+<ol class="do">
+<li><b>Double-click <span class="ui">start_server.bat</span>.</b> A console window opens.</li>
+<li><b>Wait for <span class="ui">Ready for connections...</span></b> in that window. Leave the window open for the whole session.</li>
+</ol>
+<h3>2.3 Start QuPath and connect</h3>
+<ol class="do">
+<li><b>Open QuPath.</b></li>
+<li><b>Open <span class="ui path">Edit &gt; Preferences</span>, category <span class="ui">QuPath SCope</span>.</b> Check that <span class="ui">Microscope Config File</span> is the file for your camera: <span class="ui">config_LCPolScope_Hamamatsu.yml</span> for the Hamamatsu or <span class="ui">config_LCPolScope.yml</span> for the Oryx.</li>
+<li><b>If you changed the file, click <span class="ui">Switch now</span></b> in the <span class="ui">Switch Microscope</span> dialog.</li>
+<li><b>Open <span class="ui path">Extensions &gt; QuPath SCope &gt; Utilities &gt; Microscope Configuration &gt; Communication Settings...</span></b></li>
+<li><b>Click <span class="ui">Connect Now</span>.</b> The status changes to <span class="ui path">Status: Primary connected (auxiliary will connect on use)</span>.</li>
+<li><b>Click <span class="ui">OK</span>.</b></li>
+</ol>
+<div class="note warn"><b>Each camera has its own configuration file.</b> The Micro-Manager configuration and the QuPath file must describe the same camera. A calibration applied to one file does not reach the other. A mismatch usually appears later as <span class="ui path">Objective Pixel-Size Mismatch -- Workflow Cancelled</span>.</div>
+</section>
+
+<section class="card" id="s3">
+<h2>3. Load the slide and find focus</h2>
+<p>The microscope is inverted, so the slide sits on the stage face down with the coverslip toward the objective. The label goes on your right as you face the microscope.</p>
+<ol class="do">
+<li><b>Place the slide on the stage, coverslip down, with the label on your right.</b></li>
+<li><b>Open <span class="ui path">Extensions &gt; QuPath SCope &gt; Acquisition controls &gt; Stage Map</span>.</b></li>
+<li><b>Check <span class="ui">Slide in holder:</span>.</b> Choose the placement that says the label is on your right, or <span class="ui">Placement A (as scanned)</span> if no macro image has been placed.</li>
+<li><b>Open <span class="ui path">Extensions &gt; QuPath SCope &gt; Acquisition controls &gt; Live Viewer</span>.</b></li>
+<li><b>Click <span class="ui">Live: OFF</span></b> so that it reads <span class="ui">Live: ON</span>. Stage movement stays disabled until live view is on.</li>
+<li><b>Open <span class="ui">Stage Control</span>, then the <span class="ui">Navigate</span> tab, and move to your sample.</b></li>
+<li><b>Focus on the sample.</b></li>
+</ol>
+<div class="slot"><b>Photo to add</b>Slide on the stage from the operator's position, showing the label on the right and which side faces down.</div>
+<div class="slot"><b>Photo to add</b>Condenser above the stage, with the aperture setting used for acquisition.</div>
+<div class="note"><b>A very dark live image can be normal.</b> Near the extinction state, empty glass is close to black and only birefringent structure shows.</div>
+</section>
+
+<section class="card" id="s4">
+<h2>4. Check the camera settings</h2>
+<p>Retardance comes from brightness ratios between frames, so the camera has to be linear and fixed.</p>
+<ol class="do">
+<li><b>Open <span class="ui path">Extensions &gt; QuPath SCope &gt; LC-PolScope &gt; LC-PolScope Setup...</span></b> One scrolling window lists the steps in order, with a <span class="ui">Ready to acquire?</span> box at the top.</li>
+<li><b>In Micro-Manager's Device Property Browser, set Gain Auto and Exposure Auto to Off, turn gamma off, and choose a 12-bit or 16-bit pixel format.</b></li>
+<li><b>Click <span class="ui">Recheck</span>.</b> The <span class="ui">Camera:</span> line in the box updates. Any <span class="ui">Fix</span> line about the camera must be cleared before you calibrate.</li>
+</ol>
+<div class="confirm"><b>Confirm at the microscope:</b> what the <span class="ui">Camera:</span> line shows for the Hamamatsu, since it may not have the same property names as the Oryx.</div>
+</section>
+
+<section class="card" id="s5">
+<h2>5. Calibrate the liquid crystals</h2>
+<p>Calibration finds the crystal settings where the least light reaches the camera, then sets four swing states around that point. Run it on the slide you will image, on empty glass close to your region.</p>
+<h3>5.1 Run the calibration</h3>
+<ol class="do">
+<li><b>In the Live Viewer, move to a clear, empty area near your region.</b> Anything birefringent in the field makes the result worse.</li>
+<li><b>In <span class="ui">LC-PolScope Setup</span>, click <span class="ui">Calibrate Liquid Crystals...</span></b></li>
+<li><b>Fill in the dialog using the table below, then click <span class="ui">OK</span>.</b></li>
+</ol>
+<div class="tablewrap"><table>
+<tr><th>Field</th><th>Set to</th></tr>
+<tr><td><span class="ui">Output folder:</span></td><td>Leave the default.</td></tr>
+<tr><td><span class="ui">Search:</span></td><td><span class="ui">single_pass</span>. The other option takes roughly three times as many exposures.</td></tr>
+<tr><td><span class="ui">Exposure (ms):</span></td><td>The exposure you plan to acquire with. Use <b>50</b> for the birefringent test target. See 5.3 for other samples.</td></tr>
+<tr><td><span class="ui">Black level:</span></td><td>Leave the prefilled value. Do not clear the field.</td></tr>
+<tr><td><span class="ui">Measure on:</span></td><td><span class="ui">100</span>, unless dust or debris near the edges needs excluding.</td></tr>
+</table></div>
+<p>Swing, wavelength and scheme are shown in the dialog for checking. They come from the configuration file and should read 0.05 waves, 549 nm and 5-State.</p>
+<p>The <span class="ui">LC Calibration In Progress</span> window stays open for a few minutes. Keep the field clear and do not touch the microscope.</p>
+<div class="note warn"><b><span class="ui">Cancel</span> in the progress window does not stop the calibration.</b> The window closes, but the crystals keep moving until the search finishes. Wait for the result before starting anything else.</div>
+<h3>5.2 Read the result and apply it</h3>
+<p>The <span class="ui">LC Calibration Complete</span> window reports the extinction ratio in its header.</p>
+<div class="tablewrap"><table>
+<tr><th>Extinction ratio</th><th>Header word</th><th>What to do</th></tr>
+<tr><td>100 or above</td><td><span class="lv ok">good</span></td><td>Continue. This microscope usually reaches about 270.</td></tr>
+<tr><td>80 to under 100</td><td><span class="lv ch">acceptable</span></td><td>Check that the field is clear and the optics are clean, then calibrate again if you can.</td></tr>
+<tr><td>Under 80</td><td><span class="lv fx">poor</span></td><td>Move to a cleaner area and calibrate again.</td></tr>
+<tr><td>Any</td><td><span class="lv fx">unreliable</span></td><td>Fix what the warnings name, then calibrate again. Do not apply it.</td></tr>
+</table></div>
+<ol class="do">
+<li><b>Read the warnings in the <span class="ui">Summary</span> tab.</b> A warning that a state would clip at the acquisition exposure means the exposure is too long.</li>
+<li><b>Click <span class="ui">Apply to acquisition</span>.</b> Until you do, acquisition does not use this calibration.</li>
+<li><b>Check <span class="ui">Exposure, all states (ms):</span>.</b> Type your exposure if a different value is shown. The value is written to the configuration file for all five states.</li>
+<li><b>Tick the <span class="ui">Black level</span> box if it appears, then click <span class="ui">Apply</span>.</b></li>
+<li><b>Click <span class="ui">Collect background now...</span></b> in the <span class="ui">LC palette applied</span> window, then continue at step 6.</li>
+</ol>
+<h3>5.3 Choosing the exposure</h3>
+<p>Empty glass is already bright in the swing states, and birefringent structure pushes one of them higher. Choose an exposure that leaves room for the brightest structure you will measure.</p>
+<div class="tablewrap"><table>
+<tr><th>Sample</th><th>Exposure on this rig</th><th>Why</th></tr>
+<tr><td>Thin tissue sections with faint collagen, mostly under 5 nm</td><td>About 140 ms</td><td>Low noise, and swing states stay below saturation up to about 10 nm</td></tr>
+<tr><td>Birefringent test target, or anything near 20 nm</td><td>50 ms</td><td>Swing states stay below saturation up to about 40 nm</td></tr>
+</table></div>
+<p>These numbers depend on lamp brightness. To measure your own slide:</p>
+<ol class="do">
+<li><b>In the Live Viewer, open the <span class="ui">Camera</span> tab.</b></li>
+<li><b>Move to the brightest structure you intend to measure.</b></li>
+<li><b>Type the exposure in <span class="ui">Exposure, all states (ms):</span></b></li>
+<li><b>Click <span class="ui">Measure all states</span>.</b> A row that turns red and says <span class="ui">clipped</span> means the exposure is too long.</li>
+<li><b>Click <span class="ui">Save to Profile</span>, then <span class="ui">Save</span>, if you change the exposure.</b> The value applies to every objective on this microscope. Collect a new background afterward.</li>
+</ol>
+<div class="note warn"><b>No warning appears if tissue saturates during a run.</b> The <span class="ui">Ready to acquire?</span> box does not check exposure against your sample, so <span class="ui">Measure all states</span> on the brightest structure is the check to make.</div>
+</section>
+
+<section class="card" id="s6">
+<h2>6. Collect the background</h2>
+<p>The background records the lens strain pattern and the slide's own retardance so they can be removed from every tile. Collect it right after calibrating, on the same slide, at the same exposure.</p>
+<h3>6.1 Make a background profile, once for each kind of slide</h3>
+<p>A background profile describes the setup on the stage: holder, slide type and mountant. The dialog will not collect without one.</p>
+<ol class="do">
+<li><b>Open <span class="ui path">Extensions &gt; QuPath SCope &gt; Utilities &gt; Image Quality &gt; Background Profiles...</span></b></li>
+<li><b>Click <span class="ui">New...</span></b></li>
+<li><b>Check the suggested values against what is on the stage, type a <span class="ui">Name:</span>, and add the mountant after <span class="ui">medium:</span> under <span class="ui">Attributes:</span>.</b></li>
+<li><b>Leave <span class="ui">Make this the active background profile</span> ticked and confirm.</b></li>
+<li><b>Click <span class="ui">Close</span>.</b></li>
+</ol>
+<h3>6.2 Collect</h3>
+<ol class="do">
+<li><b>Stay on or near the clear area.</b> Check the live image for anything sharp.</li>
+<li><b>Turn the focus 10 to 20 um out of focus.</b> QPSC does not move the focus for you. Defocusing keeps dust from printing onto every tile.</li>
+<li><b>Click <span class="ui">OK</span></b> in the <span class="ui">LC-PolScope background</span> prompt. If you did not arrive from the calibration, click <span class="ui">Collect background...</span> in <span class="ui">LC-PolScope Setup</span> first.</li>
+<li><b>Fill in the <span class="ui">Background Collection</span> dialog using the table below.</b></li>
+<li><b>Click <span class="ui">Acquire Backgrounds</span>.</b> A <span class="ui">Background Collection Complete</span> notification appears when it finishes.</li>
+<li><b>Refocus on the sample.</b></li>
+</ol>
+<div class="tablewrap"><table>
+<tr><th>Field</th><th>Set to</th></tr>
+<tr><td><span class="ui">Modality:</span></td><td><span class="ui">lcpolscope</span></td></tr>
+<tr><td><span class="ui">Objective:</span></td><td>The objective in use.</td></tr>
+<tr><td><span class="ui">Detector:</span></td><td>The camera in use.</td></tr>
+<tr><td><span class="ui">Background profile:</span></td><td>The profile for this slide.</td></tr>
+<tr><td><span class="ui">Acquisition Profile:</span></td><td>The matching profile, for example <span class="ui">lcpolscope_20x</span>.</td></tr>
+<tr><td><span class="ui">Exposure Times (ms):</span></td><td>Read only. All five states show the exposure you applied, with 10 frames averaged per state.</td></tr>
+</table></div>
+<div class="note"><b>Each objective needs its own background.</b> Repeat this step for each objective you will acquire with.</div>
+</section>
+
+<section class="card" id="s7">
+<h2>7. Set up and start the acquisition</h2>
+<p>Use <span class="ui">Bounded Acquisition</span> to image a region defined by stage coordinates, as described here. If you have an overview image with annotations, use <span class="ui path">Extensions &gt; QuPath SCope &gt; Acquisition controls &gt; Acquire from Existing Image</span>, which needs the image open and adds alignment steps.</p>
+<ol class="do">
+<li><b>Open <span class="ui path">Extensions &gt; QuPath SCope &gt; Acquisition controls &gt; Bounded Acquisition</span>.</b></li>
+<li><b>Fill in the open sections using the table below.</b></li>
+<li><b>Open the <span class="ui">MODALITY-SPECIFIC OPTIONS</span> section.</b> The section starts collapsed, and <span class="ui">Ready to acquire?</span> is inside it.</li>
+<li><b>Read every line of <span class="ui">Ready to acquire?</span> and clear each <span class="ui">Fix</span> line.</b> The box never blocks the run, so reading it is up to you.</li>
+<li><b>Check the settings in the second table.</b></li>
+<li><b>Open the <span class="ui">AUTOFOCUS</span> section and check <span class="ui">Autofocus:</span>.</b> The default suits tissue. Tick <span class="ui">Sample is already in focus (skip initial focus search)</span> only if you have just focused.</li>
+<li><b>Read <span class="ui">ACQUISITION PREVIEW</span> for the tile count, time and disk space, then click <span class="ui">Start Acquisition</span>.</b></li>
+<li><b>Read the <span class="ui">LC-PolScope: this slide</span> reminder, then click <span class="ui">Acquire</span>.</b> The reminder appears before every run and lists the calibration and background in use. Pressing Enter cancels, because <span class="ui">Cancel</span> is the default button.</li>
+</ol>
+<div class="tablewrap"><table>
+<tr><th>Section</th><th>Field</th><th>Set to</th></tr>
+<tr><td rowspan="2"><span class="ui">PROJECT &amp; SAMPLE</span></td><td><span class="ui">Sample Name:</span></td><td>A short name. QPSC creates the project if none is open.</td></tr>
+<tr><td><span class="ui">Projects Folder:</span></td><td>Leave the default unless told otherwise.</td></tr>
+<tr><td rowspan="4"><span class="ui">HARDWARE CONFIGURATION</span></td><td><span class="ui">Modality:</span></td><td><span class="ui">lcpolscope</span></td></tr>
+<tr><td><span class="ui">Objective:</span></td><td>The objective on the nosepiece.</td></tr>
+<tr><td><span class="ui">Detector:</span></td><td>The camera in use.</td></tr>
+<tr><td><span class="ui">Background profile:</span></td><td>The profile you collected into.</td></tr>
+<tr><td><span class="ui">ACQUISITION REGION</span></td><td><span class="ui">Center Point + Size</span> or <span class="ui">Two Corners</span></td><td>Move to the center of the region and click <span class="ui">Use Current Position as Center</span>, then type <span class="ui">Width (um):</span> and <span class="ui">Height (um):</span>.</td></tr>
+</table></div>
+<div class="tablewrap"><table>
+<tr><th>Inside <span class="ui">MODALITY-SPECIFIC OPTIONS</span></th><th>Set to</th></tr>
+<tr><td><span class="ui">Exposure, all states (ms):</span></td><td>Should match <span class="ui">YAML:</span> beside it and the exposure of your background.</td></tr>
+<tr><td><span class="ui">Focus</span> column</td><td><span class="ui">State1</span> or another swing state. Never use <span class="ui">State0</span>, because the extinction state is too dark for autofocus.</td></tr>
+<tr><td><span class="ui">Orientation colour image:</span></td><td><span class="ui">As in the config (ppm)</span>. The choice only changes the colors.</td></tr>
+<tr><td><span class="ui">Full brightness at:</span></td><td>Leave <span class="ui">Config (20 nm)</span> unless a different ceiling suits your sample. The choice only changes the display.</td></tr>
+</table></div>
+<h3>What the <span class="ui">Ready to acquire?</span> lines mean</h3>
+<div class="tablewrap"><table>
+<tr><th>Line</th><th>Meaning</th><th>What to do</th></tr>
+<tr><td><span class="lv ok">OK</span> <span class="ui path">lcpolscope_20x: background ..., this calibration</span></td><td>The background matches the calibration.</td><td>Nothing.</td></tr>
+<tr><td><span class="lv fx">Fix</span> <span class="ui path">the background is from a different calibration and will be refused</span></td><td>The run would go ahead with no background correction, and the only other record is the server log.</td><td>Collect the background again (step 6).</td></tr>
+<tr><td><span class="lv fx">Fix</span> <span class="ui path">The microscope server is running ... but QPSC is set to ...</span></td><td>The server and QuPath are using different configuration files.</td><td>Disconnect and reconnect, or use <span class="ui">Switch Microscope...</span></td></tr>
+<tr><td><span class="lv ch">Check</span> <span class="ui path">no background collected yet; it reconstructs uncorrected</span></td><td>This objective has no background in the active profile.</td><td>Collect one for this objective.</td></tr>
+<tr><td><span class="lv ch">Check</span> <span class="ui path">the background's swing states differ by ...</span></td><td>The background was probably taken on specimen.</td><td>Collect it again on an empty area.</td></tr>
+<tr><td><span class="lv ch">Check</span> <span class="ui path">... -- consider recalibrating</span></td><td>The calibration is over 14 days old.</td><td>Calibrate. You should be doing so for each slide.</td></tr>
+<tr><td><span class="lv ch">Check</span> <span class="ui path">Extinction ratio ... is below 80</span></td><td>Reconstruction will be noisy.</td><td>Calibrate on a cleaner area.</td></tr>
+</table></div>
+<h3>During the run</h3>
+<p>The <span class="ui">Microscope Acquisition Progress</span> window shows positions acquired and time remaining. Stay off the bench, since a bump between frames shows up as false retardance along edges.</p>
+<ol class="do">
+<li><b>To stop, click <span class="ui">Cancel Acquisition</span>.</b> The current tile finishes first, so the stop is not immediate.</li>
+</ol>
+</section>
+
+<section class="card" id="s8">
+<h2>8. Open and check the results</h2>
+<p>Stitching starts by itself and runs in the background. The <span class="ui">Stitching queue</span> window opens to show progress, and finished images are added to the project without being opened.</p>
+<div class="tablewrap"><table>
+<tr><th>Project entry</th><th>Contents</th><th>Use it for</th></tr>
+<tr><td><span class="ui path">Sample_001.ome.tif</span></td><td>The five raw states as channels</td><td>Checking saturation and focus</td></tr>
+<tr><td><span class="ui path">Sample_retardance_001.ome.tif</span></td><td>Retardance, stored as nm &times; 100. A pixel value of 500 is 5.00 nm.</td><td>Measuring retardance</td></tr>
+<tr><td><span class="ui path">Sample_orientation_001.ome.tif</span></td><td>Slow-axis angle, stored as degrees &times; 100, from 0 to 18000</td><td>Measuring angle at full resolution</td></tr>
+<tr><td><span class="ui path">Sample_orientation_color_001.ome.tif</span></td><td>Color image: hue for angle, brightness for retardance</td><td>Viewing and figures. Do not measure on it.</td></tr>
+</table></div>
+<p>File names can also include the objective or modality, depending on QuPath preferences.</p>
+<ol class="do">
+<li><b>Open the retardance image and look at empty glass.</b> Glass should be close to black, with no grid across the tiles.</li>
+<li><b>Open the color image and look at the tile edges.</b> Fibers should continue across them.</li>
+<li><b>To try other colors, open the retardance or orientation image and choose <span class="ui path">Extensions &gt; QuPath SCope &gt; Utilities &gt; Project Tools &gt; Orientation Colour View...</span></b> Choose a <span class="ui">Colour map:</span> and <span class="ui">Full brightness at:</span>, then click <span class="ui">Show on viewer</span>. Stored data do not change. <span class="ui">Export colour image...</span> writes a new image.</li>
+</ol>
+<div class="note"><b>Colors and numbers use different angle zeros.</b> The color image is registered to our PPM images (angle &times; -1, plus 4.5&deg;), and the orientation image keeps the measured angle. Both are correct, but their angle values differ.</div>
+<p>Raw tiles, the calibration and the background for each run are kept in the run's folder inside the project, under <span class="ui path">lcpolscope_20x_1/bounds/</span>. Copies of the calibration and background are in <span class="ui">_protected</span>, which tile cleanup leaves in place.</p>
+</section>
+
+<section class="card" id="s9">
+<h2>9. Change to the next slide</h2>
+<ol class="do">
+<li><b>Load the new slide and focus</b> (step 3).</li>
+<li><b>Calibrate on a clear area of the new slide</b> (step 5).</li>
+<li><b>Collect the background on the new slide</b> (step 6).</li>
+<li><b>Acquire</b> (step 7). Keep the exposure, objective and display settings the same across slides you intend to compare.</li>
+</ol>
+<p><a href="LCPolScope_Settings.html#cadence">The settings table</a> lists how often each setting needs repeating.</p>
+</section>
+
+<section class="card" id="s10">
+<h2>10. Shut down</h2>
+<ol class="do">
+<li><b>Save the project and close QuPath.</b></li>
+<li><b>Click in the server window and press Ctrl+C.</b> The window shows <span class="ui">Server stopped.</span></li>
+<li><b>Close Micro-Manager.</b></li>
+<li><b>Turn off the lamp.</b> A field left lit overnight dimmed the tissue under it, so never leave the lamp on a slide.</li>
+<li><b>Remove your slide.</b></li>
+</ol>
+<div class="confirm"><b>Confirm at the microscope:</b> the power-off order for the controllers and camera, and whether the stage keeps its coordinates after power-off. Saved alignments depend on the second answer.</div>
+</section>
+
+<section class="card" id="s11">
+<h2>If something goes wrong</h2>
+<div class="tablewrap"><table>
+<tr><th>What you see</th><th>Meaning</th><th>What to do</th></tr>
+<tr><td>Server window: <span class="ui path">Failed to connect to Micro-Manager.</span></td><td>Micro-Manager is closed, or its server setting is off.</td><td>Start Micro-Manager first, then the server.</td></tr>
+<tr><td>Server window: <span class="ui path">Another server instance is already running on port 5000!</span></td><td>A server is already open.</td><td>Use the open server, or close it first.</td></tr>
+<tr><td><span class="ui">Connection Error</span>: <span class="ui path">Cannot connect to microscope server.</span></td><td>The server is not running.</td><td>Start it (step 2.2), then reconnect.</td></tr>
+<tr><td><span class="ui path">Movement disabled - Live View is Off</span></td><td>Live view is off.</td><td>Click <span class="ui">Live: OFF</span>.</td></tr>
+<tr><td><span class="ui path">LC-PolScope Calibration</span> error: <span class="ui path">the camera is not in a state a calibration can measure through</span></td><td>Auto gain or auto exposure is on.</td><td>Turn it off in Micro-Manager (step 4).</td></tr>
+<tr><td><span class="ui path">LC-PolScope Calibration</span> error: <span class="ui path">the field is too dark to calibrate</span></td><td>The lamp is off or dim, the light path is blocked, or the exposure is too short.</td><td>Check the lamp and selector, then raise the exposure.</td></tr>
+<tr><td>Calibration result is <span class="lv fx">unreliable</span></td><td>The frames cannot support the result, for example clipped states or 8-bit frames.</td><td>Fix what the warnings name, then calibrate again.</td></tr>
+<tr><td><span class="ui path">Background profile needed</span></td><td>No background profile is selected.</td><td>Choose one, or click <span class="ui">Manage...</span> (step 6.1).</td></tr>
+<tr><td><span class="ui path">Objective Pixel-Size Mismatch -- Workflow Cancelled</span></td><td>Micro-Manager's objective differs from your selection, or the wrong camera configuration is loaded.</td><td>Select the right objective in Micro-Manager and check the camera files (step 2).</td></tr>
+<tr><td><span class="ui path">Camera ROI Mismatch -- Workflow Cancelled</span></td><td>The camera is cropped in Micro-Manager.</td><td>Clear the ROI in Micro-Manager.</td></tr>
+<tr><td><span class="ui path">LC-PolScope acquisition refused: ...</span></td><td>A state is missing, or the states have different exposures.</td><td>Use all five states at one exposure.</td></tr>
+<tr><td><span class="ui path">Saturation Summary</span> window after a run</td><td>Tiles had saturated pixels.</td><td>Read the states listed, shorten the exposure, recalibrate and collect a new background.</td></tr>
+<tr><td>Retardance and orientation images are missing after a run</td><td>Reconstruction was refused. Raw states were still saved.</td><td>Keep the raw tiles and ask for help before deleting anything.</td></tr>
+<tr><td>Grid pattern across the mosaic</td><td>The background was missing or not used.</td><td>Check <span class="ui">Ready to acquire?</span> for a <span class="ui">Fix</span> line, collect a new background, and acquire again.</td></tr>
+</table></div>
+<p><a href="LCPolScope_Image_Workflow.html">Making an image</a> shows what these problems look like on real data.</p>
+</section>
+
+<footer>
+Companion pages: <a href="LCPolScope_Image_Workflow.html">making an image and recognizing mistakes</a> &middot; <a href="LCPolScope_Settings.html">settings, calibration &amp; background</a> &middot; <a href="LCPolScope_Concepts.html">concept interactives</a> &middot; <a href="LCPolScope_Birefringence.html">polarization states</a> &middot; <a href="lc-polscope/">simulator &amp; lab guide</a>.<br>
+Laboratory for Optical and Computational Instrumentation (LOCI), UW&ndash;Madison.
+</footer>
+</div></body></html>

@@ -25,6 +25,8 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-microscopy-cou
 - [LC-PolScope — polarization states & birefringence](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Birefringence.html) — explore polarization states and birefringence contrast. ([`LCPolScope_Birefringence.html`](LCPolScope_Birefringence.html))
 - [LC-PolScope — concept interactives](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Concepts.html) — reading birefringence with polarized light, six core ideas as small interactives. ([`LCPolScope_Concepts.html`](LCPolScope_Concepts.html))
 - [LC-PolScope — settings, calibration & background](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Settings.html) — image formation through the light path, what calibration and background correction each fix, and how often every setting changes (per study, session, or slide). ([`LCPolScope_Settings.html`](LCPolScope_Settings.html))
+- [LC-PolScope — making an image and recognizing mistakes](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Image_Workflow.html) — the path of the data from the microscope to the finished image, with each mistake applied to real frames in the browser. ([`LCPolScope_Image_Workflow.html`](LCPolScope_Image_Workflow.html))
+- [Running the LC-PolScope with QPSC](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_QPSC_Walkthrough.html) — step-by-step operator walkthrough, from power-on to images in a QuPath project (photos in progress). ([`LCPolScope_QPSC_Walkthrough.html`](LCPolScope_QPSC_Walkthrough.html))
 - [LC-PolScope-simulator and usage guide](https://uw-loci.github.io/interactive-microscopy-courseware/lc-polscope/)
 
 ## Hosting
