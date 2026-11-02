@@ -27,6 +27,7 @@ Live site (GitHub Pages): **https://uw-loci.github.io/interactive-microscopy-cou
 - [LC-PolScope — settings, calibration & background](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Settings.html) — image formation through the light path, what calibration and background correction each fix, and how often every setting changes (per study, session, or slide). ([`LCPolScope_Settings.html`](LCPolScope_Settings.html))
 - [LC-PolScope — making an image and recognizing mistakes](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_Image_Workflow.html) — the path of the data from the microscope to the finished image, with each mistake applied to real frames in the browser. ([`LCPolScope_Image_Workflow.html`](LCPolScope_Image_Workflow.html))
 - [Running the LC-PolScope with QPSC](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_QPSC_Walkthrough.html) — step-by-step operator walkthrough, from power-on to images in a QuPath project (photos in progress). ([`LCPolScope_QPSC_Walkthrough.html`](LCPolScope_QPSC_Walkthrough.html))
+  - [If you see this, check this](https://uw-loci.github.io/interactive-microscopy-courseware/LCPolScope_QPSC_Troubleshooting.html) — the walkthrough's companion: messages, settings and image problems, and what to check for each. ([`LCPolScope_QPSC_Troubleshooting.html`](LCPolScope_QPSC_Troubleshooting.html))
 - [LC-PolScope-simulator and usage guide](https://uw-loci.github.io/interactive-microscopy-courseware/lc-polscope/)
 
 ## Hosting
