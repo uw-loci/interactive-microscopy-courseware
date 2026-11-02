@@ -48,7 +48,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <body><div class="wrap">
 <div class="eyebrow">LC-PolScope &middot; if you see this, check this</div>
 <h1>LC-PolScope with QPSC: if you see this, check this</h1>
-<p class="intro">Each section matches a step of <a href="LCPolScope_QPSC_Walkthrough.html">the walkthrough</a>. Find what you see in the left column, then follow the right one. Labels in <span class="ui">this style</span> match the software, including its spelling of &ldquo;Colour&rdquo;.</p>
+<p class="intro">Each section matches a step of <a href="LCPolScope_QPSC_Walkthrough.html">the walkthrough</a>. Find what you see in the left column, then follow the right one. Labels in <span class="ui">this style</span> match the software.</p>
 <div class="toc">
 <a href="#start">Starting up</a><a href="#live">Live image</a><a href="#calibration">Calibration</a><a href="#camera">Camera settings</a><a href="#exposure">Exposure</a><a href="#background">Background</a><a href="#ready">Ready to acquire?</a><a href="#run">During a run</a><a href="#images">Image problems</a>
 </div>
@@ -60,8 +60,8 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <tr><td>Server window: <span class="ui path">Failed to connect to Micro-Manager.</span></td><td>Micro-Manager must be open before the server starts. Close the server window, open Micro-Manager, then start the server again.</td></tr>
 <tr><td>Server window: <span class="ui path">Another server instance is already running on port 5000!</span></td><td>A server window is already open. Use that one.</td></tr>
 <tr><td><span class="ui">Connection Error</span>: <span class="ui path">Cannot connect to microscope server.</span></td><td>The server window is closed or still starting. Wait for <span class="ui">Ready for connections...</span>, then click <span class="ui">Connect Now</span> again.</td></tr>
-<tr><td><span class="ui path">Objective Pixel-Size Mismatch -- Workflow Cancelled</span></td><td>The objective chosen in Micro-Manager differs from the one in QPSC, or Micro-Manager has the other camera's configuration loaded. See <a href="#config">camera configuration files</a>.</td></tr>
-<tr><td><span class="ui path">Camera ROI Mismatch -- Workflow Cancelled</span></td><td>The camera image is cropped in Micro-Manager. Clear the ROI there.</td></tr>
+<tr><td><span class="ui path">Objective Pixel-Size Mismatch -- Workflow Canceled</span></td><td>The objective chosen in Micro-Manager differs from the one in QPSC, or Micro-Manager has the other camera's configuration loaded. See <a href="#config">camera configuration files</a>.</td></tr>
+<tr><td><span class="ui path">Camera ROI Mismatch -- Workflow Canceled</span></td><td>The camera image is cropped in Micro-Manager. Clear the ROI there.</td></tr>
 <tr><td>The liquid crystals behave oddly or settings do not stick</td><td>Close OpenPolScope and recOrder if either is open. Only one program should control the crystals.</td></tr>
 </table></div>
 <details id="config"><summary>Camera configuration files: Hamamatsu or Oryx</summary>
