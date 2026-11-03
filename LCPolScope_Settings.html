@@ -69,7 +69,7 @@ footer a,.refs a,.card a{color:var(--am);text-decoration:none;}
 <body><div class="wrap">
 <div class="eyebrow">LC-PolScope &middot; settings &amp; image formation</div>
 <h1>What the PolScope settings do, and how often to change them</h1>
-<p class="intro">The <a href="LCPolScope_Concepts.html">concept page</a> covers what birefringence is and how five frames become a retardance map. This page covers what an operator does with the instrument: how the image actually forms in the light path, what the <b>calibration</b> and the <b>background</b> each correct, and which settings stay fixed for a whole study while others must be redone for every slide. All the numbers come from an exact polarization model (Jones calculus) of the same five-state scheme our rig uses, at its 549&nbsp;nm wavelength and 0.03-wave swing.</p>
+<p class="intro">The <a href="LCPolScope_Concepts.html">concept page</a> covers what birefringence is and how five frames become a retardance map. This page covers what an operator does with the instrument: how the image actually forms in the light path, what the <b>calibration</b> and the <b>background</b> each correct, and which settings stay fixed for a whole study while others must be redone for every slide. All the numbers come from an exact polarization model (Jones calculus) of the same five-state scheme our rig uses, at its 549&nbsp;nm wavelength and 0.05-wave swing.</p>
 
 <section class="card">
 <div class="eyebrow">0 &middot; the rule you were taught</div>
@@ -77,7 +77,7 @@ footer a,.refs a,.card a{color:var(--am);text-decoration:none;}
 <p class="lede">The rule is right, but it applies to the <b>measurement</b>, not the <b>reference</b>. Retardance (nm) and slow-axis angle (&deg;) are physical quantities. You keep them comparable by keeping fixed everything that defines how they are measured. The calibration and the background are references: they record what the instrument reads when no specimen is there. That reading includes the slide's own glass, coverslip and mountant, so a new slide changes it. Think of the tare button on a balance: you press it again for every new weighing boat precisely so that the <b>weights</b> stay comparable.</p>
 <div class="two">
  <div class="box"><h3 class="c-fixed">Hold constant across a study</h3><ul>
-  <li><b>Wavelength</b> (549&nbsp;nm filter) and <b>swing</b> (0.03 waves)</li>
+  <li><b>Wavelength</b> (549&nbsp;nm filter) and <b>swing</b> (0.05 waves)</li>
   <li><b>Objective</b> and <b>condenser aperture</b></li>
   <li><b>Reconstruction</b>: 5-state scheme, method, black level for the camera's pixel format</li>
   <li><b>Camera mode</b>: auto gain and auto exposure off, gamma off, 12/16-bit</li>
@@ -102,7 +102,7 @@ footer a,.refs a,.card a{color:var(--am);text-decoration:none;}
 <section class="card">
 <div class="eyebrow">2 &middot; the five states</div>
 <h2>Five illumination states, one pixel</h2>
-<p class="lede">The two liquid crystals shape the light reaching the slide. In the <b>extinction</b> state (State0) it is circularly polarized, so the circular analyzer blocks it completely, unless something on the slide changed it. Each of the four <b>swing</b> states moves one crystal by &plusmn;0.03 waves, which makes the light slightly elliptical, with its long axis in one of four directions. A birefringent pixel brightens some swing states more than others, and the pattern across the four tells the reconstruction its <b>angle</b>. How far the pixel rises above extinction overall gives its <b>retardance</b>. Pick a state to see it.</p>
+<p class="lede">The two liquid crystals shape the light reaching the slide. In the <b>extinction</b> state (State0) it is circularly polarized, so the circular analyzer blocks it completely, unless something on the slide changed it. Each of the four <b>swing</b> states moves one crystal by &plusmn;0.05 waves, which makes the light slightly elliptical, with its long axis in one of four directions. A birefringent pixel brightens some swing states more than others, and the pattern across the four tells the reconstruction its <b>angle</b>. How far the pixel rises above extinction overall gives its <b>retardance</b>. Pick a state to see it.</p>
 <canvas id="cv2" width="960" height="330"></canvas>
 <div class="controls">
  <div class="seg"><span class="lab">state</span><span id="stbtns"></span></div>
@@ -217,7 +217,7 @@ footer a,.refs a,.card a{color:var(--am);text-decoration:none;}
 (function(){
 "use strict";
 // ===================== polarization model (no DOM) =====================
-var TAU=Math.PI*2, D2R=Math.PI/180, LAM=549, CHI=0.03, FLOOR=1/300;
+var TAU=Math.PI*2, D2R=Math.PI/180, LAM=549, CHI=0.05, FLOOR=1/300;
 function cm(a,b){return [a[0]*b[0]-a[1]*b[1], a[0]*b[1]+a[1]*b[0]];}
 function ca(a,b){return [a[0]+b[0], a[1]+b[1]];}
 function cexp(p){return [Math.cos(p), Math.sin(p)];}

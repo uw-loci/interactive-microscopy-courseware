@@ -74,7 +74,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <div class="tablewrap"><table>
 <tr><th>If you see</th><th>Check</th></tr>
 <tr><td><span class="ui path">Movement disabled - Live View is Off</span></td><td>Click <span class="ui">Live: OFF</span> so it reads <span class="ui">Live: ON</span>.</td></tr>
-<tr><td>Empty glass is nearly black, and only some structures show</td><td>Normal near the extinction setting, for example after a calibration.</td></tr>
+<tr><td>Empty glass is nearly black, and only some structures show</td><td>Normal when the crystals are at the extinction setting, the darkest of the five states, for example after a calibration.</td></tr>
 <tr><td>No light at all</td><td>The lamp is on and the <span class="ui">PORT</span> dial is at 4. If both are right, ask a staff scientist.</td></tr>
 <tr><td>Numbers on the test target appear mirrored</td><td>Normal. The camera looks at the slide from below.</td></tr>
 <tr><td><span class="ui path">Movement in Live View in [Y] Opposite Live View Controls</span> in the Stage Map</td><td>Normal for this stage. It is a standing note, not an error.</td></tr>
@@ -85,7 +85,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <section class="card" id="calibration">
 <h2>Calibration</h2>
 <div class="tablewrap"><table>
-<tr><th>Result header says</th><th>What to do</th></tr>
+<tr><th>Grade and extinction ratio in the result header</th><th>What to do</th></tr>
 <tr><td><span class="lv ok">good</span> (100 or above)</td><td>Apply it. This microscope usually reaches about 270.</td></tr>
 <tr><td><span class="lv ch">acceptable</span> (80 to 100)</td><td>Move to a cleaner area of glass and calibrate again.</td></tr>
 <tr><td><span class="lv fx">poor</span> (under 80)</td><td>Move to a cleaner area, check that nothing is in the field, and calibrate again.</td></tr>
@@ -114,7 +114,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <h2>Camera settings</h2>
 <p>Retardance comes from brightness ratios between frames, so the camera must not adjust itself. The <span class="ui">Ready to acquire?</span> box in <span class="ui">LC-PolScope Setup</span> shows a <span class="lv fx">Fix</span> line for the camera when something is wrong.</p>
 <ol class="do">
-<li><b>In Micro-Manager's Device Property Browser, set Gain Auto and Exposure Auto to Off, turn gamma off, and choose a 12-bit or 16-bit pixel format.</b></li>
+<li><b>In Micro-Manager, open <span class="ui path">Devices &gt; Device Property Browser...</span>, then set Gain Auto and Exposure Auto to Off, turn gamma off, and choose a 12-bit or 16-bit pixel format.</b></li>
 <li><b>In <span class="ui">LC-PolScope Setup</span>, click <span class="ui">Recheck</span>.</b> The camera line should no longer start with <span class="lv fx">Fix</span>.</li>
 </ol>
 <p>Restarting Micro-Manager can bring back the camera defaults, so check again after a restart.</p>
@@ -122,7 +122,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 
 <section class="card" id="exposure">
 <h2>Exposure</h2>
-<p>Bright structures can push the camera past its limit in some of the five frames. That lowers the measured retardance and bends the angle without any error message. For tissue sections, the saved exposure is right. For the test target or anything above about 10 nm, use a shorter exposure.</p>
+<p>Bright structures can push the camera past its limit in some of the five frames. That lowers the measured retardance and bends the angle without any error message. For tissue sections, the saved exposure is right. For the test target, or anything that is bright in the retardance image (above about 10 nm), use a shorter exposure.</p>
 <div class="tablewrap"><table>
 <tr><th>Sample</th><th>Exposure</th><th>Saturates above about</th></tr>
 <tr><td>Tissue sections, faint collagen</td><td>About 140 ms (saved setting)</td><td>10 nm</td></tr>
@@ -148,7 +148,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <tr><td><span class="ui path">Background profile needed</span></td><td>Choose the profile for your slide type in <span class="ui">Background profile:</span>, or create one (below).</td></tr>
 <tr><td><span class="lv ch">Check</span> <span class="ui path">the background's swing states differ by ...</span></td><td>The background was probably taken on tissue. Move to empty glass and collect again.</td></tr>
 <tr><td>A faint negative copy of the sample in every tile</td><td>Same cause: collect again on empty glass, out of focus.</td></tr>
-<tr><td>Dark spots in the same place in every tile</td><td>Dust was in focus during the background. Defocus 10 to 20 um and collect again.</td></tr>
+<tr><td>Dark spots in the same place in every tile</td><td>Dust was in focus during the background. Defocus 10 to 20 &micro;m and collect again.</td></tr>
 </table></div>
 <details><summary>Creating a background profile</summary>
 <p>A background profile describes the setup on the stage: holder, slide type and mountant. Create one for each kind of slide.</p>
@@ -163,7 +163,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 
 <section class="card" id="ready">
 <h2>Lines in the Ready to acquire? box</h2>
-<p>The box sits inside <span class="ui">MODALITY-SPECIFIC OPTIONS</span> in the acquisition dialog and never stops a run, so read it before you click <span class="ui">Start Acquisition</span>.</p>
+<p>The box is in <span class="ui">LC-PolScope Setup</span> and in the acquisition dialog: under <span class="ui">MODALITY-SPECIFIC OPTIONS</span> in Bounded Acquisition, and under <span class="ui">Modality Options</span> in Acquire from Existing Image. It never stops a run, so read it before you click <span class="ui">Start Acquisition</span>.</p>
 <div class="tablewrap"><table>
 <tr><th>Line</th><th>Meaning and what to do</th></tr>
 <tr><td><span class="lv fx">Fix</span> <span class="ui path">the background is from a different calibration and will be refused</span></td><td>The run would have no background correction. Collect the background again.</td></tr>
