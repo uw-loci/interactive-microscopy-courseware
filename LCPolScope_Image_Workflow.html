@@ -102,7 +102,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <p class="note"><b>The correct panels are partly reconstructed.</b> The frames were recorded at 141.5&nbsp;ms, long enough to saturate one or more swing states on most spoke pixels. For the correct panels, each saturated value was rebuilt from the unsaturated frame of its pair and the extinction frame, then scaled to 50&nbsp;ms with simulated camera noise. The 141.5&nbsp;ms setting of <b>Exposure too long</b> uses the frames exactly as recorded. The arithmetic is otherwise unchanged. The background is a smooth fit to the background the microscope used.</p>
 </section>
 
-<section class="card">
+<section class="card" id="exposure">
 <div class="eyebrow">3 &middot; choosing the exposure</div>
 <h2>How much retardance fits before a swing state saturates</h2>
 <p class="lede">Empty glass is already bright in the swing states, and birefringence makes one of them brighter still. A pixel with high retardance therefore saturates long before empty glass does. Saturation is easy to miss because the saturated pixels are a small part of the frame and the retardance image still looks normal. Move the slider to see the limit for this rig at a swing of 0.05 waves.</p>
@@ -143,6 +143,7 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 </table></div>
 </section>
 
+<!--lcnav--><div role="navigation" aria-label="LC-PolScope guides" style="display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 16px;margin:28px 0 10px;padding:12px 14px;border:1px solid rgba(148,163,184,.28);border-radius:10px;background:rgba(15,23,42,.55);font-size:13.5px;line-height:1.9;color:#cbd5e1;"><b style="color:#fff;white-space:nowrap;">LC-PolScope guides</b><a href="LCPolScope_Birefringence.html" style="white-space:nowrap;color:#7dd3fc;text-decoration:none;">1. Polarization states</a><a href="LCPolScope_Concepts.html" style="white-space:nowrap;color:#7dd3fc;text-decoration:none;">2. Concept interactives</a><a href="LCPolScope_Settings.html" style="white-space:nowrap;color:#7dd3fc;text-decoration:none;">3. Settings, calibration &amp; background</a><span aria-current="page" style="white-space:nowrap;color:#fff;font-weight:600;">4. Making an image &amp; recognizing mistakes</span><a href="LCPolScope_QPSC_Walkthrough.html" style="white-space:nowrap;color:#7dd3fc;text-decoration:none;">5. Operator walkthrough (QPSC)</a><a href="LCPolScope_QPSC_Troubleshooting.html" style="white-space:nowrap;color:#7dd3fc;text-decoration:none;">6. If you see this, check this</a><a href="lc-polscope/" style="white-space:nowrap;color:#7dd3fc;text-decoration:none;">7. Simulator &amp; lab guide</a></div><!--/lcnav-->
 <footer>
 <b>About the data.</b> The target is a Birefringent Test Target from the Kazansky Lab, Southampton (batch July 2021, labeled OpenPolScope.org). Five frames from one 2048 &times; 2048 tile, cropped to 260 &times; 260 pixels, 0.2695&nbsp;&micro;m per pixel, 20x objective, Hamamatsu ORCA-Flash4.0, 549&nbsp;nm, swing 0.05 waves, exposure 141.5&nbsp;ms, extinction ratio 272. Reconstruction follows the five-state formulas of Shribak &amp; Oldenbourg (2003) as implemented by OpenPolScope 3.20b. Simulated camera noise uses 0.46 electrons per count. Orientation colors use the PPM -7&deg; calibration with the angle reference measured on the same target (sign -1, offset 4.5&deg;), so a direction has the same color as on our PPM images.
 <ul class="refs">
@@ -150,7 +151,6 @@ footer{color:var(--mut);font-size:12.5px;margin-top:26px;border-top:1px solid va
 <li>Oldenbourg R, Mei G. New polarized light microscope with precision universal compensator. <a href="https://doi.org/10.1111/j.1365-2818.1995.tb03669.x">J. Microsc. 180:140&ndash;147 (1995)</a>.</li>
 <li><a href="https://openpolscope.org/docs/Pol-Acquisition-Manual-3.0.pdf">OpenPolScope Pol-Acquisition manual 3.0</a>.</li>
 </ul>
-Companion pages: <a href="LCPolScope_QPSC_Walkthrough.html">running the LC-PolScope with QPSC</a> &middot; <a href="LCPolScope_Settings.html">settings, calibration &amp; background</a> &middot; <a href="LCPolScope_Concepts.html">concept interactives</a> &middot; <a href="LCPolScope_Birefringence.html">polarization states</a> &middot; <a href="lc-polscope/">simulator &amp; lab guide</a>.
 </footer>
 </div>
 <script>
